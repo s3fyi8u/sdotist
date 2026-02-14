@@ -26,5 +26,11 @@ services:
     depends_on:
       - db
 
+  flutter_web:
+    build: ./flutter_app
+    ports:
+      - "3000:80"
+    restart: always
+
 volumes:
   postgres_data:
