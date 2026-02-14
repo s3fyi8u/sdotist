@@ -33,6 +33,7 @@ app.add_middleware(
         "https://sdotist.org",
         "https://www.sdotist.org"
     ],
+    allow_origin_regex="https?://localhost(:[0-9]+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
