@@ -6,6 +6,8 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/responsive_layout.dart';
+import '../../../core/widgets/web_navigation_bar.dart';
 
 class RepresentativeListScreen extends StatefulWidget {
   const RepresentativeListScreen({super.key});
@@ -37,6 +39,92 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      mobileScaffold: _buildMobileScaffold(context),
+      tabletScaffold: _buildDesktopScaffold(context),
+      desktopScaffold: _buildDesktopScaffold(context),
+    );
+  }
+
+  Widget _buildDesktopScaffold(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          WebNavigationBar(
+            selectedIndex: -1,
+            onItemTapped: (index) {
+               if (index == 0) Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            },
+          ),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                           BackButton(color: Theme.of(context).textTheme.bodyLarge?.color),
+                           const SizedBox(width: 8),
+                           Text(
+                            'ممثلي الجامعات',
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Expanded(
+                        child: FutureBuilder<List<UniversityRepresentative>>(
+                          future: _representativesFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return ErrorScreen(
+                                error: _error ?? ErrorMapper.map(snapshot.error),
+                                onRetry: () {
+                                  setState(() {
+                                    _representativesFuture = _fetchRepresentatives();
+                                  });
+                                },
+                              );
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(child: Text('لا يوجد ممثلين حالياً'));
+                            }
+
+                            final representatives = snapshot.data!;
+                            return GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 400,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 3, // Wide card for rep
+                              ),
+                              itemCount: representatives.length,
+                              itemBuilder: (context, index) {
+                                return _buildRepCard(context, representatives[index]);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ممثلي الجامعات'),
@@ -64,47 +152,51 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
             padding: const EdgeInsets.all(16.0),
             itemCount: representatives.length,
             itemBuilder: (context, index) {
-              final rep = representatives[index];
-              return ContentCard(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: rep.imageUrl != null
-                          ? CachedNetworkImageProvider(rep.imageUrl!)
-                          : null,
-                      child: rep.imageUrl == null
-                          ? Icon(Icons.person, size: 30, color: Colors.grey[400])
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            rep.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            rep.university,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return _buildRepCard(context, representatives[index]);
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildRepCard(BuildContext context, UniversityRepresentative rep) {
+    return ContentCard(
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.grey[200],
+            backgroundImage: rep.imageUrl != null
+                ? CachedNetworkImageProvider(rep.imageUrl!)
+                : null,
+            child: rep.imageUrl == null
+                ? Icon(Icons.person, size: 30, color: Colors.grey[400])
+                : null,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  rep.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  rep.university,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

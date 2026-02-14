@@ -7,6 +7,8 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/responsive_layout.dart';
+import '../../../core/widgets/web_navigation_bar.dart';
 
 class OfficeListScreen extends StatefulWidget {
   const OfficeListScreen({super.key});
@@ -41,6 +43,95 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      mobileScaffold: _buildMobileScaffold(context),
+      tabletScaffold: _buildDesktopScaffold(context),
+      desktopScaffold: _buildDesktopScaffold(context),
+    );
+  }
+
+  Widget _buildDesktopScaffold(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          WebNavigationBar(
+            selectedIndex: -1, // No tab selected
+            onItemTapped: (index) {
+              // Navigate based on index if needed, or better, make navbar capable of navigation
+              // For now, since this is a push screen, we might want to pop or standard navigate
+               if (index == 0) Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+               // Add other navigation logic here if consistent with main navbar
+            },
+          ),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                           BackButton(color: Theme.of(context).textTheme.bodyLarge?.color),
+                           const SizedBox(width: 8),
+                           Text(
+                            'المكاتب التنفيذية', // "Executive Offices"
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Expanded(
+                        child: FutureBuilder<List<ExecutiveOffice>>(
+                          future: _officesFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return ErrorScreen(
+                                error: _error ?? ErrorMapper.map(snapshot.error),
+                                onRetry: () {
+                                  setState(() {
+                                    _officesFuture = _fetchOffices();
+                                  });
+                                },
+                              );
+                            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(child: Text('No offices found.'));
+                            }
+
+                            final offices = snapshot.data!;
+                            return GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 400,
+                                crossAxisSpacing: 24,
+                                mainAxisSpacing: 24,
+                                childAspectRatio: 0.85, 
+                              ),
+                              itemCount: offices.length,
+                              itemBuilder: (context, index) {
+                                final office = offices[index];
+                                return _buildOfficeCard(context, office);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('المكاتب التنفيذية'),
