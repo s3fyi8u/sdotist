@@ -276,7 +276,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         radius: 40,
                                         backgroundColor: Colors.grey[200],
                                         backgroundImage: _userData!['profile_image'] != null
-                                            ? CachedNetworkImageProvider(_userData!['profile_image'].toString().replaceFirst('http://', 'https://'))
+                                            ? CachedNetworkImageProvider(
+                                                _userData!['profile_image'].toString()
+                                                .replaceFirst('http://', 'https://')
+                                                .replaceFirst('sdotist.org/static', 'api.sdotist.org/static')
+                                              )
                                             : null,
                                         child: _userData!['profile_image'] == null
                                             ? const Icon(Icons.person, size: 40, color: Colors.grey)

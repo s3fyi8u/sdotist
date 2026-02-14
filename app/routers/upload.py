@@ -23,4 +23,8 @@ async def upload_image(request: Request, file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
         
     # Return URL dynamically based on request host (handles both localhost and sdotist.org)
-    return {"url": str(request.base_url) + f"static/uploads/{filename}"}
+    # Generate full URL
+    # Hardcoding production domain to avoid proxy issues
+    base_url = "https://api.sdotist.org/"
+    url = f"{base_url}static/uploads/{filename}"
+    return {"url": url}
