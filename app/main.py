@@ -28,7 +28,11 @@ setup_rate_limiting(app)
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # في الإنتاج، حدد الـ origins المسموحة
+    allow_origins=[
+        "http://localhost:3000",
+        "https://sdotist.org",
+        "https://www.sdotist.org"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
