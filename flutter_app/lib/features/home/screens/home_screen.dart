@@ -4,6 +4,8 @@ import '../../news/screens/news_screen.dart';
 import '../../executive_offices/screens/office_list_screen.dart';
 import '../../university_representatives/screens/representative_list_screen.dart';
 import 'notifications_screen.dart';
+import '../../../core/widgets/responsive_layout.dart';
+import '../../../core/widgets/web_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,6 +31,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      mobileScaffold: _buildMobileScaffold(context),
+      tabletScaffold: _buildDesktopScaffold(context), // Tablet shares desktop layout for now
+      desktopScaffold: _buildDesktopScaffold(context),
+    );
+  }
+
+  Widget _buildDesktopScaffold(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Column(
+        children: [
+          WebNavigationBar(
+            selectedIndex: _selectedIndex,
+            onItemTapped: _onItemTapped,
+          ),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: _pages.elementAt(_selectedIndex),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
       appBar: _selectedIndex == 0 
         ? AppBar(
