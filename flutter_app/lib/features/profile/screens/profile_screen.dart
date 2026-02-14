@@ -515,7 +515,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               httpHeaders: headers,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                                    errorWidget: (context, url, error) => Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.error, color: Colors.red),
+                                    Text(error.toString(), style: const TextStyle(fontSize: 8), textAlign: TextAlign.center),
+                                  ],
+                                ),
                             ),
                           ),
                         )
@@ -526,7 +532,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           httpHeaders: headers,
                           fit: BoxFit.contain,
                           placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                errorWidget: (context, url, error) => Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.error, color: Colors.red),
+                                    Text(error.toString(), style: const TextStyle(fontSize: 8), textAlign: TextAlign.center),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
