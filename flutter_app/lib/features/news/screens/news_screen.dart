@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/app_error.dart';
@@ -90,7 +91,12 @@ class _NewsScreenState extends State<NewsScreen> {
                         width: double.infinity,
                         color: Colors.grey[200],
                         // Placeholder for actual image widget
-                         child: Center(child: Icon(Icons.image, size: 50, color: Colors.grey[400])),
+                        child: CachedNetworkImage(
+                          imageUrl: news['image'].toString().replaceFirst('http://', 'https://'),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                        ),
                       ),
                     ),
                   Padding(

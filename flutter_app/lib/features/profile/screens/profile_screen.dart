@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -275,7 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         radius: 40,
                                         backgroundColor: Colors.grey[200],
                                         backgroundImage: _userData!['profile_image'] != null
-                                            ? CachedNetworkImageProvider(_userData!['profile_image'])
+                                            ? CachedNetworkImageProvider(_userData!['profile_image'].toString().replaceFirst('http://', 'https://'))
                                             : null,
                                         child: _userData!['profile_image'] == null
                                             ? const Icon(Icons.person, size: 40, color: Colors.grey)
@@ -309,35 +310,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             
                             // Right Side: Barcode
-                            FutureBuilder<String?>(
-                              future: _apiClient.storage.read(key: 'access_token'),
+                            FutureBuilder<Response<List<int>>>(
+                              future: _apiClient.dio.get<List<int>>(
+                                ApiConstants.myBarcode,
+                                options: Options(responseType: ResponseType.bytes),
+                              ),
                               builder: (context, snapshot) {
-                                if (!snapshot.hasData) return const SizedBox(height: 80, width: 80, child: Center(child: CircularProgressIndicator()));
-                                 return GestureDetector(
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const SizedBox(height: 80, width: 80, child: Center(child: CircularProgressIndicator()));
+                                }
+                                if (snapshot.hasError || !snapshot.hasData) {
+                                  return const SizedBox(
+                                    height: 100, width: 100, 
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.qr_code_2, size: 40, color: Colors.grey),
+                                        Text("Unavailable", style: TextStyle(fontSize: 10)),
+                                      ],
+                                    )
+                                  );
+                                }
+                                
+                                final imageBytes = Uint8List.fromList(snapshot.data!.data!);
+                                
+                                return GestureDetector(
                                   onTap: () {
-                                     _showEnlargedImage(
-                                       context,
-                                       "${ApiConstants.baseUrl}${ApiConstants.myBarcode}",
-                                       "My QR Code",
-                                       headers: {"Authorization": "Bearer ${snapshot.data}"},
-                                     );
+                                     showDialog(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                        child: Image.memory(imageBytes, fit: BoxFit.contain),
+                                      ),
+                                    );
                                   },
                                   child: Hero(
                                     tag: 'qr_code',
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(
-                                        imageUrl: "${ApiConstants.baseUrl}${ApiConstants.myBarcode}",
-                                        httpHeaders: {"Authorization": "Bearer ${snapshot.data}"},
-                                        placeholder: (context, url) => const SizedBox(height: 80, width: 80, child: Center(child: CircularProgressIndicator())),
-                                        errorWidget: (context, url, error) => const Column(
-                                          children: [
-                                            Icon(Icons.qr_code_2, size: 40, color: Colors.grey),
-                                            SizedBox(height: 4),
-                                            Text("Unavailable", style: TextStyle(fontSize: 10)),
-                                          ],
-                                        ),
-                                        height: 100, // Adjusted size
+                                      child: Image.memory(
+                                        imageBytes,
+                                        height: 100,
                                         width: 100,
                                         fit: BoxFit.contain,
                                       ),
