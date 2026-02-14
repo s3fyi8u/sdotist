@@ -90,7 +90,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       radius: 60,
                       backgroundColor: Colors.grey[200],
                       backgroundImage: _userData['profile_image'] != null
-                          ? CachedNetworkImageProvider(_userData['profile_image'])
+                          ? CachedNetworkImageProvider(
+                              _userData['profile_image'].toString()
+                              .replaceFirst('http://', 'https://')
+                              .replaceFirst('sdotist.org/static', 'api.sdotist.org/static')
+                            )
                           : null,
                       child: _userData['profile_image'] == null
                           ? const Icon(Icons.person, size: 60, color: Colors.grey)
