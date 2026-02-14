@@ -520,6 +520,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     const Icon(Icons.error, color: Colors.red),
                                     Text(error.toString(), style: const TextStyle(fontSize: 8), textAlign: TextAlign.center),
+                                    Text(url, style: const TextStyle(fontSize: 8, color: Colors.blue), textAlign: TextAlign.center),
                                   ],
                                 ),
                             ),
@@ -537,6 +538,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     const Icon(Icons.error, color: Colors.red),
                                     Text(error.toString(), style: const TextStyle(fontSize: 8), textAlign: TextAlign.center),
+                                    Text(url, style: const TextStyle(fontSize: 8, color: Colors.blue), textAlign: TextAlign.center),
                                   ],
                                 ),
                         ),
