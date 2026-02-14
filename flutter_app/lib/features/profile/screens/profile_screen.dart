@@ -515,7 +515,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           aspectRatio: 1,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl: imageUrl,
+                              imageUrl: imageUrl.replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
                               httpHeaders: headers,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
@@ -533,7 +533,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       : ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: CachedNetworkImage(
-                          imageUrl: imageUrl,
+                          imageUrl: imageUrl.replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
                           httpHeaders: headers,
                           fit: BoxFit.contain,
                           placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
