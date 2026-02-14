@@ -7,8 +7,8 @@ class ApiConstants {
   static const String register = "/users/";
   static const String me = "/users/me";
   static const String myBarcode = "/users/me/barcode";
-  static const String news = "/news";
-  static const String offices = "/offices";
+  static const String news = "/news/";
+  static const String offices = "/offices/";
   static const String representatives = "/representatives/";
   static const String changePassword = "/users/me/password";
 }
