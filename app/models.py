@@ -25,8 +25,9 @@ class User(Base):
     degree = Column(String, nullable=True)
     date_of_birth = Column(String, nullable=True)
     profile_image = Column(String, nullable=True)
-
+    
     news = relationship("News", back_populates="author")
+    notifications = relationship("Notification", back_populates="author")
 
 
 class News(Base):
@@ -54,8 +55,6 @@ class Notification(Base):
     
     author_id = Column(Integer, ForeignKey("users.id"))
     author = relationship("User", back_populates="notifications")
-
-User.notifications = relationship("Notification", back_populates="author")
 
 
 class ExecutiveOffice(Base):
