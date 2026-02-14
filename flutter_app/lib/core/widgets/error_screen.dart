@@ -34,7 +34,8 @@ class _ErrorScreenState extends State<ErrorScreen> {
     super.initState();
     // Use addPostFrameCallback to ensure context is available and build is finished
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.error.type == AppErrorType.unauthorized) {
+      if (widget.error.type == AppErrorType.unauthorized || 
+          widget.error.type == AppErrorType.forbidden) {
         _handleUnauthorized();
       }
     });
@@ -52,7 +53,8 @@ class _ErrorScreenState extends State<ErrorScreen> {
   @override
   Widget build(BuildContext context) {
     // If unauthorized, show nothing effectively (or a loader) while redirecting
-    if (widget.error.type == AppErrorType.unauthorized) {
+    if (widget.error.type == AppErrorType.unauthorized || 
+        widget.error.type == AppErrorType.forbidden) {
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
