@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../errors/app_error.dart';
 import '../errors/error_mapper.dart';
 
-class ErrorScreen extends StatelessWidget {
+class ErrorScreen extends StatefulWidget {
   final AppError error;
   final VoidCallback? onRetry;
   final VoidCallback? onLogin;
@@ -25,16 +25,50 @@ class ErrorScreen extends StatelessWidget {
   }
 
   @override
+  State<ErrorScreen> createState() => _ErrorScreenState();
+}
+
+class _ErrorScreenState extends State<ErrorScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Use addPostFrameCallback to ensure context is available and build is finished
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.error.type == AppErrorType.unauthorized) {
+        _handleUnauthorized();
+      }
+    });
+  }
+
+  void _handleUnauthorized() {
+    if (widget.onLogin != null) {
+      widget.onLogin!();
+    } else {
+      // Clear stack and go to login to prevent going back to restricted page
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // If unauthorized, show nothing effectively (or a loader) while redirecting
+    if (widget.error.type == AppErrorType.unauthorized) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: onGoBack != null
+        leading: widget.onGoBack != null
             ? IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: onGoBack,
+                onPressed: widget.onGoBack,
               )
             : null,
       ),
@@ -46,7 +80,7 @@ class ErrorScreen extends StatelessWidget {
             _buildIcon(context),
             const SizedBox(height: 32),
             Text(
-              error.title,
+              widget.error.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 24,
@@ -56,7 +90,7 @@ class ErrorScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              error.message,
+              widget.error.message,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -76,7 +110,7 @@ class ErrorScreen extends StatelessWidget {
     IconData icon;
     Color color;
 
-    switch (error.type) {
+    switch (widget.error.type) {
       case AppErrorType.network:
         icon = Icons.wifi_off_rounded;
         color = Colors.orange;
@@ -133,31 +167,12 @@ class ErrorScreen extends StatelessWidget {
   }
 
   Widget _buildActionButton(BuildContext context) {
-    if (error.type == AppErrorType.unauthorized) {
+    if (widget.error.retryable && widget.onRetry != null) {
       return SizedBox(
         width: double.infinity,
         height: 50,
         child: ElevatedButton.icon(
-          onPressed: onLogin ?? () => Navigator.pushNamed(context, '/login'),
-          icon: const Icon(Icons.login),
-          label: const Text('Login Now'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (error.retryable && onRetry != null) {
-      return SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton.icon(
-          onPressed: onRetry,
+          onPressed: widget.onRetry,
           icon: const Icon(Icons.refresh),
           label: const Text('Try Again'),
           style: ElevatedButton.styleFrom(
