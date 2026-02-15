@@ -349,13 +349,54 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
     }
   }
   
-  void _showMemberForm() {
+  void _showMemberForm({Map<String, dynamic>? member}) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MemberFormScreen(officeId: widget.officeId),
+          builder: (context) => MemberFormScreen(
+            officeId: widget.officeId,
+            member: member,
+          ),
         ),
       ).then((_) => _fetchMembers());
+  }
+
+  Future<void> _deleteMember(int memberId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete this member?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _apiClient.dio.delete('${ApiConstants.offices}${widget.officeId}/members/$memberId');
+        _fetchMembers();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Member deleted successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting member: $e')),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -363,23 +404,41 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Manage Members')),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showMemberForm,
+        onPressed: () => _showMemberForm(),
         child: const Icon(Icons.add),
       ),
       body: _isLoading
       ? const Center(child: CircularProgressIndicator())
-      : ListView.builder(
+      : _members.isEmpty
+        ? const Center(child: Text('No members yet'))
+        : ListView.builder(
+          padding: const EdgeInsets.all(16),
           itemCount: _members.length,
           itemBuilder: (context, index) {
               final member = _members[index];
-              return ListTile(
+              return ContentCard(
+                child: ListTile(
                   leading: member['image_url'] != null
                     ? CircleAvatar(
                         backgroundImage: NetworkImage(member['image_url']),
                       )
                     : const CircleAvatar(child: Icon(Icons.person)),
                   title: Text(member['name']),
-                  subtitle: Text(member['position'] ?? member['role']),
+                  subtitle: Text(member['position'] ?? member['role'] ?? ''),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => _showMemberForm(member: member),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteMember(member['id']),
+                      ),
+                    ],
+                  ),
+                ),
               );
           },
       ),
@@ -389,7 +448,8 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
 
 class MemberFormScreen extends StatefulWidget {
   final int officeId;
-  const MemberFormScreen({super.key, required this.officeId});
+  final Map<String, dynamic>? member;
+  const MemberFormScreen({super.key, required this.officeId, this.member});
 
   @override
   State<MemberFormScreen> createState() => _MemberFormScreenState();
@@ -397,17 +457,29 @@ class MemberFormScreen extends StatefulWidget {
 
 class _MemberFormScreenState extends State<MemberFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _positionController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _positionController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
   
   final ApiClient _apiClient = ApiClient();
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
   Uint8List? _imageBytes;
   bool _isLoading = false;
-  String _role = 'member';
+  late String _role;
+
+  bool get isEditing => widget.member != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.member?['name'] ?? '');
+    _positionController = TextEditingController(text: widget.member?['position'] ?? '');
+    _emailController = TextEditingController(text: widget.member?['email'] ?? '');
+    _phoneController = TextEditingController(text: widget.member?['phone'] ?? '');
+    _role = widget.member?['role'] ?? 'member';
+  }
 
   @override
   void dispose() {
@@ -444,7 +516,7 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
     setState(() => _isLoading = true);
 
     try {
-      String? imageUrl;
+      String? imageUrl = widget.member?['image_url'];
       if (_pickedImage != null) {
         imageUrl = await _uploadPickedImage();
       }
@@ -458,18 +530,28 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
         'image_url': imageUrl,
       };
 
-      await _apiClient.dio.post('${ApiConstants.offices}${widget.officeId}/members', data: data);
+      if (isEditing) {
+        await _apiClient.dio.put(
+          '${ApiConstants.offices}${widget.officeId}/members/${widget.member!['id']}',
+          data: data,
+        );
+      } else {
+        await _apiClient.dio.post(
+          '${ApiConstants.offices}${widget.officeId}/members',
+          data: data,
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Member added successfully')),
+          SnackBar(content: Text(isEditing ? 'Member updated successfully' : 'Member added successfully')),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding member: $e')),
+          SnackBar(content: Text('Error saving member: $e')),
         );
       }
     } finally {
@@ -482,7 +564,7 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Member')),
+      appBar: AppBar(title: Text(isEditing ? 'Edit Member' : 'Add Member')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -494,8 +576,12 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
-                  child: _imageBytes == null
+                  backgroundImage: _imageBytes != null 
+                      ? MemoryImage(_imageBytes!)
+                      : (isEditing && widget.member!['image_url'] != null)
+                          ? NetworkImage(widget.member!['image_url']) as ImageProvider
+                          : null,
+                  child: (_imageBytes == null && (!isEditing || widget.member!['image_url'] == null))
                       ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey)
                       : null,
                 ),
@@ -541,7 +627,7 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: 'Add Member',
+                text: isEditing ? 'Update Member' : 'Add Member',
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

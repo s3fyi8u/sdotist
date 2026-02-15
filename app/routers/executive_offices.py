@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from ..models import ExecutiveOffice, OfficeMember
-from ..schemas import ExecutiveOfficeCreate, ExecutiveOfficeUpdate, ExecutiveOfficeOut, OfficeMemberCreate, OfficeMemberOut
+from ..schemas import ExecutiveOfficeCreate, ExecutiveOfficeUpdate, ExecutiveOfficeOut, OfficeMemberCreate, OfficeMemberUpdate, OfficeMemberOut
 from ..auth import require_admin, get_current_user
 
 router = APIRouter(prefix="/offices", tags=["Executive Offices"])
@@ -91,5 +91,48 @@ def delete_office(
         raise HTTPException(status_code=404, detail="Office not found")
     
     db.delete(office)
+    db.commit()
+    return None
+
+@router.put("/{office_id}/members/{member_id}", response_model=OfficeMemberOut)
+def update_member(
+    office_id: int,
+    member_id: int,
+    member_data: OfficeMemberUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
+    """Update an office member (Admin only)"""
+    member = db.query(OfficeMember).filter(
+        OfficeMember.id == member_id,
+        OfficeMember.office_id == office_id
+    ).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+    
+    update_data = member_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(member, field, value)
+    
+    db.commit()
+    db.refresh(member)
+    return member
+
+@router.delete("/{office_id}/members/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_member(
+    office_id: int,
+    member_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
+    """Delete an office member (Admin only)"""
+    member = db.query(OfficeMember).filter(
+        OfficeMember.id == member_id,
+        OfficeMember.office_id == office_id
+    ).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+    
+    db.delete(member)
     db.commit()
     return None

@@ -114,6 +114,14 @@ class OfficeMemberBase(BaseModel):
 class OfficeMemberCreate(OfficeMemberBase):
     pass
 
+class OfficeMemberUpdate(BaseModel):
+    name: str | None = None
+    position: str | None = None
+    image_url: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    role: str | None = None
+
 class OfficeMemberOut(OfficeMemberBase):
     id: int
     office_id: int
