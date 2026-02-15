@@ -4,6 +4,7 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/executive_offices/screens/office_list_screen.dart';
 import '../../features/university_representatives/screens/representative_list_screen.dart';
 import '../constants/api_constants.dart';
+import '../l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class WebNavigationBar extends StatelessWidget {

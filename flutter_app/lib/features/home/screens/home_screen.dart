@@ -18,11 +18,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
-    Center(child: Text(AppLocalizations.of(context).translate('welcome_home'), style: const TextStyle(fontSize: 24))), // Home Placeholder
-    NewsScreen(),
-    ProfileScreen(),
-  ];
+  List<Widget> _pages = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _pages = <Widget>[
+      Center(child: Text(AppLocalizations.of(context).translate('welcome_home'), style: const TextStyle(fontSize: 24))), // Home Placeholder
+      const NewsScreen(),
+      const ProfileScreen(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
