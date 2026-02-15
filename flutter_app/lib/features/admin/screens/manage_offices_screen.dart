@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../core/api/api_client.dart';
@@ -165,7 +164,7 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
   }
 }
 
-class OfficeFormScreen extends StatefulWidget { // Renamed from AddOfficeScreen
+class OfficeFormScreen extends StatefulWidget {
   final Map<String, dynamic>? office;
   const OfficeFormScreen({super.key, this.office});
 
@@ -334,8 +333,13 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
     }
   }
   
-  void _showAddMemberDialog() {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Member management to be implemented fully based on API specifics')));
+  void _showMemberForm() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MemberFormScreen(officeId: widget.officeId),
+        ),
+      ).then((_) => _fetchMembers());
   }
 
   @override
@@ -343,7 +347,7 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Manage Members')),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddMemberDialog,
+        onPressed: _showMemberForm,
         child: const Icon(Icons.add),
       ),
       body: _isLoading
@@ -353,10 +357,168 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
           itemBuilder: (context, index) {
               final member = _members[index];
               return ListTile(
+                  leading: member['image_url'] != null
+                    ? CircleAvatar(
+                        backgroundImage: NetworkImage(member['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static')),
+                      )
+                    : const CircleAvatar(child: Icon(Icons.person)),
                   title: Text(member['name']),
-                  subtitle: Text(member['role']),
+                  subtitle: Text(member['position'] ?? member['role']),
               );
           },
+      ),
+    );
+  }
+}
+
+class MemberFormScreen extends StatefulWidget {
+  final int officeId;
+  const MemberFormScreen({super.key, required this.officeId});
+
+  @override
+  State<MemberFormScreen> createState() => _MemberFormScreenState();
+}
+
+class _MemberFormScreenState extends State<MemberFormScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _positionController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  
+  final ApiClient _apiClient = ApiClient();
+  final ImagePicker _picker = ImagePicker();
+  File? _imageFile;
+  bool _isLoading = false;
+  String _role = 'member';
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _positionController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _imageFile = File(image.path);
+      });
+    }
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+
+    try {
+      String? imageUrl;
+      if (_imageFile != null) {
+        imageUrl = await _apiClient.uploadImage(_imageFile!.path);
+      }
+
+      final data = {
+        'name': _nameController.text,
+        'position': _positionController.text.isNotEmpty ? _positionController.text : null,
+        'email': _emailController.text.isNotEmpty ? _emailController.text : null,
+        'phone': _phoneController.text.isNotEmpty ? _phoneController.text : null,
+        'role': _role,
+        'image_url': imageUrl,
+      };
+
+      await _apiClient.dio.post('${ApiConstants.offices}${widget.officeId}/members', data: data);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Member added successfully')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error adding member: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Add Member')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.grey[200],
+                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                  child: _imageFile == null
+                      ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey)
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _nameController,
+                label: 'Name',
+                hint: 'Member Name',
+                validator: (value) => value!.isEmpty ? 'Name is required' : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _positionController,
+                label: 'Position',
+                hint: 'e.g. President, Secretary',
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _emailController,
+                label: 'Email',
+                hint: 'Email Address',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _phoneController,
+                label: 'Phone',
+                hint: 'Phone Number',
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _role,
+                decoration: const InputDecoration(labelText: 'Role'),
+                items: const [
+                  DropdownMenuItem(value: 'member', child: Text('Member')),
+                  DropdownMenuItem(value: 'head', child: Text('Head')),
+                ],
+                onChanged: (value) {
+                  if (value != null) setState(() => _role = value);
+                },
+              ),
+              const SizedBox(height: 24),
+              PrimaryButton(
+                text: 'Add Member',
+                isLoading: _isLoading,
+                onPressed: _submit,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
