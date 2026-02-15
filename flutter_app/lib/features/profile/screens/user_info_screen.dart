@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,8 +36,14 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
       setState(() => _isLoading = true);
 
-      // 1. Upload Image
-      final String? imageUrl = await _apiClient.uploadImage(pickedFile.path);
+      // 1. Upload Image (web-compatible)
+      String? imageUrl;
+      if (kIsWeb) {
+        final bytes = await pickedFile.readAsBytes();
+        imageUrl = await _apiClient.uploadImageBytes(bytes, pickedFile.name);
+      } else {
+        imageUrl = await _apiClient.uploadImage(pickedFile.path);
+      }
       
       if (imageUrl != null) {
         // 2. Update User Profile
