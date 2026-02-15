@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import 'dart:io';
 
 class ManageNewsScreen extends StatefulWidget {
   const ManageNewsScreen({super.key});
@@ -66,7 +66,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
     if (confirmed == true) {
       try {
         await _apiClient.dio.delete('${ApiConstants.news}$newsId');
-        _fetchNews(); // Refresh list
+        _fetchNews();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('News deleted successfully')),
@@ -150,7 +150,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
   }
 }
 
-class NewsFormScreen extends StatefulWidget { // Renamed from AddNewsScreen
+class NewsFormScreen extends StatefulWidget {
   final Map<String, dynamic>? newsItem;
   const NewsFormScreen({super.key, this.newsItem});
 
@@ -167,7 +167,8 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
   final ApiClient _apiClient = ApiClient();
   final ImagePicker _picker = ImagePicker();
   
-  File? _imageFile;
+  XFile? _pickedImage;
+  Uint8List? _imageBytes;
   bool _isLoading = false;
 
   @override
@@ -189,9 +190,22 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _imageFile = File(image.path);
+        _pickedImage = image;
+        _imageBytes = bytes;
       });
+    }
+  }
+
+  Future<String?> _uploadPickedImage() async {
+    if (_pickedImage == null || _imageBytes == null) return null;
+    
+    final fileName = _pickedImage!.name;
+    if (kIsWeb) {
+      return await _apiClient.uploadImageBytes(_imageBytes!, fileName);
+    } else {
+      return await _apiClient.uploadImage(_pickedImage!.path);
     }
   }
 
@@ -208,8 +222,8 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
 
     try {
       String? imageUrl = widget.newsItem?['image'];
-      if (_imageFile != null) {
-        imageUrl = await _apiClient.uploadImage(_imageFile!.path);
+      if (_pickedImage != null) {
+        imageUrl = await _uploadPickedImage();
       }
 
       final data = {
@@ -220,10 +234,8 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
       };
 
       if (widget.newsItem == null) {
-        // Create
         await _apiClient.dio.post(ApiConstants.news, data: data);
       } else {
-        // Update
         await _apiClient.dio.put('${ApiConstants.news}${widget.newsItem!['id']}', data: data);
       }
 
@@ -265,9 +277,9 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
-                    image: _imageFile != null
+                    image: _imageBytes != null
                         ? DecorationImage(
-                            image: FileImage(_imageFile!),
+                            image: MemoryImage(_imageBytes!),
                             fit: BoxFit.cover,
                           )
                         : (isEditing && widget.newsItem!['image'] != null)
@@ -277,7 +289,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                               )
                             : null,
                   ),
-                  child: (_imageFile == null && (!isEditing || widget.newsItem!['image'] == null))
+                  child: (_imageBytes == null && (!isEditing || widget.newsItem!['image'] == null))
                       ? const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

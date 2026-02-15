@@ -88,7 +88,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         color: Colors.grey[200],
                         // Placeholder for actual image widget
                         child: CachedNetworkImage(
-                          imageUrl: news['image'].toString().replaceFirst('http://', 'https://'),
+                          imageUrl: news['image'].toString(),
                           fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) => const Icon(Icons.error),

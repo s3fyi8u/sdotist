@@ -92,8 +92,6 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       backgroundImage: _userData['profile_image'] != null
                           ? CachedNetworkImageProvider(
                               _userData['profile_image'].toString()
-                              .replaceFirst('http://', 'https://')
-                              .replaceFirst('sdotist.org/static', 'api.sdotist.org/static')
                             )
                           : null,
                       child: _userData['profile_image'] == null

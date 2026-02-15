@@ -36,12 +36,20 @@ class ApiClient {
   Future<String?> uploadImage(String filePath) async {
     try {
       String fileName = filePath.split('/').last;
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(filePath, filename: fileName),
-      });
+      late FormData formData;
+      
+      if (kIsWeb) {
+        // On web, filePath is actually a blob URL - we can't use fromFile
+        // Use uploadImageBytes instead for web
+        return null;
+      } else {
+        formData = FormData.fromMap({
+          "file": await MultipartFile.fromFile(filePath, filename: fileName),
+        });
+      }
 
       final response = await _dio.post(
-        "/upload", // Using relative path since baseUrl is set
+        "/upload",
         data: formData,
         options: Options(
           headers: {
@@ -53,7 +61,30 @@ class ApiClient {
       return response.data["url"];
     } catch (e) {
       debugPrint("Upload error: $e");
-      return null; // Or rethrow
+      return null;
+    }
+  }
+
+  Future<String?> uploadImageBytes(List<int> bytes, String fileName) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(bytes, filename: fileName),
+      });
+
+      final response = await _dio.post(
+        "/upload",
+        data: formData,
+        options: Options(
+          headers: {
+            "Content-Type": "multipart/form-data",
+          }
+        )
+      );
+      
+      return response.data["url"];
+    } catch (e) {
+      debugPrint("Upload error: $e");
+      return null;
     }
   }
   Future<Response> changePassword(String currentPassword, String newPassword) async {

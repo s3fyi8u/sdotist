@@ -164,7 +164,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundImage: user['profile_image'] != null
-                          ? NetworkImage(user['profile_image'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'))
+                          ? NetworkImage(user['profile_image'].toString())
                           : null,
                       child: user['profile_image'] == null
                           ? const Icon(Icons.person)

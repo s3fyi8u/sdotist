@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:typed_data';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../../../core/widgets/searchable_dropdown.dart'; // Reusing if available, or just text field
+import '../../../core/widgets/searchable_dropdown.dart';
 
 class ManageRepresentativesScreen extends StatefulWidget {
   const ManageRepresentativesScreen({super.key});
@@ -117,6 +117,8 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.person),
                             ),
                           )
                         : const Icon(Icons.person),
@@ -143,7 +145,7 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
   }
 }
 
-class RepresentativeFormScreen extends StatefulWidget { // Renamed from AddRepresentativeScreen
+class RepresentativeFormScreen extends StatefulWidget {
   final Map<String, dynamic>? representative;
   const RepresentativeFormScreen({super.key, this.representative});
 
@@ -156,7 +158,8 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
   late TextEditingController _nameController;
   final ApiClient _apiClient = ApiClient();
   final ImagePicker _picker = ImagePicker();
-  File? _imageFile;
+  XFile? _pickedImage;
+  Uint8List? _imageBytes;
   bool _isLoading = false;
 
   final List<String> _universities = [
@@ -193,9 +196,21 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _imageFile = File(image.path);
+        _pickedImage = image;
+        _imageBytes = bytes;
       });
+    }
+  }
+
+  Future<String?> _uploadPickedImage() async {
+    if (_pickedImage == null || _imageBytes == null) return null;
+    final fileName = _pickedImage!.name;
+    if (kIsWeb) {
+      return await _apiClient.uploadImageBytes(_imageBytes!, fileName);
+    } else {
+      return await _apiClient.uploadImage(_pickedImage!.path);
     }
   }
 
@@ -212,8 +227,8 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
 
     try {
       String? imageUrl = widget.representative?['image_url'];
-      if (_imageFile != null) {
-        imageUrl = await _apiClient.uploadImage(_imageFile!.path);
+      if (_pickedImage != null) {
+        imageUrl = await _uploadPickedImage();
       }
 
       final data = {
@@ -263,12 +278,12 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: _imageFile != null 
-                      ? FileImage(_imageFile!) 
+                  backgroundImage: _imageBytes != null 
+                      ? MemoryImage(_imageBytes!) 
                       : (isEditing && widget.representative!['image_url'] != null)
                           ? NetworkImage(widget.representative!['image_url']) as ImageProvider
                           : null,
-                  child: (_imageFile == null && (!isEditing || widget.representative!['image_url'] == null)) 
+                  child: (_imageBytes == null && (!isEditing || widget.representative!['image_url'] == null)) 
                       ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey) 
                       : null,
                 ),

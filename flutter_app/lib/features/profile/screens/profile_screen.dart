@@ -238,8 +238,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         backgroundImage: _userData!['profile_image'] != null
                                             ? CachedNetworkImageProvider(
                                                 _userData!['profile_image'].toString()
-                                                .replaceFirst('http://', 'https://')
-                                                .replaceFirst('sdotist.org/static', 'api.sdotist.org/static')
                                               )
                                             : null,
                                         child: _userData!['profile_image'] == null
@@ -507,7 +505,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           aspectRatio: 1,
                           child: ClipOval(
                             child: CachedNetworkImage(
-                              imageUrl: imageUrl.replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
+                              imageUrl: imageUrl,
                               httpHeaders: headers,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
@@ -525,7 +523,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       : ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: CachedNetworkImage(
-                          imageUrl: imageUrl.replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
+                          imageUrl: imageUrl,
                           httpHeaders: headers,
                           fit: BoxFit.contain,
                           placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
