@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _dateController = TextEditingController();
   // final _universityController = TextEditingController(); // Removed
   final _specializationController = TextEditingController();
-  final _academicYearController = TextEditingController();
+
   
   String? _selectedUniversity;
   String? _selectedDegree;
@@ -137,6 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     surface: Colors.white, // Background color
                     onSurface: Colors.black, // Text color
                   ),
+            // ignore: deprecated_member_use
             dialogBackgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(

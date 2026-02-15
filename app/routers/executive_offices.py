@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from ..models import ExecutiveOffice, OfficeMember
-from ..schemas import ExecutiveOfficeCreate, ExecutiveOfficeOut, OfficeMemberCreate, OfficeMemberOut
+from ..schemas import ExecutiveOfficeCreate, ExecutiveOfficeUpdate, ExecutiveOfficeOut, OfficeMemberCreate, OfficeMemberOut
 from ..auth import require_admin, get_current_user
 
 router = APIRouter(prefix="/offices", tags=["Executive Offices"])
@@ -57,6 +57,27 @@ def add_member(
     db.commit()
     db.refresh(new_member)
     return new_member
+
+
+@router.put("/{office_id}", response_model=ExecutiveOfficeOut)
+def update_office(
+    office_id: int,
+    office_data: ExecutiveOfficeUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
+    """Update an executive office (Admin only)"""
+    office = db.query(ExecutiveOffice).filter(ExecutiveOffice.id == office_id).first()
+    if not office:
+        raise HTTPException(status_code=404, detail="Office not found")
+    
+    update_data = office_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(office, field, value)
+    
+    db.commit()
+    db.refresh(office)
+    return office
 
 @router.delete("/{office_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_office(

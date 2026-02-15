@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (BuildContext context) {
                     final isDark = Theme.of(context).brightness == Brightness.dark;
                     final iconColor = isDark ? Colors.white : Colors.black;
-                    final containerColor = isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05);
+                    final containerColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05);
 
                     return [
                       PopupMenuItem<String>(

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import UniversityRepresentative
-from app.schemas import UniversityRepresentativeCreate, UniversityRepresentativeOut
+from app.schemas import UniversityRepresentativeCreate, UniversityRepresentativeUpdate, UniversityRepresentativeOut
 from app.dependencies import admin_only, get_current_user
 
 router = APIRouter(
@@ -27,6 +27,27 @@ def create_representative(
     db.commit()
     db.refresh(new_rep)
     return new_rep
+
+
+@router.put("/{rep_id}", response_model=UniversityRepresentativeOut)
+def update_representative(
+    rep_id: int,
+    rep_data: UniversityRepresentativeUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(admin_only)
+):
+    """Update a university representative (Admin only)"""
+    rep = db.query(UniversityRepresentative).filter(UniversityRepresentative.id == rep_id).first()
+    if not rep:
+        raise HTTPException(status_code=404, detail="Representative not found")
+    
+    update_data = rep_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(rep, field, value)
+    
+    db.commit()
+    db.refresh(rep)
+    return rep
 
 @router.delete("/{rep_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_representative(

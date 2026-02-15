@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:io';
+
 import 'package:provider/provider.dart';
 import '../../../core/api/api_client.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -132,7 +131,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(Icons.notifications_outlined, color: Theme.of(context).primaryColor),
@@ -185,7 +184,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

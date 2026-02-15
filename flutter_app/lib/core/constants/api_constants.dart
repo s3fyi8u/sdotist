@@ -10,5 +10,6 @@ class ApiConstants {
   static const String news = "/news/";
   static const String offices = "/offices/";
   static const String representatives = "/representatives/";
+  static const String notifications = "/notifications/";
   static const String changePassword = "/users/me/password";
 }

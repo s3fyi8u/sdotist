@@ -59,7 +59,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Scaffold(
       appBar: AppBar(title: const Text('Change Password')),

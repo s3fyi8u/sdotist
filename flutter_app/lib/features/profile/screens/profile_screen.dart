@@ -6,8 +6,7 @@ import '../../auth/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/api/api_client.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+
 
 import 'user_info_screen.dart';
 import '../../../core/errors/app_error.dart';
@@ -16,6 +15,7 @@ import '../../../core/widgets/error_screen.dart';
 
 import 'settings_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../admin/screens/admin_dashboard_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -30,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isLoading = true;
   AppError? _error;
   final ApiClient _apiClient = ApiClient();
-  final ImagePicker _picker = ImagePicker();
+
 
   @override
   void initState() {
@@ -76,47 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _updateProfileImage() async {
-    try {
-      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile == null) return;
 
-      setState(() => _isLoading = true);
-
-      // 1. Upload Image
-      final String? imageUrl = await _apiClient.uploadImage(pickedFile.path);
-      
-      if (imageUrl != null) {
-        // 2. Update User Profile
-        await _apiClient.dio.put(
-          ApiConstants.me,
-          data: {'profile_image': imageUrl},
-        );
-
-        // 3. Refresh Profile
-        await _fetchProfile();
-        
-        if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile image updated successfully!')),
-          );
-        }
-      } else {
-        throw Exception("Failed to upload image");
-      }
-
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating image: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-         setState(() => _isLoading = false);
-      }
-    }
-  }
 
   Future<void> _refreshProfile() async {
     // Check auth status again
@@ -371,6 +331,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Menu Items
                       Column(
                         children: [
+                          if (authProvider.isAdmin) ...[
+                            ContentCard(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AdminDashboardScreen(),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.admin_panel_settings,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  const Text('Admin Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  const Spacer(),
+                                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
                           ContentCard(
                             onTap: () {
                               Navigator.push(
@@ -386,8 +378,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white.withOpacity(0.1) 
-                                        : Colors.black.withOpacity(0.05),
+                                        ? Colors.white.withValues(alpha: 0.1) 
+                                        : Colors.black.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
@@ -418,8 +410,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white.withOpacity(0.1) 
-                                        : Colors.black.withOpacity(0.05),
+                                        ? Colors.white.withValues(alpha: 0.1) 
+                                        : Colors.black.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
@@ -455,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.red.withOpacity(0.05),
+                            backgroundColor: Colors.red.withValues(alpha: 0.05),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                         ),
@@ -481,7 +473,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),

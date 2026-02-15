@@ -59,20 +59,16 @@ class _NewsScreenState extends State<NewsScreen> {
       );
     }
 
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    
-    if (_newsList.isEmpty) {
-      return const Center(child: Text('No news available.'));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('News'),
         centerTitle: false,
       ),
-      body: RefreshIndicator(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _newsList.isEmpty
+              ? const Center(child: Text('No news available.'))
+              : RefreshIndicator(
         onRefresh: _fetchNews,
         child: ListView.builder(
           itemCount: _newsList.length,

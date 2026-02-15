@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/api_constants.dart';
@@ -149,8 +149,8 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.dark 
-                ? Colors.white.withOpacity(0.1) 
-                : Colors.black.withOpacity(0.05),
+                ? Colors.white.withValues(alpha: 0.1) 
+                : Colors.black.withValues(alpha: 0.05),
             shape: BoxShape.circle,
           ),
           child: Icon(

@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/widgets/content_card.dart';
-import '../../auth/providers/auth_provider.dart';
+
 import 'change_password_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_and_conditions_screen.dart';
@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onChanged: (value) {
                     themeProvider.toggleTheme(value);
                   },
-                  activeColor: isDark ? Colors.white : Colors.black,
+                  thumbColor: WidgetStateProperty.all(isDark ? Colors.white : Colors.black),
                 ),
               ],
             ),
@@ -126,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Switch(
                   value: _notificationsEnabled,
                   onChanged: _toggleNotifications,
-                  activeColor: isDark ? Colors.white : Colors.black,
+                  thumbColor: WidgetStateProperty.all(isDark ? Colors.white : Colors.black),
                 ),
               ],
             ),

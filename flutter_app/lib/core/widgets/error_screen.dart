@@ -36,12 +36,12 @@ class _ErrorScreenState extends State<ErrorScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.error.type == AppErrorType.unauthorized || 
           widget.error.type == AppErrorType.forbidden) {
-        _handleRedirect();
+        _handleUnauthorized();
       }
     });
   }
 
-  void _handleRedirect() {
+  void _handleUnauthorized() {
     if (widget.onLogin != null) {
       widget.onLogin!();
     } else {
@@ -52,7 +52,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // If redirecting, show nothing effectively (or a loader)
+    // If unauthorized, show nothing effectively (or a loader) while redirecting
     if (widget.error.type == AppErrorType.unauthorized || 
         widget.error.type == AppErrorType.forbidden) {
       return const Scaffold(

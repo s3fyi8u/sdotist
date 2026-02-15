@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/responsive_layout.dart';
 
