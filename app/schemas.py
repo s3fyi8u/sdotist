@@ -148,3 +148,15 @@ class UniversityRepresentativeOut(UniversityRepresentativeBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ExecutiveOfficeUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    image_url: str | None = None
+
+
+class UniversityRepresentativeUpdate(BaseModel):
+    name: str | None = None
+    university: str | None = None
+    image_url: str | None = None
