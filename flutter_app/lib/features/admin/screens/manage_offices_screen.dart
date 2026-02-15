@@ -418,15 +418,17 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
           itemCount: _members.length,
           itemBuilder: (context, index) {
               final member = _members[index];
-              return ContentCard(
-                child: ListTile(
-                  leading: member['image_url'] != null
-                    ? CircleAvatar(
-                        backgroundImage: NetworkImage(member['image_url']),
-                      )
-                    : const CircleAvatar(child: Icon(Icons.person)),
-                  title: Text(member['name']),
-                  subtitle: Text(member['position'] ?? member['role'] ?? ''),
+                  final t = AppLocalizations.of(context);
+                  final role = member['role'] ?? 'member';
+                  return ContentCard(
+                  child: ListTile(
+                    leading: member['image_url'] != null
+                      ? CircleAvatar(
+                          backgroundImage: NetworkImage(member['image_url']),
+                        )
+                      : const CircleAvatar(child: Icon(Icons.person)),
+                    title: Text(member['name']),
+                    subtitle: Text(member['position'] ?? t.translate(role)),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

@@ -16,7 +16,7 @@ class LocaleProvider extends ChangeNotifier {
   Future<void> _loadLocale() async {
     try {
       final saved = await _storage.read(key: _storageKey);
-      if (saved != null) {
+      if (saved != null && supportedLocales.any((l) => l.languageCode == saved)) {
         _locale = Locale(saved);
         notifyListeners();
       }
@@ -33,16 +33,7 @@ class LocaleProvider extends ChangeNotifier {
   }
 
   String get currentLanguageName {
-    switch (_locale.languageCode) {
-      case 'ar':
-        return 'العربية';
-      case 'en':
-        return 'English';
-      case 'tr':
-        return 'Türkçe';
-      default:
-        return 'العربية';
-    }
+    return languageNames[_locale.languageCode] ?? 'العربية';
   }
 
   static const List<Locale> supportedLocales = [
