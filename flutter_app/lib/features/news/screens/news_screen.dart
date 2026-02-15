@@ -82,16 +82,16 @@ class _NewsScreenState extends State<NewsScreen> {
                   if (news['image'] != null)
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      child: Container(
-                        height: 200,
-                        width: double.infinity,
-                        color: Colors.grey[200],
-                        // Placeholder for actual image widget
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
                         child: CachedNetworkImage(
                           imageUrl: news['image'].toString(),
                           fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.error, size: 40),
+                          ),
                         ),
                       ),
                     ),

@@ -271,33 +271,37 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
             children: [
               GestureDetector(
                 onTap: _pickImage,
-                child: Container(
-                  height: 200,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(12),
-                    image: _imageBytes != null
-                        ? DecorationImage(
-                            image: MemoryImage(_imageBytes!),
-                            fit: BoxFit.cover,
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                      image: _imageBytes != null
+                          ? DecorationImage(
+                              image: MemoryImage(_imageBytes!),
+                              fit: BoxFit.cover,
+                            )
+                          : (isEditing && widget.newsItem!['image'] != null)
+                              ? DecorationImage(
+                                  image: NetworkImage(widget.newsItem!['image']),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                    ),
+                    child: (_imageBytes == null && (!isEditing || widget.newsItem!['image'] == null))
+                        ? const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                              SizedBox(height: 8),
+                              Text('Tap to add/change image', style: TextStyle(color: Colors.grey)),
+                              SizedBox(height: 4),
+                              Text('Recommended: 1280×720 (16:9)', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                            ],
                           )
-                        : (isEditing && widget.newsItem!['image'] != null)
-                            ? DecorationImage(
-                                image: NetworkImage(widget.newsItem!['image']),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                  ),
-                  child: (_imageBytes == null && (!isEditing || widget.newsItem!['image'] == null))
-                      ? const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
-                            Text('Tap to add/change image', style: TextStyle(color: Colors.grey)),
-                          ],
-                        )
-                      : null,
+                        : null,
                 ),
               ),
               const SizedBox(height: 16),

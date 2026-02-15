@@ -19,7 +19,7 @@ def get_db():
 @router.get("/", response_model=list[NewsOut])
 def get_all_news(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """الحصول على جميع الأخبار (عام)"""
-    return db.query(News).offset(skip).limit(limit).all()
+    return db.query(News).order_by(News.created_at.desc()).offset(skip).limit(limit).all()
 
 
 @router.get("/{news_id}", response_model=NewsOut)
