@@ -116,9 +116,10 @@ class WebNavigationBar extends StatelessWidget {
                    PopupMenuItem(
                     value: 'offices',
                     child: Row(
-                      children: const [
-                        Icon(Icons.business_outlined, size: 20),
-                        SizedBox(width: 12),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.business_outlined, size: 20),
+                        const SizedBox(width: 12),
                         Text(t.translate('executive_offices')),
                       ],
                     ),
@@ -126,6 +127,7 @@ class WebNavigationBar extends StatelessWidget {
                   PopupMenuItem(
                     value: 'representatives',
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.school_outlined, size: 20),
                         const SizedBox(width: 12),
