@@ -111,7 +111,7 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
                     leading: office['image_url'] != null
                         ? ClipOval(
                             child: Image.network(
-                              office['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
+                              office['image_url'].toString(),
                               width: 40,
                               height: 40,
                               fit: BoxFit.cover,
@@ -264,7 +264,7 @@ class _OfficeFormScreenState extends State<OfficeFormScreen> {
                   backgroundImage: _imageFile != null 
                       ? FileImage(_imageFile!) 
                       : (isEditing && widget.office!['image_url'] != null)
-                          ? NetworkImage(widget.office!['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static')) as ImageProvider
+                          ? NetworkImage(widget.office!['image_url']) as ImageProvider
                           : null,
                   child: (_imageFile == null && (!isEditing || widget.office!['image_url'] == null)) 
                       ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey) 
@@ -359,7 +359,7 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
               return ListTile(
                   leading: member['image_url'] != null
                     ? CircleAvatar(
-                        backgroundImage: NetworkImage(member['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static')),
+                        backgroundImage: NetworkImage(member['image_url']),
                       )
                     : const CircleAvatar(child: Icon(Icons.person)),
                   title: Text(member['name']),

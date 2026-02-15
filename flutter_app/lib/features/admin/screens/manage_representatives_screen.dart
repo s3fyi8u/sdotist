@@ -113,7 +113,7 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
                     leading: rep['image_url'] != null
                         ? ClipOval(
                             child: Image.network(
-                              rep['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
+                              rep['image_url'].toString(),
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
@@ -266,7 +266,7 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
                   backgroundImage: _imageFile != null 
                       ? FileImage(_imageFile!) 
                       : (isEditing && widget.representative!['image_url'] != null)
-                          ? NetworkImage(widget.representative!['image_url'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static')) as ImageProvider
+                          ? NetworkImage(widget.representative!['image_url']) as ImageProvider
                           : null,
                   child: (_imageFile == null && (!isEditing || widget.representative!['image_url'] == null)) 
                       ? const Icon(Icons.add_a_photo, size: 40, color: Colors.grey) 

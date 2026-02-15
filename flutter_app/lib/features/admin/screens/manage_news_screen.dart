@@ -114,7 +114,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
-                              news['image'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static'),
+                              news['image'].toString(),
                               width: 60,
                               height: 60,
                               fit: BoxFit.cover,
@@ -272,7 +272,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                           )
                         : (isEditing && widget.newsItem!['image'] != null)
                             ? DecorationImage(
-                                image: NetworkImage(widget.newsItem!['image'].toString().replaceFirst('http://', 'https://').replaceFirst('sdotist.org/static', 'api.sdotist.org/static')),
+                                image: NetworkImage(widget.newsItem!['image']),
                                 fit: BoxFit.cover,
                               )
                             : null,
@@ -293,7 +293,15 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                 controller: _titleController,
                 label: 'Title',
                 hint: 'Enter news title',
-                validator: (value) => value!.isEmpty ? 'Title is required' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Title is required';
+                  }
+                  if (value.length < 5) {
+                    return 'Title must be at least 5 characters';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               CustomTextField(
