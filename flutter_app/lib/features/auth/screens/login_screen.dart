@@ -213,6 +213,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          const Text(
+            "v1.0.2 (Cache Check)", 
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 10),
+          ),
         ],
       ),
     );
