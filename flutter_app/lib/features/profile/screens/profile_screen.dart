@@ -16,6 +16,7 @@ import '../../../core/widgets/error_screen.dart';
 import 'settings_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../admin/screens/admin_dashboard_screen.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -115,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!authProvider.isAuthenticated) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Profile'),
+            title: Text(AppLocalizations.of(context).translate('profile')),
             centerTitle: false,
             actions: [
               IconButton(
@@ -137,15 +138,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const Icon(Icons.account_circle, size: 100, color: Colors.grey),
                   const SizedBox(height: 20),
-                  const Text(
-                    'You are not logged in',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Text(
+                    AppLocalizations.of(context).translate('not_logged_in'),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Login or create an account to view your profile',
+                  Text(
+                    AppLocalizations.of(context).translate('login_or_create'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
@@ -155,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                          Navigator.pushNamed(context, '/login')
                              .then((_) => _refreshProfile());
                       },
-                      child: const Text('Login'),
+                      child: Text(AppLocalizations.of(context).translate('login')),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -172,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pushNamed(context, '/register')
                               .then((_) => _refreshProfile());
                       },
-                      child: const Text('Create Account'),
+                      child: Text(AppLocalizations.of(context).translate('create_account')),
                     ),
                   ),
                 ],
@@ -185,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(AppLocalizations.of(context).translate('profile')),
         centerTitle: false, // Align to left
         actions: [
           IconButton(
@@ -202,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _userData == null
-              ? const Center(child: Text('Failed to load profile'))
+              ? Center(child: Text(AppLocalizations.of(context).translate('failed_load_profile')))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
@@ -353,9 +354,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  const Text('Admin Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(AppLocalizations.of(context).translate('admin_dashboard'), style: const TextStyle(fontWeight: FontWeight.bold)),
                                   const Spacer(),
-                                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                  Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
                                 ],
                               ),
                             ),
@@ -388,9 +389,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                const Text('Personal Information', style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text(AppLocalizations.of(context).translate('personal_information'), style: const TextStyle(fontWeight: FontWeight.bold)),
                                 const Spacer(),
-                                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
                               ],
                             ),
                           ),
@@ -420,9 +421,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text(AppLocalizations.of(context).translate('settings'), style: const TextStyle(fontWeight: FontWeight.bold)),
                                 const Spacer(),
-                                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
                               ],
                             ),
                           ),
@@ -442,7 +443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                              Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
                           },
                           icon: const Icon(Icons.logout, color: Colors.red),
-                          label: const Text('Logout', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                          label: Text(AppLocalizations.of(context).translate('logout'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             backgroundColor: Colors.red.withValues(alpha: 0.05),

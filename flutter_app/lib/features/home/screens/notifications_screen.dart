@@ -9,6 +9,7 @@ import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'create_notification_screen.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -86,7 +87,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(AppLocalizations.of(context).translate('notifications')),
       ),
       floatingActionButton: authProvider.isAdmin
           ? FloatingActionButton(
@@ -112,7 +113,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     children: [
                       Icon(Icons.notifications_off_outlined, size: 64, color: Colors.grey[400]),
                       const SizedBox(height: 16),
-                      Text('No notifications yet', style: TextStyle(color: Colors.grey[600], fontSize: 16)),
+                      Text(AppLocalizations.of(context).translate('no_notifications'), style: TextStyle(color: Colors.grey[600], fontSize: 16)),
                     ],
                   ),
                 )
@@ -172,7 +173,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildGuestUI(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(AppLocalizations.of(context).translate('notifications')),
       ),
       body: Center(
         child: Padding(
@@ -195,14 +196,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'Login Required',
+                AppLocalizations.of(context).translate('login_required'),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                'Please sign in to view your notifications\nand stay updated.',
+                AppLocalizations.of(context).translate('login_to_view_notifications'),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.grey,
@@ -210,7 +211,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               const SizedBox(height: 48),
               PrimaryButton(
-                text: 'Login Now', 
+                text: AppLocalizations.of(context).translate('login_now'), 
                 onPressed: () {
                    Navigator.pushNamed(context, '/login').then((_) {
                       if (mounted) {

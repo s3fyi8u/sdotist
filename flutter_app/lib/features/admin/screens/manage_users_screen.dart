@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -34,7 +35,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading users: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_loading_users')}: $e')),
         );
       }
     }
@@ -44,16 +45,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this user?'),
+        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
+        content: Text(AppLocalizations.of(context).translate('delete_user_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -64,14 +65,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         await _apiClient.dio.delete('${ApiConstants.register}$userId');
         _fetchUsers(); // Refresh list
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User deleted successfully')),
+           ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context).translate('user_deleted'))),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting user: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('error_deleting_user')}: $e')),
           );
         }
       }
@@ -83,7 +84,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit User: ${user['name']}'),
+        title: Text('${AppLocalizations.of(context).translate('edit_user')}: ${user['name']}'),
         content: StatefulBuilder(
           builder: (context, setState) {
             return Column(
@@ -91,10 +92,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               children: [
                 DropdownButtonFormField<String>(
                   value: selectedRole,
-                  decoration: const InputDecoration(labelText: 'Role'),
-                  items: const [
-                    DropdownMenuItem(value: 'user', child: Text('User')),
-                    DropdownMenuItem(value: 'admin', child: Text('Admin')),
+                  decoration: InputDecoration(labelText: AppLocalizations.of(context).translate('role')),
+                  items: [
+                    DropdownMenuItem(value: 'user', child: Text(AppLocalizations.of(context).translate('user'))),
+                    DropdownMenuItem(value: 'admin', child: Text(AppLocalizations.of(context).translate('admin'))),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -109,14 +110,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               _updateUserRole(user['id'], selectedRole);
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context).translate('save')),
           ),
         ],
       ),
@@ -131,8 +132,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         data: {'role': newRole},
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User role updated successfully')),
+         ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).translate('user_role_updated'))),
         );
       }
       _fetchUsers();
@@ -140,7 +141,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating user: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_updating_user')}: $e')),
         );
       }
     }
@@ -150,7 +151,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Users'),
+        title: Text(AppLocalizations.of(context).translate('manage_users')),
         centerTitle: false,
       ),
       body: _isLoading
@@ -170,14 +171,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           ? const Icon(Icons.person)
                           : null,
                     ),
-                    title: Text(user['name'] ?? 'No Name'),
-                    subtitle: Text(user['email'] ?? 'No Email'),
+                    title: Text(user['name'] ?? AppLocalizations.of(context).translate('no_name')),
+                    subtitle: Text(user['email'] ?? AppLocalizations.of(context).translate('no_email')),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (user['role'] == 'admin')
                            const Padding(
-                             padding: EdgeInsets.only(right: 8.0),
+                             padding: const EdgeInsetsDirectional.only(end: 8.0),
                              child: Chip(
                                label: Text('Admin', style: TextStyle(fontSize: 10)),
                                padding: EdgeInsets.zero,

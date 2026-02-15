@@ -5,6 +5,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/responsive_layout.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -112,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildLoginForm(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final t = AppLocalizations.of(context);
 
     return Form(
       key: _formKey,
@@ -120,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Welcome Back!',
+            t.translate('welcome_back'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -129,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Please sign in to continue',
+            t.translate('sign_in_continue'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.grey,
@@ -140,26 +142,26 @@ class _LoginScreenState extends State<LoginScreen> {
           // Inputs
           CustomTextField(
             controller: _emailController,
-            label: 'Email',
-            hint: 'Enter your email',
+            label: t.translate('email'),
+            hint: t.translate('enter_email'),
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
-            validator: (value) => value!.isEmpty ? 'Enter email' : null,
+            validator: (value) => value!.isEmpty ? t.translate('enter_email_validation') : null,
           ),
           const SizedBox(height: 16),
           CustomTextField(
             controller: _passwordController,
-            label: 'Password',
-            hint: 'Enter your password',
+            label: t.translate('password'),
+            hint: t.translate('enter_password'),
             prefixIcon: Icons.lock_outline,
             obscureText: true,
-            validator: (value) => value!.isEmpty ? 'Enter password' : null,
+            validator: (value) => value!.isEmpty ? t.translate('enter_password_validation') : null,
           ),
           const SizedBox(height: 24),
 
           // Action Button
           PrimaryButton(
-            text: 'Login',
+            text: t.translate('login'),
             isLoading: authProvider.isLoading,
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
@@ -200,16 +202,16 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Don't have an account?",
+                t.translate('no_account'),
                 style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/register');
                 },
-                child: const Text(
-                  'Create Account',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  t.translate('create_account'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],

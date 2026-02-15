@@ -8,6 +8,7 @@ import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/searchable_dropdown.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ManageRepresentativesScreen extends StatefulWidget {
   const ManageRepresentativesScreen({super.key});
@@ -39,7 +40,7 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading representatives: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_loading_reps')}: $e')),
         );
       }
     }
@@ -49,16 +50,16 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this representative?'),
+        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
+        content: Text(AppLocalizations.of(context).translate('delete_rep_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -70,13 +71,13 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
         _fetchRepresentatives();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Representative deleted successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('rep_deleted'))),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting representative: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('error_deleting_rep')}: $e')),
           );
         }
       }
@@ -94,7 +95,7 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Representatives'),
+        title: Text(AppLocalizations.of(context).translate('manage_representatives')),
         centerTitle: false,
       ),
       floatingActionButton: FloatingActionButton(
@@ -122,8 +123,8 @@ class _ManageRepresentativesScreenState extends State<ManageRepresentativesScree
                             ),
                           )
                         : const Icon(Icons.person),
-                    title: Text(rep['name'] ?? 'No Name'),
-                    subtitle: Text(rep['university'] ?? 'No University'),
+                    title: Text(rep['name'] ?? AppLocalizations.of(context).translate('no_name')),
+                    subtitle: Text(rep['university'] ?? AppLocalizations.of(context).translate('no_university')),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -218,7 +219,7 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedUniversity == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a university')),
+          SnackBar(content: Text(AppLocalizations.of(context).translate('select_university_required'))),
         );
         return;
     }
@@ -245,14 +246,14 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.representative == null ? 'Representative added successfully' : 'Representative updated successfully')),
+          SnackBar(content: Text(widget.representative == null ? AppLocalizations.of(context).translate('rep_added') : AppLocalizations.of(context).translate('rep_updated'))),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving representative: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_saving_rep')}: $e')),
         );
       }
     } finally {
@@ -265,8 +266,9 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.representative != null;
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit Representative' : 'Add Representative')),
+      appBar: AppBar(title: Text(isEditing ? t.translate('edit_representative') : t.translate('add_representative'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -291,15 +293,15 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _nameController,
-                label: 'Name',
-                hint: 'Representative Name',
-                validator: (value) => value!.isEmpty ? 'Name is required' : null,
+                label: t.translate('name'),
+                hint: t.translate('rep_name'),
+                validator: (value) => value!.isEmpty ? t.translate('name_required') : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedUniversity,
                 decoration: InputDecoration(
-                  labelText: 'University',
+                  labelText: t.translate('university'),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 items: _universities.map((uni) {
@@ -309,7 +311,7 @@ class _RepresentativeFormScreenState extends State<RepresentativeFormScreen> {
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: isEditing ? 'Update Representative' : 'Add Representative',
+                text: isEditing ? t.translate('update_representative') : t.translate('add_representative'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

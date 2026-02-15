@@ -5,15 +5,17 @@ import 'manage_offices_screen.dart';
 import 'manage_representatives_screen.dart';
 import 'send_notification_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   const AdminDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard'),
+        title: Text(t.translate('admin_dashboard')),
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -22,7 +24,7 @@ class AdminDashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Management',
+              t.translate('management'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -37,7 +39,7 @@ class AdminDashboardScreen extends StatelessWidget {
               children: [
                 _buildDashboardCard(
                   context,
-                  title: 'Users',
+                  title: t.translate('users'),
                   icon: Icons.people_outline,
                   color: Colors.blue,
                   onTap: () => Navigator.push(
@@ -47,7 +49,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
                 _buildDashboardCard(
                   context,
-                  title: 'News',
+                  title: t.translate('news'),
                   icon: Icons.article_outlined,
                   color: Colors.orange,
                   onTap: () => Navigator.push(
@@ -57,7 +59,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
                 _buildDashboardCard(
                   context,
-                  title: 'Offices',
+                  title: t.translate('offices'),
                   icon: Icons.business_outlined,
                   color: Colors.purple,
                   onTap: () => Navigator.push(
@@ -67,7 +69,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
                 _buildDashboardCard(
                   context,
-                  title: 'Representatives',
+                  title: t.translate('representatives'),
                   icon: Icons.school_outlined,
                   color: Colors.green,
                   onTap: () => Navigator.push(
@@ -77,7 +79,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 ),
                 _buildDashboardCard(
                   context,
-                  title: 'Notifications',
+                  title: t.translate('notifications'),
                   icon: Icons.notifications_active_outlined,
                   color: Colors.red,
                   onTap: () => Navigator.push(

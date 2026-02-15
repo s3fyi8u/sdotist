@@ -7,6 +7,7 @@ import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ManageOfficesScreen extends StatefulWidget {
   const ManageOfficesScreen({super.key});
@@ -38,7 +39,7 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading offices: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_loading_offices')}: $e')),
         );
       }
     }
@@ -48,16 +49,16 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this office?'),
+        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
+        content: Text(AppLocalizations.of(context).translate('delete_office_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -69,13 +70,13 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
         _fetchOffices();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Office deleted successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('office_deleted'))),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting office: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('error_deleting_office')}: $e')),
           );
         }
       }
@@ -93,7 +94,7 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Offices'),
+        title: Text(AppLocalizations.of(context).translate('manage_offices')),
         centerTitle: false,
       ),
       floatingActionButton: FloatingActionButton(
@@ -128,14 +129,14 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(office['description'] ?? 'No Description'),
+                            Text(office['description'] ?? AppLocalizations.of(context).translate('no_description')),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton.icon(
                                   icon: const Icon(Icons.people),
-                                  label: const Text('Members'),
+                                  label: Text(AppLocalizations.of(context).translate('members')),
                                   onPressed: () {
                                      Navigator.push(
                                       context,
@@ -244,14 +245,14 @@ class _OfficeFormScreenState extends State<OfficeFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.office == null ? 'Office added successfully' : 'Office updated successfully')),
+          SnackBar(content: Text(widget.office == null ? AppLocalizations.of(context).translate('office_added') : AppLocalizations.of(context).translate('office_updated'))),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving office: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_saving_office')}: $e')),
         );
       }
     } finally {
@@ -264,8 +265,9 @@ class _OfficeFormScreenState extends State<OfficeFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.office != null;
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit Office' : 'Add Office')),
+      appBar: AppBar(title: Text(isEditing ? t.translate('edit_office') : t.translate('add_office'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -290,20 +292,20 @@ class _OfficeFormScreenState extends State<OfficeFormScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _nameController,
-                label: 'Name',
-                hint: 'Office Name',
-                validator: (value) => value!.isEmpty ? 'Name is required' : null,
+                label: t.translate('name'),
+                hint: t.translate('office_name'),
+                validator: (value) => value!.isEmpty ? t.translate('name_required') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _descController,
-                label: 'Description',
-                hint: 'Description',
+                label: t.translate('description'),
+                hint: t.translate('description'),
                 maxLines: 3,
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: isEditing ? 'Update Office' : 'Create Office',
+                text: isEditing ? t.translate('update_office') : t.translate('create_office'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),
@@ -365,16 +367,16 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this member?'),
+        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
+        content: Text(AppLocalizations.of(context).translate('delete_member_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -386,13 +388,13 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
         _fetchMembers();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Member deleted successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('member_deleted'))),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting member: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('error_deleting_member')}: $e')),
           );
         }
       }
@@ -402,7 +404,7 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Members')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('manage_members'))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showMemberForm(),
         child: const Icon(Icons.add),
@@ -410,7 +412,7 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
       body: _isLoading
       ? const Center(child: CircularProgressIndicator())
       : _members.isEmpty
-        ? const Center(child: Text('No members yet'))
+        ? Center(child: Text(AppLocalizations.of(context).translate('no_members')))
         : ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: _members.length,
@@ -544,14 +546,14 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(isEditing ? 'Member updated successfully' : 'Member added successfully')),
+          SnackBar(content: Text(isEditing ? AppLocalizations.of(context).translate('member_updated') : AppLocalizations.of(context).translate('member_added'))),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving member: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_saving_member')}: $e')),
         );
       }
     } finally {
@@ -563,8 +565,9 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit Member' : 'Add Member')),
+      appBar: AppBar(title: Text(isEditing ? t.translate('edit_member') : t.translate('add_member'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -589,37 +592,37 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _nameController,
-                label: 'Name',
-                hint: 'Member Name',
-                validator: (value) => value!.isEmpty ? 'Name is required' : null,
+                label: t.translate('name'),
+                hint: t.translate('member_name'),
+                validator: (value) => value!.isEmpty ? t.translate('name_required') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _positionController,
-                label: 'Position',
-                hint: 'e.g. President, Secretary',
+                label: t.translate('position'),
+                hint: t.translate('position_hint'),
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _emailController,
-                label: 'Email',
-                hint: 'Email Address',
+                label: t.translate('email'),
+                hint: t.translate('email_address'),
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _phoneController,
-                label: 'Phone',
-                hint: 'Phone Number',
+                label: t.translate('phone'),
+                hint: t.translate('phone_number'),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _role,
-                decoration: const InputDecoration(labelText: 'Role'),
-                items: const [
-                  DropdownMenuItem(value: 'member', child: Text('Member')),
-                  DropdownMenuItem(value: 'head', child: Text('Head')),
+                decoration: InputDecoration(labelText: t.translate('member_role')),
+                items: [
+                  DropdownMenuItem(value: 'member', child: Text(t.translate('member'))),
+                  DropdownMenuItem(value: 'head', child: Text(t.translate('head'))),
                 ],
                 onChanged: (value) {
                   if (value != null) setState(() => _role = value);
@@ -627,7 +630,7 @@ class _MemberFormScreenState extends State<MemberFormScreen> {
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: isEditing ? 'Update Member' : 'Add Member',
+                text: isEditing ? t.translate('update_member') : t.translate('add_member'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

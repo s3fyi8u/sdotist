@@ -8,6 +8,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/searchable_dropdown.dart';
 import '../../../core/widgets/responsive_layout.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -215,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('create_account'))),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -228,6 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildRegisterForm(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final t = AppLocalizations.of(context);
 
     return Form(
       key: _formKey,
@@ -273,18 +275,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           // Personal Info
           Text(
-            'Personal Information',
+            t.translate('personal_information'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           CustomTextField(
             controller: _nameController,
-            label: 'Full Name',
+            label: t.translate('full_name'),
             prefixIcon: Icons.person_outline,
             validator: (value) {
-              if (value == null || value.isEmpty) return 'Enter full name';
+              if (value == null || value.isEmpty) return t.translate('name_required');
               final words = value.trim().split(RegExp(r'\s+'));
-              if (words.length < 3) return 'Enter full name (at least 3 words)';
+              if (words.length < 3) return t.translate('name_required');
 
               return null;
             },
@@ -293,14 +295,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SizedBox(height: 16),
           CustomTextField(
             controller: _emailController,
-            label: 'Email Address',
+            label: t.translate('email_address'),
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (_emailError != null) return _emailError;
-              if (value == null || value.isEmpty) return 'Enter email';
+              if (value == null || value.isEmpty) return t.translate('email_required');
               final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-              if (!emailRegex.hasMatch(value)) return 'Enter valid email';
+              if (!emailRegex.hasMatch(value)) return t.translate('invalid_email');
               return null;
             },
           ),
@@ -309,23 +311,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           CustomTextField(
             controller: _passwordController,
-            label: 'Password',
+            label: t.translate('password'),
             prefixIcon: Icons.lock_outline,
             obscureText: true,
-            validator: (value) => value!.isEmpty ? 'Enter password' : null,
+            validator: (value) => value!.isEmpty ? t.translate('enter_password_validation') : null,
           ),
           const SizedBox(height: 16),
           CustomTextField(
             controller: _confirmPasswordController,
-            label: 'Confirm Password',
+            label: t.translate('confirm_password'),
             prefixIcon: Icons.lock_outline,
             obscureText: true,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Confirm your password';
+                return t.translate('confirm_your_password');
               }
               if (value != _passwordController.text) {
-                return 'Passwords do not match';
+                return t.translate('passwords_not_match');
               }
               return null;
             },
@@ -333,17 +335,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SizedBox(height: 16),
           CustomTextField(
             controller: _dateController,
-            label: 'Date of Birth',
+            label: t.translate('date_of_birth'),
             prefixIcon: Icons.calendar_today_outlined,
             readOnly: true,
             onTap: () => _selectDate(context),
-            validator: (value) => value!.isEmpty ? 'Select date of birth' : null,
+            validator: (value) => value!.isEmpty ? t.translate('select_date') : null,
           ),
           const SizedBox(height: 32),
 
           // Academic Info
           Text(
-            'Academic Information',
+            t.translate('academic_year'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
@@ -351,13 +353,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SearchableDropdown(
             value: _selectedUniversity,
             items: _universities,
-            label: 'University',
+            label: t.translate('university'),
             onChanged: (newValue) {
               setState(() {
                 _selectedUniversity = newValue;
               });
             },
-            validator: (value) => value == null || value.isEmpty ? 'Select university' : null,
+            validator: (value) => value == null || value.isEmpty ? t.translate('select_university') : null,
           ),
 
           const SizedBox(height: 16),
@@ -366,13 +368,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SearchableDropdown(
             value: _selectedDegree,
             items: _degrees,
-            label: 'Degree',
+            label: t.translate('degree'),
             onChanged: (newValue) {
               setState(() {
                 _selectedDegree = newValue;
               });
             },
-            validator: (value) => value == null || value.isEmpty ? 'Select degree' : null,
+            validator: (value) => value == null || value.isEmpty ? t.translate('select_degree') : null,
           ),
 
           const SizedBox(height: 16),
@@ -380,26 +382,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SearchableDropdown(
             value: _selectedAcademicYear,
             items: _academicYears,
-            label: 'Academic Year',
+            label: t.translate('academic_year'),
             onChanged: (newValue) {
               setState(() {
                 _selectedAcademicYear = newValue;
               });
             },
-            validator: (value) => value == null || value.isEmpty ? 'Select year' : null,
+            validator: (value) => value == null || value.isEmpty ? t.translate('select_academic_year') : null,
           ),
 
           const SizedBox(height: 16),
           CustomTextField(
             controller: _specializationController,
-            label: 'Specialization',
+            label: t.translate('specialization'),
             prefixIcon: Icons.book_outlined,
           ),
           const SizedBox(height: 48),
 
           // Action Button
           PrimaryButton(
-            text: 'Register',
+            text: t.translate('register'),
             isLoading: authProvider.isLoading,
             onPressed: () async {
               print("Register button pressed");
@@ -426,7 +428,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Registration successful!')),
+                      SnackBar(content: Text(t.translate('registration_successful'))),
                     );
                     
                     // Pop until we are back to the main screen (Profile or Home)
@@ -436,7 +438,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }
                 } on DioException catch (e) {
                     print("DioException caught in RegisterScreen: ${e.response?.data}");
-                    String errorMessage = 'Registration failed';
+                    String errorMessage = t.translate('registration_failed');
                     if (e.response?.data != null) {
                       if (e.response!.data is List) {
                         // Handle FastAPI validation errors (List)
@@ -470,16 +472,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Already have an account?",
+                t.translate('already_have_account'),
                 style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  t.translate('login'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],

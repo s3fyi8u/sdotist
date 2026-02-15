@@ -9,6 +9,7 @@ import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class OfficeListScreen extends StatefulWidget {
   const OfficeListScreen({super.key});
@@ -76,7 +77,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
                            BackButton(color: Theme.of(context).textTheme.bodyLarge?.color),
                            const SizedBox(width: 8),
                            Text(
-                            'المكاتب التنفيذية', // "Executive Offices"
+                            AppLocalizations.of(context).translate('executive_offices'),
                             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -100,7 +101,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
                                 },
                               );
                             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text('No offices found.'));
+                              return Center(child: Text(AppLocalizations.of(context).translate('no_offices')));
                             }
 
                             final offices = snapshot.data!;
@@ -134,7 +135,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
   Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('المكاتب التنفيذية'),
+        title: Text(AppLocalizations.of(context).translate('executive_offices')),
         centerTitle: true,
       ),
       body: FutureBuilder<List<ExecutiveOffice>>(
@@ -152,7 +153,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
                },
              );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No offices found.'));
+            return Center(child: Text(AppLocalizations.of(context).translate('no_offices')));
           }
 
           final offices = snapshot.data!;

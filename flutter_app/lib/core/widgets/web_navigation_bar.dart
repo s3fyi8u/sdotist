@@ -20,6 +20,7 @@ class WebNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final authProvider = Provider.of<AuthProvider>(context);
+    final t = AppLocalizations.of(context);
 
     return Container(
       height: 70,
@@ -64,21 +65,21 @@ class WebNavigationBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _NavBarItem(
-                title: 'Home',
+                title: t.translate('welcome_home_title'),
                 icon: Icons.home_outlined,
                 isActive: selectedIndex == 0,
                 onTap: () => onItemTapped(0),
               ),
               const SizedBox(width: 30),
               _NavBarItem(
-                title: 'News',
+                title: t.translate('news'),
                 icon: Icons.article_outlined,
                 isActive: selectedIndex == 1,
                 onTap: () => onItemTapped(1),
               ),
               const SizedBox(width: 30),
               _NavBarItem(
-                title: 'Profile',
+                title: t.translate('profile'),
                 icon: Icons.person_outline,
                 isActive: selectedIndex == 2,
                 onTap: () => onItemTapped(2),
@@ -118,17 +119,17 @@ class WebNavigationBar extends StatelessWidget {
                       children: const [
                         Icon(Icons.business_outlined, size: 20),
                         SizedBox(width: 12),
-                        Text('Executive Offices'),
+                        Text(t.translate('executive_offices')),
                       ],
                     ),
                   ),
                   PopupMenuItem(
                     value: 'representatives',
                     child: Row(
-                      children: const [
-                        Icon(Icons.school_outlined, size: 20),
-                        SizedBox(width: 12),
-                        Text('University Representatives'),
+                      children: [
+                        const Icon(Icons.school_outlined, size: 20),
+                        const SizedBox(width: 12),
+                        Text(t.translate('university_representatives')),
                       ],
                     ),
                   ),
@@ -145,7 +146,7 @@ class WebNavigationBar extends StatelessWidget {
                   children: [
                      TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/login'),
-                      child: const Text('Login'),
+                      child: Text(t.translate('login')),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
@@ -154,7 +155,7 @@ class WebNavigationBar extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: const Text('Get Started'),
+                      child: Text(t.translate('get_started')),
                     ),
                   ],
                 ),

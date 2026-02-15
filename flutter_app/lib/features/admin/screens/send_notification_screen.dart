@@ -3,6 +3,7 @@ import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class SendNotificationScreen extends StatefulWidget {
   const SendNotificationScreen({super.key});
@@ -33,14 +34,14 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Notification sent successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context).translate('notification_sent'))),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending notification: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_sending_notification')}: $e')),
         );
       }
     } finally {
@@ -52,8 +53,9 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Send Notification')),
+      appBar: AppBar(title: Text(t.translate('send_notification'))),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -63,21 +65,21 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
             children: [
               CustomTextField(
                 controller: _titleController,
-                label: 'Title',
-                hint: 'Notification Title',
-                validator: (value) => value!.isEmpty ? 'Title is required' : null,
+                label: t.translate('title'),
+                hint: t.translate('notification_title_hint'),
+                validator: (value) => value!.isEmpty ? t.translate('title_required') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _bodyController,
-                label: 'Message',
-                hint: 'Notification Body',
+                label: t.translate('message'),
+                hint: t.translate('notification_body_hint'),
                 maxLines: 5,
-                validator: (value) => value!.isEmpty ? 'Message is required' : null,
+                validator: (value) => value!.isEmpty ? t.translate('message_required') : null,
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: 'Send Broadcast',
+                text: t.translate('send_broadcast'),
                 isLoading: _isLoading,
                 onPressed: _sendNotification,
               ),

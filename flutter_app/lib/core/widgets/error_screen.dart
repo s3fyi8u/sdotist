@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../errors/app_error.dart';
 import '../errors/error_mapper.dart';
+import '../l10n/app_localizations.dart';
 
 class ErrorScreen extends StatefulWidget {
   final AppError error;
@@ -176,7 +177,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
         child: ElevatedButton.icon(
           onPressed: widget.onRetry,
           icon: const Icon(Icons.refresh),
-          label: const Text('Try Again'),
+          label: Text(AppLocalizations.of(context).translate('try_again')),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black87,
             foregroundColor: Colors.white,

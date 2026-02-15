@@ -8,6 +8,7 @@ import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class RepresentativeListScreen extends StatefulWidget {
   const RepresentativeListScreen({super.key});
@@ -70,7 +71,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
                            BackButton(color: Theme.of(context).textTheme.bodyLarge?.color),
                            const SizedBox(width: 8),
                            Text(
-                            'ممثلي الجامعات',
+                            AppLocalizations.of(context).translate('university_representatives'),
                             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -94,7 +95,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
                                 },
                               );
                             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return const Center(child: Text('لا يوجد ممثلين حالياً'));
+                              return Center(child: Text(AppLocalizations.of(context).translate('no_representatives')));
                             }
 
                             final representatives = snapshot.data!;
@@ -127,7 +128,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
   Widget _buildMobileScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ممثلي الجامعات'),
+        title: Text(AppLocalizations.of(context).translate('university_representatives')),
       ),
       body: FutureBuilder<List<UniversityRepresentative>>(
         future: _representativesFuture,
@@ -144,7 +145,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
                },
              );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('لا يوجد ممثلين حالياً'));
+            return Center(child: Text(AppLocalizations.of(context).translate('no_representatives')));
           }
 
           final representatives = snapshot.data!;

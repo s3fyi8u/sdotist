@@ -6,6 +6,7 @@ import '../../university_representatives/screens/representative_list_screen.dart
 import 'notifications_screen.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Welcome Home! 🏠', style: TextStyle(fontSize: 24))), // Home Placeholder
+    Center(child: Text(AppLocalizations.of(context).translate('welcome_home'), style: const TextStyle(fontSize: 24))), // Home Placeholder
     NewsScreen(),
     ProfileScreen(),
   ];
@@ -138,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Icon(Icons.business_outlined, color: iconColor, size: 20),
                             ),
                             const SizedBox(width: 12),
-                            const Text('Executive Offices', style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(AppLocalizations.of(context).translate('executive_offices'), style: const TextStyle(fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ),
@@ -156,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Icon(Icons.school_outlined, color: iconColor, size: 20),
                             ),
                             const SizedBox(width: 12),
-                            const Text('University Representatives', style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(AppLocalizations.of(context).translate('university_representatives'), style: const TextStyle(fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ),

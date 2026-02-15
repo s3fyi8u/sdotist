@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class UserInfoScreen extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -59,7 +60,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         
         if (mounted) {
            ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile image updated successfully!')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('profile_image_updated'))),
           );
         }
       } else {
@@ -69,7 +70,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating image: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_updating_image')}: $e')),
         );
       }
     } finally {
@@ -81,8 +82,9 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('User Information')),
+      appBar: AppBar(title: Text(t.translate('personal_information'))),
       body: _isLoading 
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
@@ -105,9 +107,9 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                           ? const Icon(Icons.person, size: 60, color: Colors.grey)
                           : null,
                     ),
-                    Positioned(
+                    PositionedDirectional(
                       bottom: 0,
-                      right: 0,
+                      end: 0,
                       child: GestureDetector(
                         onTap: _updateProfileImage,
                         child: Container(
@@ -131,13 +133,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
               const SizedBox(height: 30),
               
               // Info Tiles
-              _buildInfoTile(context, Icons.person, 'Name', _userData['name']),
-              _buildInfoTile(context, Icons.email, 'Email', _userData['email']),
-              _buildInfoTile(context, Icons.cake, 'Date of Birth', _userData['date_of_birth']),
-              _buildInfoTile(context, Icons.school, 'University', _userData['university']),
-              _buildInfoTile(context, Icons.workspace_premium, 'Degree', _userData['degree']),
-              _buildInfoTile(context, Icons.book, 'Specialization', _userData['specialization']),
-              _buildInfoTile(context, Icons.calendar_today, 'Academic Year', _userData['academic_year']),
+              _buildInfoTile(context, Icons.person, t.translate('name'), _userData['name']),
+              _buildInfoTile(context, Icons.email, t.translate('email'), _userData['email']),
+              _buildInfoTile(context, Icons.cake, t.translate('date_of_birth'), _userData['date_of_birth']),
+              _buildInfoTile(context, Icons.school, t.translate('university'), _userData['university']),
+              _buildInfoTile(context, Icons.workspace_premium, t.translate('degree'), _userData['degree']),
+              _buildInfoTile(context, Icons.book, t.translate('specialization'), _userData['specialization']),
+              _buildInfoTile(context, Icons.calendar_today, t.translate('academic_year'), _userData['academic_year']),
             ],
           ),
         ),

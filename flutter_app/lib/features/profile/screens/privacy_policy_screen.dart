@@ -1,65 +1,54 @@
 import 'package:flutter/material.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Privacy Policy')),
+      appBar: AppBar(title: Text(t.translate('privacy_policy'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Privacy Policy',
+              t.translate('privacy_policy_title'),
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Last updated: February 13, 2026',
-              style: TextStyle(color: Colors.grey),
+            const SizedBox(height: 8),
+            Text(
+              t.translate('privacy_last_updated'),
+              style: TextStyle(color: Colors.grey[600]),
             ),
             const SizedBox(height: 24),
-            Text(
-              '1. Introduction',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Welcome to our application. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our application and tell you about your privacy rights and how the law protects you.',
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '2. Data We Collect',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'We may collect, use, store and transfer different kinds of personal data about you which we have grouped together follows: Identity Data, Contact Data, Technical Data, and Usage Data.',
-            ),
-             const SizedBox(height: 16),
-            Text(
-              '3. How We Use Your Data',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances: Where we need to perform the contract we are about to enter into or have entered into with you.',
-            ),
-             const SizedBox(height: 16),
-            Text(
-              '4. Contact Us',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'If you have any questions about this privacy policy or our privacy practices, please contact us.',
-            ),
+            _buildSection(context, t.translate('privacy_section_1_title'), t.translate('privacy_section_1_body')),
+            _buildSection(context, t.translate('privacy_section_2_title'), t.translate('privacy_section_2_body')),
+            _buildSection(context, t.translate('privacy_section_3_title'), t.translate('privacy_section_3_body')),
+            _buildSection(context, t.translate('privacy_section_4_title'), t.translate('privacy_section_4_body')),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSection(BuildContext context, String title, String content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          content,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

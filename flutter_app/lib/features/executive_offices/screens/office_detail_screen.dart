@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/office_models.dart';
 import '../services/office_service.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class OfficeDetailScreen extends StatefulWidget {
   final int officeId;
@@ -27,16 +28,16 @@ class _OfficeDetailScreenState extends State<OfficeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تفاصيل المكتب')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).translate('office_details'))),
       body: FutureBuilder<ExecutiveOffice>(
         future: _officeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('${AppLocalizations.of(context).translate('error')}: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Office not found'));
+            return Center(child: Text(AppLocalizations.of(context).translate('office_not_found')));
           }
 
           final office = snapshot.data!;
@@ -93,7 +94,7 @@ class _OfficeDetailScreenState extends State<OfficeDetailScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'مدير المكتب',
+                      AppLocalizations.of(context).translate('office_manager'),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColor,
@@ -114,7 +115,7 @@ class _OfficeDetailScreenState extends State<OfficeDetailScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                     child: Text(
-                      'أعضاء المكتب',
+                      AppLocalizations.of(context).translate('office_members'),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -222,7 +223,7 @@ class _OfficeDetailScreenState extends State<OfficeDetailScreen> {
     if (!await launchUrl(url)) {
       if (mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not launch $urlString')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('could_not_launch')} $urlString')),
         );
       }
     }

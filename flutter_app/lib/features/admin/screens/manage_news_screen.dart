@@ -7,6 +7,7 @@ import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ManageNewsScreen extends StatefulWidget {
   const ManageNewsScreen({super.key});
@@ -38,7 +39,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading news: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_loading_news')}: $e')),
         );
       }
     }
@@ -48,16 +49,16 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this news item?'),
+        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
+        content: Text(AppLocalizations.of(context).translate('delete_news_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -69,13 +70,13 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
         _fetchNews();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('News deleted successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('news_deleted'))),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error deleting news: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('error_deleting_news')}: $e')),
           );
         }
       }
@@ -93,7 +94,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage News'),
+        title: Text(AppLocalizations.of(context).translate('manage_news')),
         centerTitle: false,
       ),
       floatingActionButton: FloatingActionButton(
@@ -247,7 +248,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_bodyController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('News body is required')),
+          SnackBar(content: Text(AppLocalizations.of(context).translate('body_required'))),
         );
         return;
     }
@@ -280,14 +281,14 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.newsItem == null ? 'News added successfully' : 'News updated successfully')),
+          SnackBar(content: Text(widget.newsItem == null ? AppLocalizations.of(context).translate('news_added') : AppLocalizations.of(context).translate('news_updated'))),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving news: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context).translate('error_saving_news')}: $e')),
         );
       }
     } finally {
@@ -300,8 +301,9 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.newsItem != null;
+    final t = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit News' : 'Add News')),
+      appBar: AppBar(title: Text(isEditing ? t.translate('edit_news') : t.translate('add_news'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -322,13 +324,13 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                   TextButton.icon(
                     onPressed: _pickImage,
                     icon: const Icon(Icons.add_photo_alternate),
-                    label: const Text('Add Images'),
+                    label: Text(t.translate('add_images')),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Text(
-                'Recommended: 1280×720 (16:9)',
+                t.translate('recommended_dimensions'),
                 style: TextStyle(color: Colors.grey[500], fontSize: 12),
               ),
               const SizedBox(height: 8),
@@ -375,7 +377,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                       return Container(
                         key: ValueKey('img_$index'),
                         width: 120,
-                        margin: const EdgeInsets.only(right: 8),
+                        margin: const EdgeInsetsDirectional.only(end: 8),
                         child: Stack(
                           children: [
                             ClipRRect(
@@ -439,14 +441,14 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _titleController,
-                label: 'Title',
-                hint: 'Enter news title',
+                label: t.translate('title'),
+                hint: t.translate('news_title_hint'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Title is required';
+                    return t.translate('title_required');
                   }
                   if (value.length < 5) {
-                    return 'Title must be at least 5 characters';
+                    return t.translate('title_min_5');
                   }
                   return null;
                 },
@@ -454,19 +456,19 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _descriptionController,
-                label: 'Description',
-                hint: 'Short description',
+                label: t.translate('description'),
+                hint: t.translate('news_description_hint'),
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _bodyController,
-                label: 'Body',
-                hint: 'Full news content',
+                label: t.translate('news_body'),
+                hint: t.translate('news_body_hint'),
                 maxLines: 5,
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: isEditing ? 'Update News' : 'Publish News',
+                text: isEditing ? t.translate('news_updated').replaceAll(' successfully', '') : t.translate('add_news'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -29,7 +30,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     if (_formKey.currentState!.validate()) {
       if (_newPasswordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('New passwords do not match')),
+          SnackBar(content: Text(AppLocalizations.of(context).translate('new_passwords_not_match'))),
         );
         return;
       }
@@ -41,7 +42,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password changed successfully')),
+            SnackBar(content: Text(AppLocalizations.of(context).translate('password_changed'))),
           );
           Navigator.pop(context);
         }
@@ -49,7 +50,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         if (mounted) {
            // Basic error handling, improvement would be to parse the error
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to change password: ${e.toString()}')),
+            SnackBar(content: Text('${AppLocalizations.of(context).translate('password_change_failed')}: ${e.toString()}')),
           );
         }
       }
@@ -59,10 +60,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final t = AppLocalizations.of(context);
 
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Change Password')),
+      appBar: AppBar(title: Text(t.translate('change_password'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -72,34 +74,34 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             children: [
               CustomTextField(
                 controller: _currentPasswordController,
-                label: 'Current Password',
-                hint: 'Enter current password',
+                label: t.translate('current_password'),
+                hint: t.translate('enter_current_password'),
                 prefixIcon: Icons.lock_outline,
                 obscureText: true,
-                validator: (value) => value!.isEmpty ? 'Required' : null,
+                validator: (value) => value!.isEmpty ? t.translate('required') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _newPasswordController,
-                label: 'New Password',
-                hint: 'Enter new password',
+                label: t.translate('new_password'),
+                hint: t.translate('enter_new_password'),
                 prefixIcon: Icons.lock_reset,
                 obscureText: true,
                 validator: (value) =>
-                    value!.length < 8 ? 'Must be at least 8 chars' : null,
+                    value!.length < 8 ? t.translate('password_min_8') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _confirmPasswordController,
-                label: 'Confirm New Password',
-                hint: 'Re-enter new password',
+                label: t.translate('confirm_new_password'),
+                hint: t.translate('reenter_new_password'),
                 prefixIcon: Icons.lock_reset,
                 obscureText: true,
-                validator: (value) => value!.isEmpty ? 'Required' : null,
+                validator: (value) => value!.isEmpty ? t.translate('required') : null,
               ),
               const SizedBox(height: 32),
               PrimaryButton(
-                text: 'Change Password',
+                text: t.translate('change_password'),
                 onPressed: _submit,
                 isLoading: authProvider.isLoading,
               ),

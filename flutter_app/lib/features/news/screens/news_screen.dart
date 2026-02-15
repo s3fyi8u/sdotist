@@ -6,6 +6,7 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/l10n/app_localizations.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -82,13 +83,13 @@ class _NewsScreenState extends State<NewsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News'),
+        title: Text(AppLocalizations.of(context).translate('news')),
         centerTitle: false,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _newsList.isEmpty
-              ? const Center(child: Text('No news available.'))
+              ? Center(child: Text(AppLocalizations.of(context).translate('no_news')))
               : RefreshIndicator(
         onRefresh: _fetchNews,
         child: ListView.builder(
