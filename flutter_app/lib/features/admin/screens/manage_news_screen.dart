@@ -302,6 +302,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
                             ],
                           )
                         : null,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
