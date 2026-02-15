@@ -65,7 +65,8 @@ class NewsBase(BaseModel):
     title: str = Field(..., min_length=5, description="عنوان الخبر")
     description: str | None = Field(None, description="وصف مختصر")
     body: str = Field(..., description="نص الخبر")
-    image: str | None = Field(None, description="رابط الصورة")
+    image: str | None = Field(None, description="رابط الصورة الرئيسية")
+    images: list[str] | None = Field(None, description="قائمة روابط الصور")
 
 
 class NewsCreate(NewsBase):
@@ -77,10 +78,24 @@ class NewsUpdate(BaseModel):
     description: str | None = None
     body: str | None = None
     image: str | None = None
+    images: list[str] | None = None
 
 
-class NewsOut(NewsBase):
+class NewsImageOut(BaseModel):
     id: int
+    image_url: str
+    order: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NewsOut(BaseModel):
+    id: int
+    title: str
+    description: str | None = None
+    body: str
+    image: str | None = None
+    images: list[NewsImageOut] = []
     created_at: datetime
     updated_at: datetime | None = None
     author_id: int | None = None

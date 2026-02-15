@@ -150,6 +150,17 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
   }
 }
 
+/// Represents an image in the form - either an existing URL or a newly picked file
+class _ImageItem {
+  final String? existingUrl;  // For existing images from server
+  final XFile? pickedFile;     // For newly picked images
+  final Uint8List? bytes;       // Image bytes for display
+  
+  _ImageItem({this.existingUrl, this.pickedFile, this.bytes});
+  
+  bool get isExisting => existingUrl != null;
+}
+
 class NewsFormScreen extends StatefulWidget {
   final Map<String, dynamic>? newsItem;
   const NewsFormScreen({super.key, this.newsItem});
@@ -167,8 +178,7 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
   final ApiClient _apiClient = ApiClient();
   final ImagePicker _picker = ImagePicker();
   
-  XFile? _pickedImage;
-  Uint8List? _imageBytes;
+  final List<_ImageItem> _images = [];
   bool _isLoading = false;
 
   @override
@@ -177,6 +187,21 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
     _titleController = TextEditingController(text: widget.newsItem?['title'] ?? '');
     _descriptionController = TextEditingController(text: widget.newsItem?['description'] ?? '');
     _bodyController = TextEditingController(text: widget.newsItem?['body'] ?? '');
+    
+    // Load existing images
+    if (widget.newsItem != null) {
+      final existingImages = widget.newsItem!['images'] as List<dynamic>? ?? [];
+      if (existingImages.isNotEmpty) {
+        for (var img in existingImages) {
+          if (img is Map && img['image_url'] != null) {
+            _images.add(_ImageItem(existingUrl: img['image_url'].toString()));
+          }
+        }
+      } else if (widget.newsItem!['image'] != null) {
+        // Fallback to legacy single image
+        _images.add(_ImageItem(existingUrl: widget.newsItem!['image'].toString()));
+      }
+    }
   }
 
   @override
@@ -188,24 +213,33 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final bytes = await image.readAsBytes();
-      setState(() {
-        _pickedImage = image;
-        _imageBytes = bytes;
-      });
+    final List<XFile> pickedImages = await _picker.pickMultiImage();
+    if (pickedImages.isNotEmpty) {
+      for (var image in pickedImages) {
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _images.add(_ImageItem(pickedFile: image, bytes: bytes));
+        });
+      }
     }
   }
 
-  Future<String?> _uploadPickedImage() async {
-    if (_pickedImage == null || _imageBytes == null) return null;
+  void _removeImage(int index) {
+    setState(() {
+      _images.removeAt(index);
+    });
+  }
+
+  Future<String?> _uploadImage(_ImageItem item) async {
+    if (item.isExisting) return item.existingUrl;
     
-    final fileName = _pickedImage!.name;
+    if (item.pickedFile == null || item.bytes == null) return null;
+    
+    final fileName = item.pickedFile!.name;
     if (kIsWeb) {
-      return await _apiClient.uploadImageBytes(_imageBytes!, fileName);
+      return await _apiClient.uploadImageBytes(item.bytes!, fileName);
     } else {
-      return await _apiClient.uploadImage(_pickedImage!.path);
+      return await _apiClient.uploadImage(item.pickedFile!.path);
     }
   }
 
@@ -221,16 +255,21 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
     setState(() => _isLoading = true);
 
     try {
-      String? imageUrl = widget.newsItem?['image'];
-      if (_pickedImage != null) {
-        imageUrl = await _uploadPickedImage();
+      // Upload all images and collect URLs
+      final List<String> imageUrls = [];
+      for (var item in _images) {
+        final url = await _uploadImage(item);
+        if (url != null) {
+          imageUrls.add(url);
+        }
       }
 
       final data = {
         'title': _titleController.text,
         'description': _descriptionController.text,
         'body': _bodyController.text,
-        'image': imageUrl,
+        'image': imageUrls.isNotEmpty ? imageUrls[0] : null,
+        'images': imageUrls,
       };
 
       if (widget.newsItem == null) {
@@ -268,43 +307,135 @@ class _NewsFormScreenState extends State<NewsFormScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
-                      image: _imageBytes != null
-                          ? DecorationImage(
-                              image: MemoryImage(_imageBytes!),
-                              fit: BoxFit.cover,
-                            )
-                          : (isEditing && widget.newsItem!['image'] != null)
-                              ? DecorationImage(
-                                  image: NetworkImage(widget.newsItem!['image']),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+              // Images section header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Images (${_images.length})',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: (_imageBytes == null && (!isEditing || widget.newsItem!['image'] == null))
-                        ? const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text('Tap to add/change image', style: TextStyle(color: Colors.grey)),
-                              SizedBox(height: 4),
-                              Text('Recommended: 1280×720 (16:9)', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                            ],
-                          )
-                        : null,
+                  ),
+                  TextButton.icon(
+                    onPressed: _pickImage,
+                    icon: const Icon(Icons.add_photo_alternate),
+                    label: const Text('Add Images'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Recommended: 1280×720 (16:9)',
+                style: TextStyle(color: Colors.grey[500], fontSize: 12),
+              ),
+              const SizedBox(height: 8),
+              
+              // Image grid / empty state
+              if (_images.isEmpty)
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[300]!, style: BorderStyle.solid),
+                      ),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text('Tap to add images', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: 120,
+                  child: ReorderableListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _images.length,
+                    onReorder: (oldIndex, newIndex) {
+                      setState(() {
+                        if (newIndex > oldIndex) newIndex--;
+                        final item = _images.removeAt(oldIndex);
+                        _images.insert(newIndex, item);
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final item = _images[index];
+                      return Container(
+                        key: ValueKey('img_$index'),
+                        width: 120,
+                        margin: const EdgeInsets.only(right: 8),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: SizedBox(
+                                width: 120,
+                                height: 120,
+                                child: item.isExisting
+                                    ? Image.network(
+                                        item.existingUrl!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) =>
+                                            Container(color: Colors.grey[300], child: const Icon(Icons.broken_image)),
+                                      )
+                                    : Image.memory(
+                                        item.bytes!,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                            // Delete button
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () => _removeImage(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.close, color: Colors.white, size: 16),
+                                ),
+                              ),
+                            ),
+                            // Order badge
+                            if (_images.length > 1)
+                              Positioned(
+                                bottom: 4,
+                                left: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-              ),
+              
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _titleController,

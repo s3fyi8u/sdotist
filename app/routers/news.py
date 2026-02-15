@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
-from ..models import News, User
+from ..models import News, NewsImage, User
 from ..schemas import NewsCreate, NewsUpdate, NewsOut
 from ..auth import get_current_user, require_admin
 
@@ -38,11 +38,23 @@ def create_news(
     current_user: dict = Depends(require_admin)
 ):
     """إضافة خبر جديد (للمشرفين فقط)"""
-    # Get user object to associate
     user = db.query(User).filter(User.email == current_user["email"]).first()
     
-    new_news = News(**news.model_dump(), author_id=user.id)
+    news_data = news.model_dump(exclude={"images"})
+    
+    # If images list provided, use the first as the main image
+    images_list = news.images or []
+    if images_list and not news_data.get("image"):
+        news_data["image"] = images_list[0]
+    
+    new_news = News(**news_data, author_id=user.id)
     db.add(new_news)
+    db.flush()  # Get the ID before adding images
+    
+    # Add images
+    for i, img_url in enumerate(images_list):
+        db.add(NewsImage(news_id=new_news.id, image_url=img_url, order=i))
+    
     db.commit()
     db.refresh(new_news)
     return new_news
@@ -60,7 +72,19 @@ def update_news(
     if not news:
         raise HTTPException(status_code=404, detail="News not found")
     
-    update_data = news_data.model_dump(exclude_unset=True)
+    update_data = news_data.model_dump(exclude_unset=True, exclude={"images"})
+    
+    # Handle images list update
+    if news_data.images is not None:
+        # Delete old images
+        db.query(NewsImage).filter(NewsImage.news_id == news_id).delete()
+        # Add new images
+        for i, img_url in enumerate(news_data.images):
+            db.add(NewsImage(news_id=news_id, image_url=img_url, order=i))
+        # Set first image as main
+        if news_data.images:
+            update_data["image"] = news_data.images[0]
+    
     for field, value in update_data.items():
         setattr(news, field, value)
     

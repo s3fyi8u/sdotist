@@ -50,6 +50,27 @@ class _NewsScreenState extends State<NewsScreen> {
     }
   }
 
+  /// Get all image URLs for a news item (from images list or legacy single image)
+  List<String> _getNewsImages(Map<String, dynamic> news) {
+    final List<String> imageUrls = [];
+    
+    // Check for new images list first
+    if (news['images'] != null && (news['images'] as List).isNotEmpty) {
+      for (var img in news['images']) {
+        if (img is Map && img['image_url'] != null) {
+          imageUrls.add(img['image_url'].toString());
+        }
+      }
+    }
+    
+    // Fallback to legacy single image if no images list
+    if (imageUrls.isEmpty && news['image'] != null) {
+      imageUrls.add(news['image'].toString());
+    }
+    
+    return imageUrls;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
@@ -74,26 +95,16 @@ class _NewsScreenState extends State<NewsScreen> {
           itemCount: _newsList.length,
           itemBuilder: (context, index) {
             final news = _newsList[index];
+            final images = _getNewsImages(news);
             return ContentCard(
-              padding: EdgeInsets.zero, // ContentCard has default padding, but we want zero for the image
+              padding: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (news['image'] != null)
+                  if (images.isNotEmpty)
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: CachedNetworkImage(
-                          imageUrl: news['image'].toString(),
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.error, size: 40),
-                          ),
-                        ),
-                      ),
+                      child: _ImageCarousel(images: images),
                     ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -146,6 +157,85 @@ class _NewsScreenState extends State<NewsScreen> {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Instagram-style image carousel with dot indicators
+class _ImageCarousel extends StatefulWidget {
+  final List<String> images;
+  const _ImageCarousel({required this.images});
+
+  @override
+  State<_ImageCarousel> createState() => _ImageCarouselState();
+}
+
+class _ImageCarouselState extends State<_ImageCarousel> {
+  int _currentPage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    // Single image - no carousel needed
+    if (widget.images.length == 1) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: CachedNetworkImage(
+          imageUrl: widget.images[0],
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey[200],
+            child: const Icon(Icons.error, size: 40),
+          ),
+        ),
+      );
+    }
+
+    // Multiple images - carousel with dots
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: 16 / 9,
+          child: PageView.builder(
+            itemCount: widget.images.length,
+            onPageChanged: (index) {
+              setState(() => _currentPage = index);
+            },
+            itemBuilder: (context, index) {
+              return CachedNetworkImage(
+                imageUrl: widget.images[index],
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.error, size: 40),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Dot indicators
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            widget.images.length,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: _currentPage == index ? 8 : 6,
+              height: _currentPage == index ? 8 : 6,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _currentPage == index
+                    ? Theme.of(context).primaryColor
+                    : Colors.grey[400],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 }

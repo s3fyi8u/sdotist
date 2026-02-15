@@ -37,12 +37,24 @@ class News(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     body = Column(Text, nullable=False)
-    image = Column(String, nullable=True)
+    image = Column(String, nullable=True)  # Legacy single image field
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     author_id = Column(Integer, ForeignKey("users.id"))
     author = relationship("User", back_populates="news")
+    images = relationship("NewsImage", back_populates="news", cascade="all, delete-orphan", order_by="NewsImage.order")
+
+
+class NewsImage(Base):
+    __tablename__ = "news_images"
+
+    id = Column(Integer, primary_key=True, index=True)
+    image_url = Column(String, nullable=False)
+    order = Column(Integer, default=0)
+    
+    news_id = Column(Integer, ForeignKey("news.id"))
+    news = relationship("News", back_populates="images")
 
 
 class Notification(Base):
