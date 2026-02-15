@@ -172,8 +172,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                 } catch (e) {
                    if (context.mounted) {
+                     final error = ErrorMapper.map(e);
                      ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(content: Text('Login failed: $e')),
+                       SnackBar(
+                         content: Row(
+                           children: [
+                             const Icon(Icons.error_outline, color: Colors.white),
+                             const SizedBox(width: 8),
+                             Expanded(child: Text(error.message)),
+                           ],
+                         ),
+                         backgroundColor: Colors.red,
+                         behavior: SnackBarBehavior.floating,
+                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                       ),
                      );
                    }
                 }

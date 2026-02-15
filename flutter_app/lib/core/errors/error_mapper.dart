@@ -78,10 +78,10 @@ class ErrorMapper {
     switch (statusCode) {
       case 401:
         return AppError(
-          title: 'Authentication Required',
-          message: 'You need to login to perform this action.',
+          title: 'Authentication Failed',
+          message: serverMessage ?? 'You need to login to perform this action.',
           type: AppErrorType.unauthorized,
-          retryable: false, // Usually redirects to login
+          retryable: false, 
         );
       case 403:
         return AppError(
