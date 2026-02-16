@@ -20,10 +20,10 @@ class Settings(BaseSettings):
     MAIL_USERNAME: str = "info@sdotist.org"
     MAIL_PASSWORD: str = "Pablo@390"
     MAIL_FROM: str = "info@sdotist.org"
-    MAIL_PORT: int = 587
+    MAIL_PORT: int = 465
     MAIL_SERVER: str = "smtp.zoho.sa"
-    MAIL_STARTTLS: bool = True
-    MAIL_SSL_TLS: bool = False
+    MAIL_STARTTLS: bool = False
+    MAIL_SSL_TLS: bool = True
 
     model_config = SettingsConfigDict(env_file=".env")
 
