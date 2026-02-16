@@ -50,6 +50,10 @@ app.include_router(notifications.router)
 from .routers import executive_offices
 app.include_router(executive_offices.router)
 
+from .routers import pages
+app.include_router(pages.router)
+app.include_router(executive_offices.router)
+
 from .routers import university_representatives
 app.include_router(university_representatives.router)
 
