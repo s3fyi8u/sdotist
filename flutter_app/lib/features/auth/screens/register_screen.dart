@@ -10,6 +10,7 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/searchable_dropdown.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -92,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   ];
 
   final _formKey = GlobalKey<FormState>();
-  File? _imageFile;
+  XFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -111,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFile = pickedFile;
       });
     }
   }
@@ -271,7 +272,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                    backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                    backgroundImage: _imageFile != null
+                        ? (kIsWeb
+                            ? NetworkImage(_imageFile!.path)
+                            : FileImage(File(_imageFile!.path))) as ImageProvider
+                        : null,
                     child: _imageFile == null
                         ? Icon(Icons.person_outline, size: 50, color: isDark ? Colors.white54 : Colors.grey)
                         : null,
@@ -514,8 +519,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     degree: _selectedDegree,
                     specialization: _specializationController.text,
                     academicYear: _selectedAcademicYear,
-                    documentPath: _documentFile!.path,
-                    profileImagePath: _imageFile?.path,
+                    documentFile: _documentFile,
+                    profileImageFile: _imageFile,
                   );
                   
                   // Show success dialog (account under review)

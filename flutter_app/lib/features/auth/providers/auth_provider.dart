@@ -57,8 +57,8 @@ class AuthProvider with ChangeNotifier {
     required String name,
     required String email,
     required String password,
-    String? documentPath,
-    String? profileImagePath,
+    dynamic documentFile, // PlatformFile? or XFile?
+    dynamic profileImageFile, // XFile? or File?
     String? dateOfBirth,
     String? university,
     String? degree,
@@ -85,21 +85,36 @@ class AuthProvider with ChangeNotifier {
       if (academicYear != null) formMap['academic_year'] = academicYear;
 
       // Add document file
-      if (documentPath != null) {
-        String fileName = documentPath.split('/').last;
-        formMap['document'] = await MultipartFile.fromFile(
-          documentPath,
-          filename: fileName,
-        );
+      if (documentFile != null) {
+        if (documentFile.runtimeType.toString() == 'PlatformFile') {
+           final file = documentFile; // PlatformFile
+           if (file.bytes != null) {
+             formMap['document'] = MultipartFile.fromBytes(
+               file.bytes!,
+               filename: file.name,
+             );
+           } else if (file.path != null) {
+             formMap['document'] = await MultipartFile.fromFile(
+               file.path!,
+               filename: file.name,
+             );
+           }
+        }
       }
 
       // Add profile image
-      if (profileImagePath != null) {
-        String imgName = profileImagePath.split('/').last;
-        formMap['profile_image'] = await MultipartFile.fromFile(
-          profileImagePath,
-          filename: imgName,
-        );
+      if (profileImageFile != null) {
+         // Assuming XFile
+         // We can use readAsBytes for both web and mobile on XFile
+         // But need to handle if it is passed as something else
+         if (profileImageFile.runtimeType.toString().contains('XFile')) {
+            final file = profileImageFile; 
+            final bytes = await file.readAsBytes();
+            formMap['profile_image'] = MultipartFile.fromBytes(
+              bytes,
+              filename: file.name,
+            );
+         }
       }
 
       final formData = FormData.fromMap(formMap);
