@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 
@@ -86,8 +88,8 @@ class AuthProvider with ChangeNotifier {
 
       // Add document file
       if (documentFile != null) {
-        if (documentFile.runtimeType.toString() == 'PlatformFile') {
-           final file = documentFile; // PlatformFile
+        if (documentFile is PlatformFile) {
+           final file = documentFile;
            if (file.bytes != null) {
              formMap['document'] = MultipartFile.fromBytes(
                file.bytes!,
@@ -104,10 +106,7 @@ class AuthProvider with ChangeNotifier {
 
       // Add profile image
       if (profileImageFile != null) {
-         // Assuming XFile
-         // We can use readAsBytes for both web and mobile on XFile
-         // But need to handle if it is passed as something else
-         if (profileImageFile.runtimeType.toString().contains('XFile')) {
+         if (profileImageFile is XFile) {
             final file = profileImageFile; 
             final bytes = await file.readAsBytes();
             formMap['profile_image'] = MultipartFile.fromBytes(
