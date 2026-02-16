@@ -14,6 +14,7 @@ import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 
 import 'settings_screen.dart';
+import 'change_password_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../admin/screens/admin_dashboard_screen.dart';
 import '../../../core/l10n/app_localizations.dart';
@@ -89,6 +90,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } else {
         setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context, AuthProvider authProvider) async {
+    final t = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.warning_amber_rounded, size: 40, color: Colors.red),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                t.translate('confirm_delete_account'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                t.translate('delete_account_warning'),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+                      ),
+                      child: Text(
+                        t.translate('cancel'),
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      child: Text(t.translate('delete')),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await _apiClient.dio.delete(ApiConstants.deleteAccount);
+        if (context.mounted) {
+          authProvider.logout();
+          Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(t.translate('delete_account')),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -427,6 +522,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                           ),
+                          ContentCard(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).brightness == Brightness.dark 
+                                        ? Colors.white.withValues(alpha: 0.1) 
+                                        : Colors.black.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.lock_outline, 
+                                    color: Theme.of(context).brightness == Brightness.dark 
+                                        ? Colors.white 
+                                        : Colors.black
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(AppLocalizations.of(context).translate('change_password'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                const Spacer(),
+                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       
@@ -448,6 +574,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             backgroundColor: Colors.red.withValues(alpha: 0.05),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Delete Account Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          onPressed: () => _deleteAccount(context, authProvider),
+                          icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
+                          label: Text(
+                            AppLocalizations.of(context).translate('delete_account'),
+                            style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                         ),
                       ),

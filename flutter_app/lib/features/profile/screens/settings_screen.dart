@@ -8,7 +8,6 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/widgets/content_card.dart';
 
-import 'change_password_screen.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_and_conditions_screen.dart';
 
@@ -68,16 +67,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showLanguageSheet(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final t = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -85,40 +86,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Container(
                   width: 40,
                   height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: isDark ? Colors.white24 : Colors.grey[300],
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Text(
-                    t.translate('select_language'),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                  ),
+                Text(
+                  t.translate('select_language'),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 ...LocaleProvider.supportedLocales.map((locale) {
                   final langName = LocaleProvider.languageNames[locale.languageCode] ?? locale.languageCode;
                   final isSelected = localeProvider.locale.languageCode == locale.languageCode;
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                    leading: Icon(
-                      isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                      color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                    ),
-                    title: Text(
-                      langName,
-                      style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        fontSize: 16,
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () {
+                        localeProvider.setLocale(locale);
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05))
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isSelected
+                                ? (isDark ? Colors.white24 : Colors.black12)
+                                : (isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.05)),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              langName,
+                              style: TextStyle(
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (isSelected)
+                              Icon(
+                                Icons.check_circle,
+                                color: isDark ? Colors.white : Colors.black,
+                                size: 22,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                    onTap: () {
-                      localeProvider.setLocale(locale);
-                      Navigator.pop(context);
-                    },
                   );
                 }),
                 const SizedBox(height: 8),
@@ -232,23 +254,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   thumbColor: WidgetStateProperty.all(isDark ? Colors.white : Colors.black),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Change Password
-          ContentCard(
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.lock_outline, color: Theme.of(context).iconTheme.color),
-              title: Text(t.translate('change_password'), style: Theme.of(context).textTheme.titleMedium),
-              trailing: Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
-                );
-              },
             ),
           ),
           const SizedBox(height: 16),

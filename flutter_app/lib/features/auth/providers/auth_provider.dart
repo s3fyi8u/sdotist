@@ -93,6 +93,15 @@ class AuthProvider with ChangeNotifier {
         );
       }
 
+      // Add profile image
+      if (profileImagePath != null) {
+        String imgName = profileImagePath.split('/').last;
+        formMap['profile_image'] = await MultipartFile.fromFile(
+          profileImagePath,
+          filename: imgName,
+        );
+      }
+
       final formData = FormData.fromMap(formMap);
 
       final response = await _apiClient.dio.post(

@@ -13,7 +13,11 @@ router = APIRouter(tags=["Registration"])
 DOCUMENT_DIR = "app/static/documents"
 os.makedirs(DOCUMENT_DIR, exist_ok=True)
 
+PROFILE_DIR = "app/static/profiles"
+os.makedirs(PROFILE_DIR, exist_ok=True)
+
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/jpg", "application/pdf"}
+IMAGE_TYPES = {"image/jpeg", "image/png", "image/jpg"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
 
@@ -30,6 +34,7 @@ async def register_with_document(
     degree: str = Form(None),
     date_of_birth: str = Form(None),
     document: UploadFile = File(...),
+    profile_image: UploadFile = File(None),
     db: Session = Depends(get_db),
 ):
     """تسجيل مستخدم جديد مع وثيقة الهوية الطلابية"""
@@ -66,6 +71,19 @@ async def register_with_document(
     with open(file_path, "wb") as buffer:
         buffer.write(contents)
 
+    # Save profile image if provided
+    profile_image_url = None
+    if profile_image is not None:
+        if profile_image.content_type in IMAGE_TYPES:
+            img_contents = await profile_image.read()
+            if len(img_contents) <= MAX_FILE_SIZE:
+                img_ext = profile_image.filename.split(".")[-1] if profile_image.filename else "jpg"
+                img_filename = f"{uuid.uuid4()}.{img_ext}"
+                img_path = os.path.join(PROFILE_DIR, img_filename)
+                with open(img_path, "wb") as f:
+                    f.write(img_contents)
+                profile_image_url = f"https://api.sdotist.org/static/profiles/{img_filename}"
+
     # Create user with pending status
     new_user = User(
         name=name,
@@ -79,6 +97,7 @@ async def register_with_document(
         date_of_birth=date_of_birth,
         status="pending",
         document_path=file_path,
+        profile_image=profile_image_url,
     )
     db.add(new_user)
     db.commit()

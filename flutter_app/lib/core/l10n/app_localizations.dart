@@ -340,6 +340,12 @@ class AppLocalizations {
     'file_too_large': 'File too large. Maximum size: 5MB',
     'invalid_file_type': 'Invalid file type',
     'account_pending': 'Your account is under review',
+
+    // Delete Account
+    'delete_account': 'Delete Account',
+    'confirm_delete_account': 'Confirm Account Deletion',
+    'delete_account_warning': 'This action is permanent and cannot be undone. All your data will be deleted.',
+    'account_deleted': 'Account deleted successfully',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -654,6 +660,12 @@ class AppLocalizations {
     'file_too_large': 'حجم الملف كبير جداً. الحد الأقصى: 5 ميجابايت',
     'invalid_file_type': 'نوع ملف غير مدعوم',
     'account_pending': 'حسابك قيد المراجعة',
+
+    // Delete Account
+    'delete_account': 'حذف الحساب',
+    'confirm_delete_account': 'تأكيد حذف الحساب',
+    'delete_account_warning': 'هذا الإجراء نهائي ولا يمكن التراجع عنه. سيتم حذف جميع بياناتك.',
+    'account_deleted': 'تم حذف الحساب بنجاح',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -968,6 +980,12 @@ class AppLocalizations {
     'file_too_large': 'Dosya çok büyük. Maksimum boyut: 5MB',
     'invalid_file_type': 'Geçersiz dosya türü',
     'account_pending': 'Hesabınız inceleniyor',
+
+    // Delete Account
+    'delete_account': 'Hesabı Sil',
+    'confirm_delete_account': 'Hesap Silme Onayı',
+    'delete_account_warning': 'Bu işlem kalıcıdır ve geri alınamaz. Tüm verileriniz silinecektir.',
+    'account_deleted': 'Hesap başarıyla silindi',
   };
 }
 

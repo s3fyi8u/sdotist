@@ -515,26 +515,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     specialization: _specializationController.text,
                     academicYear: _selectedAcademicYear,
                     documentPath: _documentFile!.path,
+                    profileImagePath: _imageFile?.path,
                   );
                   
                   // Show success dialog (account under review)
                   if (context.mounted) {
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     showDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (context) => AlertDialog(
-                        icon: const Icon(Icons.hourglass_top, size: 48, color: Colors.orange),
-                        title: Text(t.translate('registration_successful')),
-                        content: Text(t.translate('registration_under_review')),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Close dialog
-                              Navigator.pop(context); // Go back to login
-                            },
-                            child: Text(t.translate('confirm')),
+                      builder: (ctx) => Dialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.hourglass_top, size: 40, color: Colors.orange),
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                t.translate('registration_successful'),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                t.translate('registration_under_review'),
+                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx); // Close dialog
+                                    Navigator.pop(context); // Go back to login
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isDark ? Colors.white : Colors.black,
+                                    foregroundColor: isDark ? Colors.black : Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(t.translate('confirm')),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     );
                   }
