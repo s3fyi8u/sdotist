@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -27,6 +27,7 @@ class User(Base):
     profile_image = Column(String, nullable=True)
     status = Column(String, default="active", nullable=False)  # pending, active, rejected
     document_path = Column(String, nullable=True)  # Path to uploaded student ID document
+    is_verified = Column(Boolean, default=False)
     
     news = relationship("News", back_populates="author")
     notifications = relationship("Notification", back_populates="author")
