@@ -30,6 +30,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
         )
 
+    # Create user
     new_user = User(
         name=user.name,
         email=user.email,
@@ -40,11 +41,20 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         academic_year=user.academic_year,
         degree=user.degree,
         date_of_birth=user.date_of_birth,
-        profile_image=user.profile_image
+        profile_image=user.profile_image,
+        is_verified=False # Explicitly set false
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    
+    # Send verification email
+    from ..auth import create_access_token
+    from ..utils.email import send_verification_email
+    token = create_access_token({"sub": new_user.email, "role": new_user.role})
+    import asyncio
+    asyncio.create_task(send_verification_email(new_user.email, token))
+    
     return new_user
 
 

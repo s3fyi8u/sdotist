@@ -88,7 +88,8 @@ class AppLocalizations {
     'register': 'Register',
     'already_have_account': 'Already have an account?',
     'sign_in': 'Sign In',
-    'registration_successful': 'Registration successful! Please login.',
+    'registration_successful': 'Registration successful!',
+    'check_email_verification': 'Please check your email to verify your account.',
     'registration_failed': 'Registration failed',
 
     // Degree options

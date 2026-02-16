@@ -39,6 +39,13 @@ def login(
             detail="بيانات الدخول غير صحيحة"
         )
 
+    # Check verification status
+    if not user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="يرجى تفعيل حسابك من البريد الإلكتروني / Please verify your email"
+        )
+
     # Check account status
     if user.status == "pending":
         raise HTTPException(
@@ -81,3 +88,29 @@ def refresh_token(refresh_token: str = Body(..., embed=True)):
         "refresh_token": create_refresh_token(token_data),
         "token_type": "bearer"
     }
+
+
+@router.get("/verify-email")
+async def verify_email(token: str, db: Session = Depends(get_db)):
+    """التحقق من البريد الإلكتروني"""
+    try:
+        from ..auth import verify_token
+        payload = verify_token(token, "access")
+        email = payload.get("sub")
+        if not email:
+             raise HTTPException(status_code=400, detail="Invalid token")
+             
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+             raise HTTPException(status_code=404, detail="User not found")
+             
+        if not user.is_verified:
+            user.is_verified = True
+            db.commit()
+        
+        from fastapi.responses import HTMLResponse
+        from ..utils.email import conf
+        return HTMLResponse(content=open(f"{conf.TEMPLATE_FOLDER}/verification_success.html").read())
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid verification link or expired")

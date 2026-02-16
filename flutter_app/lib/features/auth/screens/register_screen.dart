@@ -535,10 +535,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange.withValues(alpha: 0.1),
+                                  color: Colors.green.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.hourglass_top, size: 40, color: Colors.orange),
+                                child: const Icon(Icons.mark_email_read, size: 40, color: Colors.green),
                               ),
                               const SizedBox(height: 20),
                               Text(
@@ -548,7 +548,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                t.translate('registration_under_review'),
+                                t.translate('check_email_verification'),
                                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
