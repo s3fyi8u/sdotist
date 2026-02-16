@@ -39,6 +39,18 @@ def login(
             detail="بيانات الدخول غير صحيحة"
         )
 
+    # Check account status
+    if user.status == "pending":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="حسابك قيد المراجعة / Your account is under review"
+        )
+    if user.status == "rejected":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="تم رفض حسابك / Your account has been rejected"
+        )
+
     token_data = {"sub": user.email, "role": user.role}
 
     return {

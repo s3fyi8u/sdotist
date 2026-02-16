@@ -25,6 +25,8 @@ class User(Base):
     degree = Column(String, nullable=True)
     date_of_birth = Column(String, nullable=True)
     profile_image = Column(String, nullable=True)
+    status = Column(String, default="active", nullable=False)  # pending, active, rejected
+    document_path = Column(String, nullable=True)  # Path to uploaded student ID document
     
     news = relationship("News", back_populates="author")
     notifications = relationship("Notification", back_populates="author")

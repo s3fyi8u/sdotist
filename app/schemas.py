@@ -44,8 +44,23 @@ class UserOut(BaseModel):
     degree: str | None = None
     date_of_birth: str | None = None
     profile_image: str | None = None
+    status: str = "active"
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PendingUserOut(BaseModel):
+    id: int
+    name: str
+    email: str
+    university: str | None = None
+    specialization: str | None = None
+    degree: str | None = None
+    academic_year: str | None = None
+    document_url: str | None = None
+    created_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

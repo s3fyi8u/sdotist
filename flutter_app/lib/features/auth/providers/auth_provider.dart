@@ -53,10 +53,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> register({
+  Future<String> register({
     required String name,
     required String email,
     required String password,
+    String? documentPath,
     String? profileImagePath,
     String? dateOfBirth,
     String? university,
@@ -68,34 +69,44 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      String? imageUrl;
-      if (profileImagePath != null) {
-        imageUrl = await _apiClient.uploadImage(profileImagePath);
+      // Build multipart form data
+      final Map<String, dynamic> formMap = {
+        'name': name,
+        'email': email,
+        'password': password,
+      };
+
+      if (dateOfBirth != null) formMap['date_of_birth'] = dateOfBirth;
+      if (university != null) formMap['university'] = university;
+      if (degree != null) formMap['degree'] = degree;
+      if (specialization != null && specialization.isNotEmpty) {
+        formMap['specialization'] = specialization;
+      }
+      if (academicYear != null) formMap['academic_year'] = academicYear;
+
+      // Add document file
+      if (documentPath != null) {
+        String fileName = documentPath.split('/').last;
+        formMap['document'] = await MultipartFile.fromFile(
+          documentPath,
+          filename: fileName,
+        );
       }
 
-      await _apiClient.dio.post(
-        ApiConstants.register,
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-          'role': 'user', // Default role is user
-          'date_of_birth': dateOfBirth,
-          'university': university,
-          'degree': degree,
-          'specialization': specialization,
-          'academic_year': academicYear,
-          'profile_image': imageUrl, 
-        },
+      final formData = FormData.fromMap(formMap);
+
+      final response = await _apiClient.dio.post(
+        ApiConstants.registerWithDoc,
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
       );
-      print("Registration successful");
-      // Optional: Auto login logic could be added here
+
+      debugPrint("Registration successful");
+      return response.data['message'] ?? 'Registration submitted';
     } catch (e) {
-      print("Registration error in AuthProvider: $e");
+      debugPrint("Registration error in AuthProvider: $e");
       if (e is DioException) {
-        print("DioError response: ${e.response?.data}");
-        print("DioError message: ${e.message}");
-        print("DioError type: ${e.type}");
+        debugPrint("DioError response: ${e.response?.data}");
       }
       rethrow;
     } finally {

@@ -53,6 +53,12 @@ app.include_router(executive_offices.router)
 from .routers import university_representatives
 app.include_router(university_representatives.router)
 
+from .routers import registration
+app.include_router(registration.router)
+
+from .routers import admin
+app.include_router(admin.router)
+
 
 # Health check endpoint
 @app.get("/health", tags=["Health"])

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../auth/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
@@ -31,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedUniversity;
   String? _selectedDegree;
   String? _emailError; // Added state for email error
+  PlatformFile? _documentFile; // Selected student ID document
 
   final List<String> _degrees = [
     'Diploma',
@@ -110,6 +112,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _pickDocument() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+      allowMultiple: false,
+    );
+    if (result != null && result.files.isNotEmpty) {
+      final file = result.files.first;
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context).translate('file_too_large'))),
+          );
+        }
+        return;
+      }
+      setState(() {
+        _documentFile = file;
       });
     }
   }
@@ -397,6 +422,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
             label: t.translate('specialization'),
             prefixIcon: Icons.book_outlined,
           ),
+          const SizedBox(height: 32),
+
+          // Student ID Document Upload
+          Text(
+            t.translate('upload_student_id'),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: _pickDocument,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: _documentFile != null
+                      ? (isDark ? Colors.white54 : Colors.black54)
+                      : (isDark ? Colors.white24 : Colors.grey.shade300),
+                  width: 1.5,
+                  style: BorderStyle.solid,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                color: isDark ? Colors.grey[900] : Colors.grey[50],
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    _documentFile != null ? Icons.check_circle : Icons.cloud_upload_outlined,
+                    size: 40,
+                    color: _documentFile != null
+                        ? Colors.green
+                        : (isDark ? Colors.white54 : Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _documentFile != null
+                        ? _documentFile!.name
+                        : t.translate('select_document'),
+                    style: TextStyle(
+                      color: _documentFile != null
+                          ? (isDark ? Colors.white : Colors.black)
+                          : (isDark ? Colors.white54 : Colors.grey),
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (_documentFile == null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'JPEG, PNG, PDF (Max 5MB)',
+                      style: TextStyle(
+                        color: isDark ? Colors.white38 : Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          // Document validation error
+          Builder(
+            builder: (context) {
+              // This will be shown by form validation
+              return const SizedBox.shrink();
+            },
+          ),
           const SizedBox(height: 48),
 
           // Action Button
@@ -404,48 +496,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
             text: t.translate('register'),
             isLoading: authProvider.isLoading,
             onPressed: () async {
-              print("Register button pressed");
+              // Validate document separately
+              if (_documentFile == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(t.translate('document_required'))),
+                );
+                return;
+              }
               if (_formKey.currentState!.validate()) {
-                print("Form is valid");
                 try {
-                  await authProvider.register(
+                  final message = await authProvider.register(
                     name: _nameController.text,
                     email: _emailController.text,
                     password: _passwordController.text,
                     dateOfBirth: _dateController.text,
-                    university: _selectedUniversity!, // Use selected university
+                    university: _selectedUniversity!,
                     degree: _selectedDegree,
                     specialization: _specializationController.text,
                     academicYear: _selectedAcademicYear,
-                    profileImagePath: _imageFile?.path,
+                    documentPath: _documentFile!.path,
                   );
                   
-                  // Auto Login after registration
-                  await authProvider.login(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-
-                    if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(t.translate('registration_successful'))),
+                  // Show success dialog (account under review)
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => AlertDialog(
+                        icon: const Icon(Icons.hourglass_top, size: 48, color: Colors.orange),
+                        title: Text(t.translate('registration_successful')),
+                        content: Text(t.translate('registration_under_review')),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context); // Close dialog
+                              Navigator.pop(context); // Go back to login
+                            },
+                            child: Text(t.translate('confirm')),
+                          ),
+                        ],
+                      ),
                     );
-                    
-                    // Pop until we are back to the main screen (Profile or Home)
-                      Navigator.popUntil(context, (route) {
-                        return route.settings.name != '/login' && route.settings.name != '/register';
-                      });
                   }
                 } on DioException catch (e) {
-                    print("DioException caught in RegisterScreen: ${e.response?.data}");
                     String errorMessage = t.translate('registration_failed');
                     if (e.response?.data != null) {
                       if (e.response!.data is List) {
-                        // Handle FastAPI validation errors (List)
                         final list = e.response!.data as List;
                         errorMessage = list.map((item) => item['msg'].toString()).join('\n');
                       } else if (e.response!.data is Map) {
-                        // Handle standard errors (Map)
                         errorMessage = e.response!.data['detail']?.toString() ?? e.message ?? 'Unknown error';
                       }
                     }

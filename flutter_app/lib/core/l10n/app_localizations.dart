@@ -317,6 +317,29 @@ class AppLocalizations {
     'terms_section_3_body': 'You are specifically restricted from all of the following: publishing any App material in any other media; selling, sublicensing and/or otherwise commercializing any App material.',
     'terms_section_4_title': '4. Limitation of liability',
     'terms_section_4_body': 'In no event shall we, nor any of our officers, directors and employees, shall be held liable for anything arising out of or in any way connected with your use of this App.',
+
+    // Document Verification
+    'upload_student_id': 'Student ID Document',
+    'registration_under_review': 'Your registration is under review. You will be notified when your account is activated.',
+    'account_activated': 'Your account has been activated',
+    'account_rejected': 'Your account has been rejected',
+    'pending_registrations': 'Pending Registrations',
+    'approve': 'Approve',
+    'reject': 'Reject',
+    'no_document': 'No document',
+    'view_document': 'View Document',
+    'confirm_approve': 'Confirm Approval',
+    'confirm_reject': 'Confirm Rejection',
+    'approve_user_confirm': 'Are you sure you want to approve this user?',
+    'reject_user_confirm': 'Are you sure you want to reject this user? This will delete the account.',
+    'user_approved': 'User approved successfully',
+    'user_rejected': 'User rejected successfully',
+    'select_document': 'Select Document',
+    'document_selected': 'Document selected',
+    'document_required': 'You must upload a student ID document',
+    'file_too_large': 'File too large. Maximum size: 5MB',
+    'invalid_file_type': 'Invalid file type',
+    'account_pending': 'Your account is under review',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -608,6 +631,29 @@ class AppLocalizations {
     'terms_section_3_body': 'أنت مقيد تحديداً من جميع ما يلي: نشر أي مواد التطبيق في أي وسيلة إعلام أخرى؛ بيع أو ترخيص و/أو تسويق أي مواد التطبيق.',
     'terms_section_4_title': '٤. تحديد المسؤولية',
     'terms_section_4_body': 'لن نكون مسؤولين بأي حال من الأحوال، نحن أو أي من مسؤولينا ومديرينا وموظفينا، عن أي شيء ينشأ عن أو يتصل بأي شكل باستخدامك لهذا التطبيق.',
+
+    // Document Verification
+    'upload_student_id': 'وثيقة الهوية الطلابية',
+    'registration_under_review': 'تسجيلك قيد المراجعة. سيتم إشعارك عند تفعيل حسابك.',
+    'account_activated': 'تم تفعيل حسابك',
+    'account_rejected': 'تم رفض حسابك',
+    'pending_registrations': 'التسجيلات المعلقة',
+    'approve': 'قبول',
+    'reject': 'رفض',
+    'no_document': 'لا يوجد مستند',
+    'view_document': 'عرض المستند',
+    'confirm_approve': 'تأكيد القبول',
+    'confirm_reject': 'تأكيد الرفض',
+    'approve_user_confirm': 'هل أنت متأكد من قبول هذا المستخدم؟',
+    'reject_user_confirm': 'هل أنت متأكد من رفض هذا المستخدم؟ سيتم حذف الحساب.',
+    'user_approved': 'تم قبول المستخدم بنجاح',
+    'user_rejected': 'تم رفض المستخدم بنجاح',
+    'select_document': 'اختر مستند',
+    'document_selected': 'تم اختيار المستند',
+    'document_required': 'يجب رفع وثيقة الهوية الطلابية',
+    'file_too_large': 'حجم الملف كبير جداً. الحد الأقصى: 5 ميجابايت',
+    'invalid_file_type': 'نوع ملف غير مدعوم',
+    'account_pending': 'حسابك قيد المراجعة',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -899,6 +945,29 @@ class AppLocalizations {
     'terms_section_3_body': 'Şunların tümünden özellikle kısıtlanmış bulunmaktasınız: herhangi bir Uygulama materyalini başka bir medyada yayınlamak; herhangi bir Uygulama materyalini satmak, alt lisanslamak ve/veya başka şekilde ticarileştirmek.',
     'terms_section_4_title': '4. Sorumluluk Sınırlaması',
     'terms_section_4_body': 'Hiçbir durumda ne biz, ne de yetkililerimiz, yöneticilerimiz ve çalışanlarımız, bu Uygulamayı kullanımınızdan kaynaklanan veya herhangi bir şekilde bağlantılı olan hiçbir şeyden sorumlu tutulmayacaktır.',
+
+    // Document Verification
+    'upload_student_id': 'Öğrenci Kimlik Belgesi',
+    'registration_under_review': 'Kaydınız inceleme altında. Hesabınız aktifleştirildiğinde bilgilendirileceksiniz.',
+    'account_activated': 'Hesabınız aktifleştirildi',
+    'account_rejected': 'Hesabınız reddedildi',
+    'pending_registrations': 'Bekleyen Kayıtlar',
+    'approve': 'Onayla',
+    'reject': 'Reddet',
+    'no_document': 'Belge yok',
+    'view_document': 'Belgeyi Görüntüle',
+    'confirm_approve': 'Onayı Onayla',
+    'confirm_reject': 'Reddi Onayla',
+    'approve_user_confirm': 'Bu kullanıcıyı onaylamak istediğinizden emin misiniz?',
+    'reject_user_confirm': 'Bu kullanıcıyı reddetmek istediğinizden emin misiniz? Hesap silinecektir.',
+    'user_approved': 'Kullanıcı başarıyla onaylandı',
+    'user_rejected': 'Kullanıcı başarıyla reddedildi',
+    'select_document': 'Belge Seçin',
+    'document_selected': 'Belge seçildi',
+    'document_required': 'Öğrenci kimlik belgesi yüklemeniz gerekiyor',
+    'file_too_large': 'Dosya çok büyük. Maksimum boyut: 5MB',
+    'invalid_file_type': 'Geçersiz dosya türü',
+    'account_pending': 'Hesabınız inceleniyor',
   };
 }
 

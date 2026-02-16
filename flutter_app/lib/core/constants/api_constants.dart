@@ -5,6 +5,7 @@ class ApiConstants {
   
   static const String login = "/auth/login";
   static const String register = "/users/";
+  static const String registerWithDoc = "/register";
   static const String me = "/users/me";
   static const String myBarcode = "/users/me/barcode";
   static const String news = "/news/";
@@ -12,4 +13,7 @@ class ApiConstants {
   static const String representatives = "/representatives/";
   static const String notifications = "/notifications/";
   static const String changePassword = "/users/me/password";
+  static const String pendingRegistrations = "/admin/pending-registrations";
+  static String approveRegistration(int userId) => "/admin/registrations/$userId/approve";
+  static String rejectRegistration(int userId) => "/admin/registrations/$userId/reject";
 }
