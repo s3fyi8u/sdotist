@@ -32,6 +32,7 @@ def get_pending_registrations(
             "specialization": user.specialization,
             "degree": user.degree,
             "academic_year": user.academic_year,
+            "profile_image": user.profile_image,
             "document_url": document_url,
             "created_at": user.created_at.isoformat() if user.created_at else None,
         })

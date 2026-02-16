@@ -177,14 +177,21 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
                               Row(
                                 children: [
                                   CircleAvatar(
+                                    radius: 24,
                                     backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                                    child: Text(
-                                      (user['name'] ?? '?')[0].toUpperCase(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: isDark ? Colors.white : Colors.black,
-                                      ),
-                                    ),
+                                    backgroundImage: user['profile_image'] != null
+                                        ? NetworkImage(user['profile_image'])
+                                        : null,
+                                    child: user['profile_image'] == null
+                                        ? Text(
+                                            (user['name'] ?? '?')[0].toUpperCase(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: isDark ? Colors.white : Colors.black,
+                                            ),
+                                          )
+                                        : null,
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -225,6 +232,14 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
                                 _buildInfoRow(
                                   Icons.badge_outlined,
                                   '${user['degree']} ${user['academic_year'] != null ? '- Year ${user['academic_year']}' : ''}',
+                                  isDark,
+                                ),
+                                const SizedBox(height: 4),
+                              ],
+                              if (user['specialization'] != null && user['specialization'].toString().isNotEmpty) ...[
+                                _buildInfoRow(
+                                  Icons.book_outlined,
+                                  user['specialization'],
                                   isDark,
                                 ),
                                 const SizedBox(height: 4),
