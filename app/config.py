@@ -17,9 +17,9 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Email Settings
-    MAIL_USERNAME: str = "support@sdotist.org"
+    MAIL_USERNAME: str = "info@sdotist.org"
     MAIL_PASSWORD: str = "Sdotist360*"
-    MAIL_FROM: str = "support@sdotist.org"
+    MAIL_FROM: str = "info@sdotist.org"
     MAIL_PORT: int = 465
     MAIL_SERVER: str = "smtp.zoho.sa"
     MAIL_STARTTLS: bool = False
