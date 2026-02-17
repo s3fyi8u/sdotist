@@ -28,6 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
       const NewsScreen(),
       const ProfileScreen(),
     ];
+    
+    // Check for arguments to set initial index
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is int) {
+      _selectedIndex = args;
+    }
   }
 
   void _onItemTapped(int index) {

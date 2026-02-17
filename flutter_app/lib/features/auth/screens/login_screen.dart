@@ -182,7 +182,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     _passwordController.text,
                   );
                   if (context.mounted) {
-                    Navigator.pop(context);
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      // If root (e.g. from session expired or logout), go to Profile (Index 2)
+                      Navigator.pushReplacementNamed(context, '/home', arguments: 2);
+                    }
                   }
                 } catch (e) {
                    if (context.mounted) {
