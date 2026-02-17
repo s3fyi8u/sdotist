@@ -14,6 +14,7 @@ import '../../../core/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../events/screens/events_list_screen.dart';
+import '../../admin/screens/admin_dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,16 +52,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.isAdmin;
+
     _pages = <Widget>[
       const EventsListScreen(),
       const NewsScreen(),
       const ProfileScreen(),
     ];
     
+    if (isAdmin) {
+      _pages.add(const AdminDashboardScreen());
+    }
+    
     // Check for arguments to set initial index
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is int) {
-      _selectedIndex = args;
+      if (args < _pages.length) {
+        _selectedIndex = args;
+      }
     }
   }
 
@@ -233,6 +243,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildNavItem(0, Icons.home_outlined, Icons.home),
                 _buildNavItem(1, Icons.article_outlined, Icons.article),
                 _buildNavItem(2, Icons.person_outline, Icons.person),
+                if (Provider.of<AuthProvider>(context).isAdmin)
+                  _buildNavItem(3, Icons.admin_panel_settings_outlined, Icons.admin_panel_settings),
               ],
             ),
           ),
