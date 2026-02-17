@@ -349,6 +349,7 @@ class AppLocalizations {
     'account_deleted': 'Account deleted successfully',
     
     // Events
+    'manage_events': 'Manage Events',
     'events': 'Events',
     'no_events': 'No events available',
     'event_details': 'Event Details',
@@ -691,6 +692,7 @@ class AppLocalizations {
     'account_deleted': 'تم حذف الحساب بنجاح',
 
     // Events
+    'manage_events': 'إدارة الفعاليات',
     'events': 'الفعاليات',
     'no_events': 'لا توجد فعاليات حالياً',
     'event_details': 'تفاصيل الفعالية',
@@ -1031,6 +1033,29 @@ class AppLocalizations {
     'confirm_delete_account': 'Hesap Silme Onayı',
     'delete_account_warning': 'Bu işlem kalıcıdır ve geri alınamaz. Tüm verileriniz silinecektir.',
     'account_deleted': 'Hesap başarıyla silindi',
+
+    // Events
+    'manage_events': 'Etkinlik Yönetimi',
+    'events': 'Etkinlikler',
+    'no_events': 'Etkinlik bulunamadı',
+    'event_details': 'Etkinlik Detayları',
+    'already_registered': 'Kayıtlı',
+    'view_registrations': 'Kayıtları Görüntüle',
+    'verify_attendance': 'Katılımı Doğrula',
+    'scan_qr': 'QR Tara',
+    'create_event': 'Etkinlik Oluştur',
+    'event_created': 'Etkinlik başarıyla oluşturuldu',
+    'location': 'Konum',
+    'attendance_verified': 'Katılım doğrulandı',
+    'user_not_registered': 'Kullanıcı kayıtlı değil',
+    'already_attended': 'Zaten katıldı',
+    'event_title': 'Etkinlik Başlığı',
+    'event_date': 'Etkinlik Tarihi',
+    'event_location': 'Etkinlik Konumu',
+    'event_description': 'Etkinlik Açıklaması',
+    'select_event_date': 'Etkinlik Tarihi Seç',
+    'pick_image': 'Resim Seç',
+    'create': 'Oluştur',
   };
 }
 
