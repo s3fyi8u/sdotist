@@ -196,46 +196,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-               Row(
-                mainAxisSize: MainAxisSize.min,
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/logo.png',
-                    height: 50,
-                    color: isDark ? Colors.white : Colors.black,
+                   Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 50,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        'sdotist',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -1,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'sdotist',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -1,
-                      color: isDark ? Colors.white : Colors.black,
+                  const SizedBox(height: 32),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    child: Container(
+                      width: 500,
+                      padding: const EdgeInsets.all(40),
+                      child: _buildRegisterForm(context),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                child: Container(
-                  width: 500,
-                  padding: const EdgeInsets.all(40),
-                  child: _buildRegisterForm(context),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 16,
+            left: 16,
+            child: BackButton(
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

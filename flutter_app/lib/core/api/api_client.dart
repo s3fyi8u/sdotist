@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../main.dart'; // Import for navigatorKey
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart';
 import '../constants/api_constants.dart';
@@ -23,7 +24,7 @@ class ApiClient {
       onError: (DioException e, handler) {
         // Handle global errors (e.g., 401 Unauthorized)
         if (e.response?.statusCode == 401) {
-          // TODO: Trigger logout
+          navigatorKey.currentState?.pushNamedAndRemoveUntil('/session_expired', (route) => false);
         }
         return handler.next(e);
       },

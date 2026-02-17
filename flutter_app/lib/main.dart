@@ -10,6 +10,10 @@ import 'core/providers/theme_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/l10n/app_localizations.dart';
 
+import 'features/auth/screens/session_expired_screen.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(const MyApp());
 }
@@ -28,6 +32,7 @@ class MyApp extends StatelessWidget {
       child: Consumer3<AuthProvider, ThemeProvider, LocaleProvider>(
         builder: (context, auth, themeProvider, localeProvider, _) {
           return MaterialApp(
+            navigatorKey: navigatorKey,
             title: 'Sdotist',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
@@ -45,6 +50,7 @@ class MyApp extends StatelessWidget {
               '/login': (context) => const LoginScreen(),
               '/register': (context) => const RegisterScreen(),
               '/home': (context) => const HomeScreen(),
+              '/session_expired': (context) => const SessionExpiredScreen(),
             },
           );
         },
