@@ -27,6 +27,27 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> _pages = [];
 
   @override
+  void initState() {
+    super.initState();
+    // Verify session/fetch profile after frame (ensures Navigator is ready)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+       if (authProvider.isAuthenticated) {
+         authProvider.fetchUserProfile().catchError((e) {
+           if (e is DioException && e.response?.statusCode == 401) {
+               debugPrint("Session expired (Home check). Redirecting...");
+               authProvider.logout(); // Clear token to prevent loop
+               // Explicitly redirect using local context to bypass potentially detached GlobalKey
+               Navigator.of(context).pushNamedAndRemoveUntil('/session_expired', (route) => false);
+           } else {
+              debugPrint("Session check completed with error: $e");
+           }
+         });
+       }
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pages = <Widget>[
@@ -40,19 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (args is int) {
       _selectedIndex = args;
     }
-    
-    // Verify session/fetch profile after frame (ensures Navigator is ready)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-       Provider.of<AuthProvider>(context, listen: false).fetchUserProfile().catchError((e) {
-         if (e is DioException && e.response?.statusCode == 401) {
-             debugPrint("Session expired (Home check). Redirecting...");
-             // Explicitly redirect using local context to bypass potentially detached GlobalKey
-             Navigator.of(context).pushNamedAndRemoveUntil('/session_expired', (route) => false);
-         } else {
-            debugPrint("Session check completed with error: $e");
-         }
-       });
-    });
   }
 
   void _onItemTapped(int index) {
