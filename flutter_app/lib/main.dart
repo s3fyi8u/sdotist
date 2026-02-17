@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       child: Consumer3<AuthProvider, ThemeProvider, LocaleProvider>(
         builder: (context, auth, themeProvider, localeProvider, _) {
           return MaterialApp(
-            title: 'sdotist',
+            title: 'Sdotist',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,

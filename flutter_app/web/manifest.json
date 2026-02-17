@@ -1,11 +1,11 @@
 {
-    "name": "flutter_app",
-    "short_name": "flutter_app",
+    "name": "Sdotist",
+    "short_name": "Sdotist",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hex_code",
     "theme_color": "#hex_code",
-    "description": "A new Flutter project.",
+    "description": "Sudan Student Community Istanbul.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
