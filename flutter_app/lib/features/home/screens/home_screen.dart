@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:dio/dio.dart';
 import '../../auth/screens/session_expired_screen.dart';
 import '../../profile/screens/profile_screen.dart';
