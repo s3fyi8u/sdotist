@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
     _pages = <Widget>[
       const EventsListScreen(),
