@@ -39,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
     
     // Verify session/fetch profile after frame (ensures Navigator is ready)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       Provider.of<AuthProvider>(context, listen: false).fetchUserProfile();
+       Provider.of<AuthProvider>(context, listen: false).fetchUserProfile().catchError((e) {
+         // Silently handle error; 401 is handled by interceptor
+         debugPrint("Session check completed with error: $e");
+       });
     });
   }
 
