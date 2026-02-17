@@ -158,9 +158,8 @@ class AuthProvider with ChangeNotifier {
     
     try {
       _token = await _apiClient.storage.read(key: 'access_token');
-      if (_token != null) {
-        await fetchUserProfile();
-      }
+      // We don't fetch profile here to avoid navigator race condition.
+      // Profile fetch/verification will be triggered by the UI (e.g. HomeScreen).
     } catch (e) {
       debugPrint("Error loading token: $e");
     } finally {

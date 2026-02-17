@@ -7,6 +7,8 @@ import 'notifications_screen.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
 import '../../../core/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,6 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (args is int) {
       _selectedIndex = args;
     }
+    
+    // Verify session/fetch profile after frame (ensures Navigator is ready)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       Provider.of<AuthProvider>(context, listen: false).fetchUserProfile();
+    });
   }
 
   void _onItemTapped(int index) {
