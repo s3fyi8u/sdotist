@@ -63,6 +63,10 @@ app.include_router(registration.router)
 from .routers import admin
 app.include_router(admin.router)
 
+from .routers import events
+app.include_router(events.router)
+
+
 
 # Health check endpoint
 @app.get("/health", tags=["Health"])

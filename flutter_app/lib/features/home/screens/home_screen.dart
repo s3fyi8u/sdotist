@@ -13,6 +13,7 @@ import '../../../core/widgets/web_navigation_bar.dart';
 import '../../../core/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../events/screens/events_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,11 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
     super.didChangeDependencies();
     _pages = <Widget>[
-      Center(child: Text(AppLocalizations.of(context).translate('welcome_home'), style: const TextStyle(fontSize: 24))), // Home Placeholder
+      const EventsListScreen(),
       const NewsScreen(),
       const ProfileScreen(),
     ];

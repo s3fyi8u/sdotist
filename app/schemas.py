@@ -199,3 +199,39 @@ class UniversityRepresentativeUpdate(BaseModel):
     name: str | None = None
     university: str | None = None
     image_url: str | None = None
+
+
+class EventBase(BaseModel):
+    title: str = Field(..., min_length=3, description="عنوان الفعالية")
+    description: str | None = Field(None, description="وصف الفعالية")
+    date: datetime = Field(..., description="تاريخ ووقت الفعالية")
+    location: str = Field(..., description="مكان الفعالية")
+    image_url: str | None = Field(None, description="رابط صورة الفعالية")
+
+class EventCreate(EventBase):
+    pass
+
+class EventUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    date: datetime | None = None
+    location: str | None = None
+    image_url: str | None = None
+
+class EventRegistrationOut(BaseModel):
+    id: int
+    user_id: int
+    event_id: int
+    registered_at: datetime
+    attended: bool
+    user: UserOut # Include user details
+
+    model_config = ConfigDict(from_attributes=True)
+
+class EventOut(EventBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime | None = None
+    registrations: list[EventRegistrationOut] = []
+
+    model_config = ConfigDict(from_attributes=True)

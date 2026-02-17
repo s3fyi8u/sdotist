@@ -108,3 +108,31 @@ class UniversityRepresentative(Base):
     name = Column(String, nullable=False)
     university = Column(String, nullable=False)
     image_url = Column(String, nullable=True)
+
+
+class Event(Base):
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    date = Column(DateTime(timezone=True), nullable=False)
+    location = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    registrations = relationship("EventRegistration", back_populates="event", cascade="all, delete-orphan")
+
+
+class EventRegistration(Base):
+    __tablename__ = "event_registrations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    registered_at = Column(DateTime(timezone=True), server_default=func.now())
+    attended = Column(Boolean, default=False)
+    
+    user = relationship("User")
+    event = relationship("Event", back_populates="registrations")

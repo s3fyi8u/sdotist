@@ -347,6 +347,28 @@ class AppLocalizations {
     'confirm_delete_account': 'Confirm Account Deletion',
     'delete_account_warning': 'This action is permanent and cannot be undone. All your data will be deleted.',
     'account_deleted': 'Account deleted successfully',
+    
+    // Events
+    'events': 'Events',
+    'no_events': 'No events available',
+    'event_details': 'Event Details',
+    'already_registered': 'Registered',
+    'view_registrations': 'View Registrations',
+    'verify_attendance': 'Verify Attendance',
+    'scan_qr': 'Scan QR',
+    'create_event': 'Create Event',
+    'event_created': 'Event created successfully',
+    'location': 'Location',
+    'attendance_verified': 'Attendance verified',
+    'user_not_registered': 'User not registered',
+    'already_attended': 'Already attended',
+    'event_title': 'Event Title',
+    'event_date': 'Event Date',
+    'event_location': 'Event Location',
+    'event_description': 'Event Description',
+    'select_event_date': 'Select Event Date',
+    'pick_image': 'Pick Image',
+    'create': 'Create',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -667,6 +689,28 @@ class AppLocalizations {
     'confirm_delete_account': 'تأكيد حذف الحساب',
     'delete_account_warning': 'هذا الإجراء نهائي ولا يمكن التراجع عنه. سيتم حذف جميع بياناتك.',
     'account_deleted': 'تم حذف الحساب بنجاح',
+
+    // Events
+    'events': 'الفعاليات',
+    'no_events': 'لا توجد فعاليات حالياً',
+    'event_details': 'تفاصيل الفعالية',
+    'already_registered': 'تم التسجيل',
+    'view_registrations': 'عرض التسجيلات',
+    'verify_attendance': 'التحقق من الحضور',
+    'scan_qr': 'مسح الرمز',
+    'create_event': 'إنشاء فعالية',
+    'event_created': 'تم إنشاء الفعالية بنجاح',
+    'location': 'المكان',
+    'attendance_verified': 'تم التحقق من الحضور',
+    'user_not_registered': 'المستخدم غير مسجل',
+    'already_attended': 'تم الحضور مسبقاً',
+    'event_title': 'عنوان الفعالية',
+    'event_date': 'تاريخ الفعالية',
+    'event_location': 'مكان الفعالية',
+    'event_description': 'وصف الفعالية',
+    'select_event_date': 'اختر تاريخ الفعالية',
+    'pick_image': 'اختر صورة',
+    'create': 'إنشاء',
   };
 
   // ─── Turkish ───────────────────────────────────────────────

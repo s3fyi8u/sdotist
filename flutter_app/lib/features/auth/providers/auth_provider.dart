@@ -9,7 +9,7 @@ class AuthProvider with ChangeNotifier {
   final ApiClient _apiClient = ApiClient();
   bool _isLoading = false;
   String? _token;
-  String? _role;
+  Map<String, dynamic>? _user;
 
   AuthProvider() {
     loadToken();
@@ -18,6 +18,8 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _token != null;
   bool get isAdmin => _role == 'admin';
+  Map<String, dynamic>? get user => _user;
+  int? get userId => _user?['id'];
 
   Future<void> login(String email, String password) async {
     _isLoading = true;
@@ -47,7 +49,8 @@ class AuthProvider with ChangeNotifier {
   Future<void> fetchUserProfile() async {
     try {
       final response = await _apiClient.dio.get(ApiConstants.me);
-      _role = response.data['role'];
+      _user = response.data;
+      _role = _user?['role'];
       notifyListeners();
     } catch (e) {
       debugPrint("Error fetching user profile: $e");
