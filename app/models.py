@@ -30,7 +30,8 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     
     news = relationship("News", back_populates="author")
-    notifications = relationship("Notification", back_populates="author")
+    notifications = relationship("Notification", back_populates="author", foreign_keys="[Notification.author_id]")
+    received_notifications = relationship("Notification", back_populates="recipient", foreign_keys="[Notification.recipient_id]")
 
 
 class News(Base):
@@ -72,7 +73,7 @@ class Notification(Base):
     author = relationship("User", back_populates="notifications", foreign_keys=[author_id])
 
     recipient_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    recipient = relationship("User", foreign_keys=[recipient_id])
+    recipient = relationship("User", back_populates="received_notifications", foreign_keys=[recipient_id])
 
 
 class ExecutiveOffice(Base):
