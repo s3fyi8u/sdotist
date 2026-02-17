@@ -1,4 +1,8 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dio/dio.dart';
+import '../../auth/screens/session_expired_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../../news/screens/news_screen.dart';
 import '../../executive_offices/screens/office_list_screen.dart';
@@ -37,11 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = args;
     }
     
-    // Verify session/fetch profile after frame (ensures Navigator is ready)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
        Provider.of<AuthProvider>(context, listen: false).fetchUserProfile().catchError((e) {
-         // Silently handle error; 401 is handled by interceptor
-         debugPrint("Session check completed with error: $e");
+         if (e is DioException && e.response?.statusCode == 401) {
+             debugPrint("Session expired (Home check). Redirecting...");
+             // Explicitly redirect using local context to bypass potentially detached GlobalKey
+             Navigator.of(context).pushNamedAndRemoveUntil('/session_expired', (route) => false);
+         } else {
+            debugPrint("Session check completed with error: $e");
+         }
        });
     });
   }
