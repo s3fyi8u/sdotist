@@ -101,6 +101,13 @@ class AuthProvider with ChangeNotifier {
                filename: file.name,
              );
            }
+        } else if (documentFile is XFile) {
+           final file = documentFile;
+           final bytes = await file.readAsBytes();
+           formMap['document'] = MultipartFile.fromBytes(
+             bytes,
+             filename: file.name,
+           );
         }
       }
 

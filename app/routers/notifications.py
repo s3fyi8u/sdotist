@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from .. import models, schemas
 from ..database import get_db
 from ..auth import get_current_user
@@ -18,9 +19,18 @@ def get_notifications(
 ):
     """
     Get all notifications.
-    Accessible to all authenticated users.
+    accessible to all authenticated users.
     """
-    notifications = db.query(models.Notification).order_by(models.Notification.created_at.desc()).offset(skip).limit(limit).all()
+    user = db.query(models.User).filter(models.User.email == current_user["email"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    notifications = db.query(models.Notification).filter(
+        or_(
+            models.Notification.recipient_id == None,
+            models.Notification.recipient_id == user.id
+        )
+    ).order_by(models.Notification.created_at.desc()).offset(skip).limit(limit).all()
     return notifications
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.NotificationOut)

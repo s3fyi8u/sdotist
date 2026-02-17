@@ -69,7 +69,10 @@ class Notification(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     author_id = Column(Integer, ForeignKey("users.id"))
-    author = relationship("User", back_populates="notifications")
+    author = relationship("User", back_populates="notifications", foreign_keys=[author_id])
+
+    recipient_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    recipient = relationship("User", foreign_keys=[recipient_id])
 
 
 class ExecutiveOffice(Base):

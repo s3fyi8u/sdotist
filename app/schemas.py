@@ -129,6 +129,7 @@ class NotificationOut(NotificationBase):
     id: int
     created_at: datetime
     author_id: int | None = None
+    recipient_id: int | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

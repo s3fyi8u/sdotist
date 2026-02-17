@@ -74,6 +74,7 @@ def approve_registration(
         title="Account Activated / تم تفعيل حسابك",
         body="Your account has been activated. You can now login. / تم تفعيل حسابك. يمكنك الآن تسجيل الدخول.",
         author_id=admin_user.id if admin_user else None,
+        recipient_id=user.id
     )
     db.add(notification)
     db.commit()
