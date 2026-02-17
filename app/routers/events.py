@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from .. import models, schemas, database, auth
+from .. import models, schemas, database, auth, dependencies
 from datetime import datetime
 
 router = APIRouter(
@@ -13,7 +13,7 @@ router = APIRouter(
 def create_event(
     event: schemas.EventCreate,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(auth.get_current_active_user)
+    current_user: models.User = Depends(dependencies.get_current_active_user)
 ):
     """
     إنشاء فعالية جديدة (للمسؤولين فقط)
@@ -59,7 +59,7 @@ def get_event(
 def register_for_event(
     event_id: int,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(auth.get_current_active_user)
+    current_user: models.User = Depends(dependencies.get_current_active_user)
 ):
     """
     تسجيل المستخدم في فعالية
@@ -90,7 +90,7 @@ def register_for_event(
 def get_event_registrations(
     event_id: int,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(auth.get_current_active_user)
+    current_user: models.User = Depends(dependencies.get_current_active_user)
 ):
     """
     الحصول على قائمة المسجلين في فعالية (للمسؤولين فقط)
@@ -112,7 +112,7 @@ def verify_attendance(
     event_id: int,
     barcode_id: str,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(auth.get_current_active_user)
+    current_user: models.User = Depends(dependencies.get_current_active_user)
 ):
     """
     تحقق من حضور المستخدم عبر الباركود (للمسؤولين فقط)

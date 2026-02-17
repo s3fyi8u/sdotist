@@ -38,3 +38,23 @@ def admin_only(user=Depends(get_current_user)):
             detail="Admins only"
         )
     return user
+
+from .database import SessionLocal
+from sqlalchemy.orm import Session
+from .models import User
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+def get_current_active_user(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> User:
+    user = db.query(User).filter(User.email == current_user["email"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
