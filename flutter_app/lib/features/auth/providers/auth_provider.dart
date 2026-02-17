@@ -17,7 +17,7 @@ class AuthProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _token != null;
-  bool get isAdmin => _role == 'admin';
+  bool get isAdmin => _user?['role'] == 'admin';
   Map<String, dynamic>? get user => _user;
   int? get userId => _user?['id'];
 
@@ -50,7 +50,6 @@ class AuthProvider with ChangeNotifier {
     try {
       final response = await _apiClient.dio.get(ApiConstants.me);
       _user = response.data;
-      _role = _user?['role'];
       notifyListeners();
     } catch (e) {
       debugPrint("Error fetching user profile: $e");
@@ -150,7 +149,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout() async {
     _token = null;
-    _role = null;
+    _user = null;
     await _apiClient.storage.delete(key: 'access_token');
     notifyListeners();
   }
