@@ -10,6 +10,20 @@ class SessionExpiredScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Navigate back to Home (Guest Mode)
+            Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+          },
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: isDark ? Colors.white : Colors.black,
+        ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),

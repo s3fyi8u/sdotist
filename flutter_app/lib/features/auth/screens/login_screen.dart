@@ -82,6 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
             left: 16,
             child: BackButton(
               color: isDark ? Colors.white : Colors.black,
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pushReplacementNamed(context, '/home');
+                }
+              },
             ),
           ),
         ],
@@ -95,6 +102,16 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacementNamed(context, '/home');
+            }
+          },
+        ),
         iconTheme: IconThemeData(
           color: isDark ? Colors.white : Colors.black,
         ),
