@@ -16,6 +16,7 @@ class ApiConstants {
   static const String changePassword = "/users/me/password";
   static const String deleteAccount = "/users/me";
   static const String pendingRegistrations = "/admin/pending-registrations";
+  static const String upload = "/upload";
   static String approveRegistration(int userId) => "/admin/registrations/$userId/approve";
   static String rejectRegistration(int userId) => "/admin/registrations/$userId/reject";
 }
