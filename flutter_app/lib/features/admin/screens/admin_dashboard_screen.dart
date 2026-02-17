@@ -5,6 +5,7 @@ import 'manage_offices_screen.dart';
 import 'manage_representatives_screen.dart';
 import 'send_notification_screen.dart';
 import 'pending_registrations_screen.dart';
+import 'manage_events_screen.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/l10n/app_localizations.dart';
 
@@ -96,6 +97,16 @@ class AdminDashboardScreen extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const PendingRegistrationsScreen()),
+                  ),
+                ),
+                _buildDashboardCard(
+                  context,
+                  title: t.translate('manage_events') ?? 'Events',
+                  icon: Icons.calendar_today_outlined,
+                  color: Colors.indigo,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ManageEventsScreen()),
                   ),
                 ),
               ],

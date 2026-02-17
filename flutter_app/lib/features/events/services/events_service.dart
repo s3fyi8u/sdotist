@@ -43,6 +43,32 @@ class EventsService {
     }
   }
 
+  Future<Event> updateEvent(int id, String title, String description, DateTime date, String location, {String? imageUrl}) async {
+    try {
+      final response = await _apiClient.dio.put(
+        '${ApiConstants.events}$id',
+        data: {
+          'title': title,
+          'description': description,
+          'date': date.toIso8601String(),
+          'location': location,
+          'image_url': imageUrl,
+        },
+      );
+      return Event.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteEvent(int id) async {
+    try {
+      await _apiClient.dio.delete('${ApiConstants.events}$id');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> registerForEvent(int eventId) async {
     try {
       await _apiClient.dio.post('${ApiConstants.events}$eventId/register');

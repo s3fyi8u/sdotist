@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../auth/providers/auth_provider.dart';
 import '../models/event_model.dart';
 import '../services/events_service.dart';
 import 'event_details_screen.dart';
@@ -34,9 +32,6 @@ class _EventsListScreenState extends State<EventsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final isAdmin = authProvider.isAdmin;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translate('events') ?? 'الفعاليات'),
@@ -65,20 +60,7 @@ class _EventsListScreenState extends State<EventsListScreen> {
           );
         },
       ),
-      floatingActionButton: isAdmin
-          ? FloatingActionButton(
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateEventScreen()),
-                );
-                if (result == true) {
-                  _refreshEvents();
-                }
-              },
-              child: const Icon(Icons.add),
-            )
-          : null,
+      ),
     );
   }
 

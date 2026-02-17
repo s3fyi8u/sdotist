@@ -5,8 +5,12 @@ import '../services/events_service.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../upload/services/upload_service.dart'; 
 
+import '../models/event_model.dart';
+// ... previous imports ...
+
 class CreateEventScreen extends StatefulWidget {
-  const CreateEventScreen({super.key});
+  final Event? eventToEdit;
+  const CreateEventScreen({super.key, this.eventToEdit});
 
   @override
   State<CreateEventScreen> createState() => _CreateEventScreenState();
@@ -14,9 +18,9 @@ class CreateEventScreen extends StatefulWidget {
 
 class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _locationController = TextEditingController();
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _locationController;
   final _eventsService = EventsService();
   final _uploadService = UploadService();
   
@@ -25,58 +29,21 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String? _imageUrl;
   bool _isLoading = false;
 
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() => _isLoading = true);
-      try {
-        // Assuming you have an upload service that returns the URL
-        // If not, you might need to implement image upload in EventsService or separate service
-        // For now using the existing upload service if it exists, or assuming backend handles it?
-        // The backend Create Event endpoint expects `image_url` string.
-        // So we need to upload first.
-        
-        // Check if UploadService exists or create one.
-        // Assuming generic upload service from previous tasks.
-        final url = await _uploadService.uploadImage(image);
-        setState(() {
-          _imageUrl = url;
-        });
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image upload failed: $e')));
-      } finally {
-        setState(() => _isLoading = false);
-      }
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.eventToEdit?.title ?? '');
+    _descriptionController = TextEditingController(text: widget.eventToEdit?.description ?? '');
+    _locationController = TextEditingController(text: widget.eventToEdit?.location ?? '');
+    
+    if (widget.eventToEdit != null) {
+      _selectedDate = widget.eventToEdit!.date;
+      _selectedTime = TimeOfDay.fromDateTime(widget.eventToEdit!.date);
+      _imageUrl = widget.eventToEdit!.imageUrl;
     }
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-      _selectTime();
-    }
-  }
-
-  Future<void> _selectTime() async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (pickedTime != null) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
-  }
+  // ... _pickImage, _selectDate, _selectTime ...
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedDate != null && _selectedTime != null) {
@@ -90,33 +57,37 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           _selectedTime!.minute,
         );
 
-        await _eventsService.createEvent(
-          _titleController.text,
-          _descriptionController.text,
-          eventDateTime,
-          _locationController.text,
-          imageUrl: _imageUrl,
-        );
+        if (widget.eventToEdit == null) {
+          await _eventsService.createEvent(
+            _titleController.text,
+            _descriptionController.text,
+            eventDateTime,
+            _locationController.text,
+            imageUrl: _imageUrl,
+          );
+        } else {
+          await _eventsService.updateEvent(
+            widget.eventToEdit!.id,
+            _titleController.text,
+            _descriptionController.text,
+            eventDateTime,
+            _locationController.text,
+            imageUrl: _imageUrl,
+          );
+        }
 
         if (mounted) {
            ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context).translate('event_created') ?? 'Event created')),
+            SnackBar(content: Text(
+              widget.eventToEdit == null 
+                  ? (AppLocalizations.of(context).translate('event_created') ?? 'Event created')
+                  : (AppLocalizations.of(context).translate('event_updated') ?? 'Event updated')
+            )),
           );
           Navigator.pop(context, true);
         }
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-        }
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    } else if (_selectedDate == null || _selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select date and time')),
-      );
-    }
-  }
+// ... error handling ...
 
   @override
   Widget build(BuildContext context) {
