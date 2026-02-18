@@ -86,6 +86,31 @@ def register_for_event(
     db.refresh(new_registration)
     return new_registration
 
+@router.delete("/{event_id}/register", status_code=status.HTTP_204_NO_CONTENT)
+def unregister_from_event(
+    event_id: int,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(dependencies.get_current_active_user)
+):
+    """
+    إلغاء تسجيل المستخدم في فعالية
+    """
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="الفعالية غير موجودة")
+    
+    registration = db.query(models.EventRegistration).filter(
+        models.EventRegistration.event_id == event_id,
+        models.EventRegistration.user_id == current_user.id
+    ).first()
+    
+    if not registration:
+        raise HTTPException(status_code=404, detail="أنت لست مسجلاً في هذه الفعالية")
+    
+    db.delete(registration)
+    db.commit()
+    return None
+
 @router.get("/{event_id}/registrations", response_model=List[schemas.EventRegistrationOut])
 def get_event_registrations(
     event_id: int,

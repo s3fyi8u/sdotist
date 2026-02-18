@@ -40,33 +40,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Future<void> _register() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (!authProvider.isAuthenticated) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context).translate('login_required') ?? 'Login Required'),
-          content: Text(AppLocalizations.of(context).translate('login_to_register_event') ?? 'You must login or create an account to register for this event.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Text(AppLocalizations.of(context).translate('login') ?? 'Login'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/register');
-              },
-              child: Text(AppLocalizations.of(context).translate('create_account') ?? 'Create Account'),
-            ),
-          ],
-        ),
-      );
+      _showLoginRequiredDialog();
       return;
     }
 
@@ -85,6 +59,107 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         );
       }
     }
+  }
+
+  Future<void> _unregister() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration'),
+        content: Text(AppLocalizations.of(context).translate('confirm_cancel_registration') ?? 'Are you sure you want to cancel your registration for this event?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              AppLocalizations.of(context).translate('confirm') ?? 'Confirm',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _eventsService.unregisterFromEvent(widget.eventId);
+         if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context).translate('registration_cancelled') ?? 'Registration cancelled')),
+          );
+          _refreshEvent();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  void _showLoginRequiredDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.lock_outline, size: 48, color: Theme.of(context).primaryColor),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context).translate('login_required') ?? 'Login Required',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppLocalizations.of(context).translate('login_to_register_event') ?? 'You must login or create an account to register for this event.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('login') ?? 'Login'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -197,6 +272,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               backgroundColor: isRegistered ? Colors.grey : Theme.of(context).primaryColor,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
                               isRegistered 
@@ -206,6 +282,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             ),
                           ),
                         ),
+                        if (isRegistered) ...[
+                           const SizedBox(height: 12),
+                           SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: _unregister,
+                                child: Text(
+                                  AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ),
+                           ),
+                        ],
                       ],
                     ],
                   ),

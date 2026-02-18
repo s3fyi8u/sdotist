@@ -376,6 +376,9 @@ class AppLocalizations {
     'event_deleted': 'Event deleted successfully',
     'event_updated': 'Event updated successfully',
     'login_to_register_event': 'You must login or create an account to register for this event.',
+    'cancel_registration': 'Cancel Registration',
+    'confirm_cancel_registration': 'Are you sure you want to cancel your registration for this event?',
+    'registration_cancelled': 'Registration cancelled successfully',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -725,6 +728,9 @@ class AppLocalizations {
     'event_deleted': 'تم حذف الفعالية بنجاح',
     'event_updated': 'تم تحديث الفعالية بنجاح',
     'login_to_register_event': 'يجب عليك تسجيل الدخول أو إنشاء حساب للتسجيل في هذه الفعالية.',
+    'cancel_registration': 'إلغاء التسجيل',
+    'confirm_cancel_registration': 'هل أنت متأكد من إلغاء تسجيلك في هذه الفعالية؟',
+    'registration_cancelled': 'تم إلغاء التسجيل بنجاح',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -1074,6 +1080,9 @@ class AppLocalizations {
     'event_deleted': 'Etkinlik başarıyla silindi',
     'event_updated': 'Etkinlik başarıyla güncellendi',
     'login_to_register_event': 'Bu etkinliğe kaydolmak için giriş yapmalı veya hesap oluşturmalısınız.',
+    'cancel_registration': 'Kaydı İptal Et',
+    'confirm_cancel_registration': 'Bu etkinlik için kaydınızı iptal etmek istediğinizden emin misiniz?',
+    'registration_cancelled': 'Kayıt başarıyla iptal edildi',
   };
 }
 
