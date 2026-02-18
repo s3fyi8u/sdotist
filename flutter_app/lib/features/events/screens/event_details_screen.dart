@@ -38,16 +38,52 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   Future<void> _register() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context).translate('login_required') ?? 'Login Required'),
+          content: Text(AppLocalizations.of(context).translate('login_to_register_event') ?? 'You must login or create an account to register for this event.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/login');
+              },
+              child: Text(AppLocalizations.of(context).translate('login') ?? 'Login'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/register');
+              },
+              child: Text(AppLocalizations.of(context).translate('create_account') ?? 'Create Account'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
       await _eventsService.registerForEvent(widget.eventId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).translate('registration_successful') ?? 'Registered successfully')),
-      );
-      _refreshEvent();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).translate('registration_successful') ?? 'Registered successfully')),
+        );
+        _refreshEvent();
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')), // Improve error handling
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 

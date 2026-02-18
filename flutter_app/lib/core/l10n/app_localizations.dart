@@ -371,10 +371,12 @@ class AppLocalizations {
     'event_description': 'Event Description',
     'select_event_date': 'Select Event Date',
     'pick_image': 'Pick Image',
+    'pick_image': 'Pick Image',
     'create': 'Create',
     'delete_event_confirm': 'Are you sure you want to delete this event?',
     'event_deleted': 'Event deleted successfully',
     'event_updated': 'Event updated successfully',
+    'login_to_register_event': 'You must login or create an account to register for this event.',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -719,10 +721,12 @@ class AppLocalizations {
     'event_description': 'وصف الفعالية',
     'select_event_date': 'اختر تاريخ الفعالية',
     'pick_image': 'اختر صورة',
+    'pick_image': 'اختر صورة',
     'create': 'إنشاء',
     'delete_event_confirm': 'هل أنت متأكد من حذف هذه الفعالية؟',
     'event_deleted': 'تم حذف الفعالية بنجاح',
     'event_updated': 'تم تحديث الفعالية بنجاح',
+    'login_to_register_event': 'يجب عليك تسجيل الدخول أو إنشاء حساب للتسجيل في هذه الفعالية.',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -1067,10 +1071,12 @@ class AppLocalizations {
     'event_description': 'Etkinlik Açıklaması',
     'select_event_date': 'Etkinlik Tarihi Seç',
     'pick_image': 'Resim Seç',
+    'pick_image': 'Resim Seç',
     'create': 'Oluştur',
     'delete_event_confirm': 'Bu etkinliği silmek istediğinizden emin misiniz?',
     'event_deleted': 'Etkinlik başarıyla silindi',
     'event_updated': 'Etkinlik başarıyla güncellendi',
+    'login_to_register_event': 'Bu etkinliğe kaydolmak için giriş yapmalı veya hesap oluşturmalısınız.',
   };
 }
 

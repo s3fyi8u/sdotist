@@ -35,7 +35,7 @@ class _EventsListScreenState extends State<EventsListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translate('events') ?? 'الفعاليات'),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: FutureBuilder<List<Event>>(
         future: _eventsFuture,
