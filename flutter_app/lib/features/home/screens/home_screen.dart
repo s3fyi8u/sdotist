@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
     final isAdmin = authProvider.isAdmin;
 
+    _pages = <Widget>[
       const HomeTab(),
       const NewsScreen(),
       const EventsListScreen(),
