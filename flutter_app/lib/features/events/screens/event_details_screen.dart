@@ -74,8 +74,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -92,7 +90,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context).translate('confirm_cancel_registration') ?? 'Are you sure you want to cancel your registration for this event?',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -152,8 +150,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -170,7 +166,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context).translate('login_to_register_event') ?? 'You must login or create an account to register for this event.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),

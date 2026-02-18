@@ -48,8 +48,6 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -66,13 +64,13 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
               const SizedBox(height: 20),
               Text(
                 t.translate('confirm_approve'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
                 t.translate('approve_user_confirm'),
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                style: const TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -88,7 +86,6 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
                       ),
                       child: Text(
                         t.translate('cancel'),
-                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -148,8 +145,6 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -166,13 +161,13 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
               const SizedBox(height: 20),
               Text(
                 t.translate('confirm_reject'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
                 t.translate('reject_user_confirm'),
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                style: const TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),

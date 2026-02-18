@@ -101,8 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -398,8 +396,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                      showDialog(
                                       context: context,
                                       builder: (context) => Dialog(
-                                        backgroundColor: Colors.white,
-                                        surfaceTintColor: Colors.white,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),

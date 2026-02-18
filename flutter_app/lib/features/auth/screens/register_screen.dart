@@ -148,33 +148,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: isDark
-                ? const ColorScheme.dark(
-                    primary: Colors.white, // Header background color
-                    onPrimary: Colors.black, // Header text color
-                    surface: Color(0xFF1E1E1E), // Background color
-                    onSurface: Colors.white, // Text color
-                  )
-                : const ColorScheme.light(
-                    primary: Colors.black, // Header background color
-                    onPrimary: Colors.white, // Header text color
-                    surface: Colors.white, // Background color
-                    onSurface: Colors.black, // Text color
-                  ),
-            // ignore: deprecated_member_use
-            dialogBackgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: isDark ? Colors.white : Colors.black, // Button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       setState(() {
@@ -542,8 +515,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       barrierDismissible: false,
                       builder: (ctx) => Dialog(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(24),
                           child: Column(
@@ -560,13 +531,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               const SizedBox(height: 20),
                               Text(
                                 t.translate('registration_successful'),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 12),
                               Text(
                                 t.translate('check_email_verification'),
-                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                style: const TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 24),
@@ -578,8 +549,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     Navigator.pop(context); // Go back to login
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 14),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                     elevation: 0,

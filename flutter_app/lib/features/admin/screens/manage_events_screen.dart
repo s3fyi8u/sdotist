@@ -47,8 +47,6 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -65,7 +63,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context).translate('delete_event_confirm') ?? 'Are you sure you want to delete this event?',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
