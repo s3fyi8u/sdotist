@@ -136,7 +136,15 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           Navigator.pop(context, true);
         }
       } catch (e) {
-// ... error handling ...
+        setState(() => _isLoading = false);
+        if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
