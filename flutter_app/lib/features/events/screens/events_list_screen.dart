@@ -60,7 +60,6 @@ class _EventsListScreenState extends State<EventsListScreen> {
           );
         },
       ),
-      ),
     );
   }
 
