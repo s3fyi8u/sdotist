@@ -64,23 +64,57 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Future<void> _unregister() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration'),
-        content: Text(AppLocalizations.of(context).translate('confirm_cancel_registration') ?? 'Are you sure you want to cancel your registration for this event?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.warning_amber_rounded, size: 48, color: Colors.amber),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppLocalizations.of(context).translate('confirm_cancel_registration') ?? 'Are you sure you want to cancel your registration for this event?',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('cancel') ?? 'Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('confirm') ?? 'Confirm'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(
-              AppLocalizations.of(context).translate('confirm') ?? 'Confirm',
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
+        ),
       ),
     );
 
@@ -167,6 +201,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
     final isAdmin = authProvider.isAdmin;
     final userId = authProvider.userId;
+    // Determine button colors based on theme brightness
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final registerButtonColor = isDarkMode ? Colors.white : Theme.of(context).primaryColor;
+    final registerButtonTextColor = isDarkMode ? Colors.black : Colors.white;
 
     return Scaffold(
       appBar: AppBar(
@@ -271,14 +309,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             onPressed: isRegistered ? null : _register,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: isRegistered ? Colors.grey : Theme.of(context).primaryColor,
+                              backgroundColor: isRegistered ? Colors.grey : registerButtonColor,
+                              foregroundColor: isRegistered ? Colors.white : registerButtonTextColor,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
                               isRegistered 
                                 ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
                                 : (AppLocalizations.of(context).translate('register') ?? 'Register'),
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isRegistered ? Colors.white : registerButtonTextColor),
                             ),
                           ),
                         ),
