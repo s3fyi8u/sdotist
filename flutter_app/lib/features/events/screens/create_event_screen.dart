@@ -43,7 +43,56 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     }
   }
 
-  // ... _pickImage, _selectDate, _selectTime ...
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    
+    if (image != null) {
+      setState(() => _isLoading = true);
+      try {
+        // Upload the image
+        // Assuming UploadService has a method to upload XFile or File
+        // Based on typical implementation in this project
+        // We'll use the uploadService instance we created
+        final String url = await _uploadService.uploadImage(image);
+        
+        setState(() {
+          _imageUrl = url;
+          _isLoading = false;
+        });
+      } catch (e) {
+        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error uploading image: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _selectDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+    
+    if (pickedDate != null && mounted) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: _selectedTime ?? TimeOfDay.now(),
+      );
+      
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDate = pickedDate;
+          _selectedTime = pickedTime;
+        });
+      }
+    }
+  }
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedDate != null && _selectedTime != null) {
