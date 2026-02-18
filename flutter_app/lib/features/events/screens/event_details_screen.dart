@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -54,9 +55,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        if (e is DioException && e.response?.statusCode == 400) {
+            // Assume 400 means already registered (based on backend logic "أنت مسجل بالفعل في هذه الفعالية")
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(content: Text(AppLocalizations.of(context).translate('already_registered') ?? 'Already Registered')),
+             );
+             _refreshEvent(); // Sync UI with backend state
+        } else {
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(content: Text('Error: $e')),
+             );
+        }
       }
     }
   }
@@ -65,6 +74,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -141,6 +152,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
