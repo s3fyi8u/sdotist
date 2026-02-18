@@ -372,6 +372,9 @@ class AppLocalizations {
     'select_event_date': 'Select Event Date',
     'pick_image': 'Pick Image',
     'create': 'Create',
+    'delete_event_confirm': 'Are you sure you want to delete this event?',
+    'event_deleted': 'Event deleted successfully',
+    'event_updated': 'Event updated successfully',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -717,6 +720,9 @@ class AppLocalizations {
     'select_event_date': 'اختر تاريخ الفعالية',
     'pick_image': 'اختر صورة',
     'create': 'إنشاء',
+    'delete_event_confirm': 'هل أنت متأكد من حذف هذه الفعالية؟',
+    'event_deleted': 'تم حذف الفعالية بنجاح',
+    'event_updated': 'تم تحديث الفعالية بنجاح',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -1062,6 +1068,9 @@ class AppLocalizations {
     'select_event_date': 'Etkinlik Tarihi Seç',
     'pick_image': 'Resim Seç',
     'create': 'Oluştur',
+    'delete_event_confirm': 'Bu etkinliği silmek istediğinizden emin misiniz?',
+    'event_deleted': 'Etkinlik başarıyla silindi',
+    'event_updated': 'Etkinlik başarıyla güncellendi',
   };
 }
 
