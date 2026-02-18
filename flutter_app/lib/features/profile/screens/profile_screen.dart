@@ -101,7 +101,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -118,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               Text(
                 t.translate('confirm_delete_account'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -136,11 +137,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        side: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+                        side: const BorderSide(color: Colors.black12),
                       ),
                       child: Text(
                         t.translate('cancel'),
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -397,7 +398,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                      showDialog(
                                       context: context,
                                       builder: (context) => Dialog(
-                                        child: Image.memory(imageBytes, fit: BoxFit.contain),
+                                        backgroundColor: Colors.white,
+                                        surfaceTintColor: Colors.white,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Image.memory(imageBytes, fit: BoxFit.contain),
+                                          ),
+                                        ),
                                       ),
                                     );
                                   },
@@ -611,7 +621,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -630,7 +640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),

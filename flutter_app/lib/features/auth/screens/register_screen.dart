@@ -542,7 +542,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       barrierDismissible: false,
                       builder: (ctx) => Dialog(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(24),
                           child: Column(
@@ -559,7 +560,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               const SizedBox(height: 20),
                               Text(
                                 t.translate('registration_successful'),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 12),
@@ -577,8 +578,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     Navigator.pop(context); // Go back to login
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: isDark ? Colors.white : Colors.black,
-                                    foregroundColor: isDark ? Colors.black : Colors.white,
+                                    backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(vertical: 14),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                     elevation: 0,

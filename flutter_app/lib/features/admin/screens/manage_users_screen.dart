@@ -44,19 +44,59 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   Future<void> _deleteUser(int userId) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).translate('confirm_delete')),
-        content: Text(AppLocalizations.of(context).translate('delete_user_confirm')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context).translate('cancel')),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.warning_amber_rounded, size: 48, color: Colors.amber),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context).translate('confirm_delete'),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppLocalizations.of(context).translate('delete_user_confirm'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('cancel')),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('delete')),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(AppLocalizations.of(context).translate('delete'), style: const TextStyle(color: Colors.red)),
-          ),
-        ],
+        ),
       ),
     );
 
@@ -83,43 +123,80 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     String selectedRole = user['role'] ?? 'user';
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${AppLocalizations.of(context).translate('edit_user')}: ${user['name']}'),
-        content: StatefulBuilder(
-          builder: (context, setState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<String>(
-                  value: selectedRole,
-                  decoration: InputDecoration(labelText: AppLocalizations.of(context).translate('role')),
-                  items: [
-                    DropdownMenuItem(value: 'user', child: Text(AppLocalizations.of(context).translate('user'))),
-                    DropdownMenuItem(value: 'admin', child: Text(AppLocalizations.of(context).translate('admin'))),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => selectedRole = value);
-                    }
-                  },
-                ),
-              ],
-            );
-          },
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.edit, size: 48, color: Theme.of(context).primaryColor),
+              const SizedBox(height: 16),
+              Text(
+                '${AppLocalizations.of(context).translate('edit_user')}: ${user['name']}',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              StatefulBuilder(
+                builder: (context, setState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        value: selectedRole,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context).translate('role'),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        items: [
+                          DropdownMenuItem(value: 'user', child: Text(AppLocalizations.of(context).translate('user'))),
+                          DropdownMenuItem(value: 'admin', child: Text(AppLocalizations.of(context).translate('admin'))),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() => selectedRole = value);
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('cancel')),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        _updateUserRole(user['id'], selectedRole);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(AppLocalizations.of(context).translate('save')),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context).translate('cancel')),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              _updateUserRole(user['id'], selectedRole);
-            },
-            child: Text(AppLocalizations.of(context).translate('save')),
-          ),
-        ],
       ),
     );
   }

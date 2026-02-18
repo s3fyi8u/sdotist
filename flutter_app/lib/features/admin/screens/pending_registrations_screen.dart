@@ -48,7 +48,8 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -65,7 +66,7 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
               const SizedBox(height: 20),
               Text(
                 t.translate('confirm_approve'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -83,11 +84,11 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        side: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+                        side: const BorderSide(color: Colors.black12),
                       ),
                       child: Text(
                         t.translate('cancel'),
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
@@ -147,7 +148,8 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -164,7 +166,7 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
               const SizedBox(height: 20),
               Text(
                 t.translate('confirm_reject'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -182,11 +184,11 @@ class _PendingRegistrationsScreenState extends State<PendingRegistrationsScreen>
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        side: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+                        side: const BorderSide(color: Colors.black12),
                       ),
                       child: Text(
                         t.translate('cancel'),
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
