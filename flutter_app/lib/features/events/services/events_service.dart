@@ -77,6 +77,14 @@ class EventsService {
     }
   }
 
+  Future<void> unregisterFromEvent(int eventId) async {
+    try {
+      await _apiClient.dio.delete('${ApiConstants.events}$eventId/register');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<EventRegistration>> getEventRegistrations(int eventId) async {
     try {
       final response = await _apiClient.dio.get('${ApiConstants.events}$eventId/registrations');
