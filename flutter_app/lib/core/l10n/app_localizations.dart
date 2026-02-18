@@ -110,6 +110,8 @@ class AppLocalizations {
 
     // Home
     'welcome_home': 'Welcome Home! 🏠',
+    'welcome_subtitle': 'Stay updated with the latest events and news.',
+    'explore': 'Explore',
     'executive_offices': 'Executive Offices',
     'university_representatives': 'University Representatives',
 
@@ -453,6 +455,8 @@ class AppLocalizations {
 
     // Home
     'welcome_home': 'مرحباً بك في الصفحة الرئيسية! 🏠',
+    'welcome_subtitle': 'المكاتب التنفيذية، ممثلي الجامعات والمزيد...',
+    'explore': 'استكشف',
     'executive_offices': 'المكاتب التنفيذية',
     'university_representatives': 'ممثلي الجامعات',
 
@@ -796,6 +800,8 @@ class AppLocalizations {
 
     // Home
     'welcome_home': 'Ana Sayfaya Hoş Geldiniz! 🏠',
+    'welcome_subtitle': 'En son etkinlikler ve haberlerden haberdar olun.',
+    'explore': 'Keşfet',
     'executive_offices': 'Yürütme Ofisleri',
     'university_representatives': 'Üniversite Temsilcileri',
 

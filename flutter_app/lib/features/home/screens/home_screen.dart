@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../events/screens/events_list_screen.dart';
 import '../../admin/screens/admin_dashboard_screen.dart';
+import 'home_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isAdmin = authProvider.isAdmin;
 
     _pages = <Widget>[
+      const HomeTab(),
       const EventsListScreen(),
       const NewsScreen(),
       const ProfileScreen(),
@@ -146,75 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                child: PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.menu, 
-                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 8,
-                  offset: const Offset(0, 50),
-                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white,
-                  onSelected: (value) {
-                    if (value == 'offices') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const OfficeListScreen()),
-                      );
-                    } else if (value == 'representatives') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RepresentativeListScreen()),
-                      );
-                    }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    final iconColor = isDark ? Colors.white : Colors.black;
-                    final containerColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05);
-
-                    return [
-                      PopupMenuItem<String>(
-                        value: 'offices',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: containerColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.business_outlined, color: iconColor, size: 20),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(AppLocalizations.of(context).translate('executive_offices'), style: const TextStyle(fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<String>(
-                        value: 'representatives',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: containerColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.school_outlined, color: iconColor, size: 20),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(AppLocalizations.of(context).translate('university_representatives'), style: const TextStyle(fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                ),
-              ),
             ],
           )
         : null,
@@ -241,10 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _buildNavItem(0, Icons.home_outlined, Icons.home),
-                _buildNavItem(1, Icons.article_outlined, Icons.article),
-                _buildNavItem(2, Icons.person_outline, Icons.person),
+                _buildNavItem(1, Icons.event_outlined, Icons.event),
+                _buildNavItem(2, Icons.article_outlined, Icons.article),
+                _buildNavItem(3, Icons.person_outline, Icons.person),
                 if (Provider.of<AuthProvider>(context).isAdmin)
-                  _buildNavItem(3, Icons.admin_panel_settings_outlined, Icons.admin_panel_settings),
+                  _buildNavItem(4, Icons.admin_panel_settings_outlined, Icons.admin_panel_settings),
               ],
             ),
           ),
