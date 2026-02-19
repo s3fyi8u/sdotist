@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isAdmin = authProvider.isAdmin;
 
     _pages = <Widget>[
-      const HomeTab(),
+      HomeTab(onTabChange: _onItemTapped),
       const NewsScreen(),
       const EventsListScreen(),
       const ProfileScreen(),

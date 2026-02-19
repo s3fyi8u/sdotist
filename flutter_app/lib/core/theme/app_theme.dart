@@ -6,6 +6,7 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: Colors.black,
     scaffoldBackgroundColor: Colors.white,
+    canvasColor: Colors.white,
     useMaterial3: true,
     fontFamily: 'Roboto', // Or system default
     
@@ -87,6 +88,20 @@ class AppTheme {
       color: Colors.grey,
       thickness: 0.5,
     ),
+
+    // Dialog Theme
+    dialogTheme: const DialogThemeData(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+    ),
+
+    // Popup Menu Theme
+    popupMenuTheme: const PopupMenuThemeData(
+      color: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+    ),
   );
 
   // Dark Theme
@@ -94,6 +109,7 @@ class AppTheme {
     brightness: Brightness.dark,
     primaryColor: Colors.white,
     scaffoldBackgroundColor: const Color(0xFF121212),
+    canvasColor: Colors.black, // Pure black for dark mode
     useMaterial3: true,
     fontFamily: 'Roboto',
 
@@ -174,6 +190,20 @@ class AppTheme {
     dividerTheme: const DividerThemeData(
       color: Colors.white24,
       thickness: 0.5,
+    ),
+
+    // Dialog Theme
+    dialogTheme: const DialogThemeData(
+      backgroundColor: Colors.black, // Pure black for dark mode
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+    ),
+
+    // Popup Menu Theme
+    popupMenuTheme: const PopupMenuThemeData(
+      color: Colors.black,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
     ),
   );
 }
