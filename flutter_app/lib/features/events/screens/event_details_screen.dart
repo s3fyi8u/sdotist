@@ -252,9 +252,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               flex: 4,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
-                                child: CachedNetworkImage(
-                                  imageUrl: event.imageUrl!,
-                                  fit: BoxFit.cover,
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: CachedNetworkImage(
+                                    imageUrl: event.imageUrl!,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
@@ -279,10 +282,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       if (event.imageUrl != null)
-                        CachedNetworkImage(
-                          imageUrl: event.imageUrl!,
-                          height: 250,
-                          fit: BoxFit.cover,
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: CachedNetworkImage(
+                            imageUrl: event.imageUrl!,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),

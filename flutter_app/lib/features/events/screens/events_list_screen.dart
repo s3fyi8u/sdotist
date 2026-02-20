@@ -100,19 +100,19 @@ class _EventsListScreenState extends State<EventsListScreen> {
           if (event.imageUrl != null)
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: CachedNetworkImage(
-                imageUrl: event.imageUrl!,
-                height: 150,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  height: 150,
-                  color: Colors.grey[200],
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: 150,
-                  color: Colors.grey[300],
-                  child: Icon(Icons.event, size: 50, color: Colors.grey[500]),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: CachedNetworkImage(
+                  imageUrl: event.imageUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[300],
+                    child: Icon(Icons.event, size: 50, color: Colors.grey[500]),
+                  ),
                 ),
               ),
             ),
