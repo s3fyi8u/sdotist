@@ -225,7 +225,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               ? Center(child: Text(t.translate('no_events') ?? 'No events found'))
               : LayoutBuilder(
                   builder: (context, constraints) {
-                    if (constraints.maxWidth >= 800) {
+                    if (constraints.maxWidth >= 1100) {
                       return GridView.builder(
                         padding: const EdgeInsets.all(16),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

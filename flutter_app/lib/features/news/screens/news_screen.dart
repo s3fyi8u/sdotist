@@ -94,7 +94,7 @@ class _NewsScreenState extends State<NewsScreen> {
                   onRefresh: _fetchNews,
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      if (constraints.maxWidth >= 800) {
+                      if (constraints.maxWidth >= 1100) {
                         return GridView.builder(
                           padding: const EdgeInsets.all(16),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

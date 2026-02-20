@@ -238,7 +238,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth >= 800) {
+              if (constraints.maxWidth >= 1100) {
                 return Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1200),

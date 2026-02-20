@@ -51,7 +51,7 @@ class _EventsListScreenState extends State<EventsListScreen> {
           final events = snapshot.data!;
           return LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth >= 800) {
+              if (constraints.maxWidth >= 1100) {
                 return GridView.builder(
                   padding: const EdgeInsets.all(16),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

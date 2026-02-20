@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return ResponsiveLayout(
       mobileScaffold: _buildMobileScaffold(context),
-      tabletScaffold: _buildDesktopScaffold(context), // Tablet shares desktop layout for now
+      tabletScaffold: _buildMobileScaffold(context), // Tablet shares mobile layout now
       desktopScaffold: _buildDesktopScaffold(context),
     );
   }
