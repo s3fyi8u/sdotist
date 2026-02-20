@@ -7,6 +7,7 @@ class Event {
   final String? imageUrl;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final bool isEnded;
   final List<EventRegistration> registrations;
 
   Event({
@@ -18,6 +19,7 @@ class Event {
     this.imageUrl,
     required this.createdAt,
     this.updatedAt,
+    this.isEnded = false,
     this.registrations = const [],
   });
 
@@ -31,6 +33,7 @@ class Event {
       imageUrl: json['image_url'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      isEnded: json['is_ended'] ?? false,
       registrations: (json['registrations'] as List<dynamic>?)
               ?.map((e) => EventRegistration.fromJson(e))
               .toList() ??

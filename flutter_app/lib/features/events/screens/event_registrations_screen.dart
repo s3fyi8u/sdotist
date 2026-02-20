@@ -40,26 +40,66 @@ class _EventRegistrationsScreenState extends State<EventRegistrationsScreen> {
           }
 
           final registrations = snapshot.data!;
-          return ListView.builder(
-            itemCount: registrations.length,
-            itemBuilder: (context, index) {
-              final registration = registrations[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: registration.user.profileImage != null 
-                    ? NetworkImage(registration.user.profileImage!) 
-                    : null,
-                  child: registration.user.profileImage == null 
-                    ? const Icon(Icons.person) 
-                    : null,
+          final totalRegistered = registrations.length;
+          final totalAttended = registrations.where((r) => r.attended).length;
+
+          return Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          '$totalRegistered',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(AppLocalizations.of(context).translate('total_registered') ?? 'Total Registered'),
+                      ],
+                    ),
+                    Container(height: 40, width: 1, color: Colors.grey),
+                    Column(
+                      children: [
+                        Text(
+                          '$totalAttended',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(AppLocalizations.of(context).translate('total_attended') ?? 'Total Attended'),
+                      ],
+                    ),
+                  ],
                 ),
-                title: Text(registration.user.name),
-                subtitle: Text(registration.user.email),
-                trailing: registration.attended
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : const Icon(Icons.circle_outlined, color: Colors.grey),
-              );
-            },
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: registrations.length,
+                  itemBuilder: (context, index) {
+                    final registration = registrations[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: registration.user.profileImage != null 
+                          ? NetworkImage(registration.user.profileImage!) 
+                          : null,
+                        child: registration.user.profileImage == null 
+                          ? const Icon(Icons.person) 
+                          : null,
+                      ),
+                      title: Text(registration.user.name),
+                      subtitle: Text(registration.user.email),
+                      trailing: registration.attended
+                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          : const Icon(Icons.circle_outlined, color: Colors.grey),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

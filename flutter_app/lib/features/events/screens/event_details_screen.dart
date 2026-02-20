@@ -232,7 +232,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           }
 
           final event = snapshot.data!;
-          final isRegistered = event.registrations.any((r) => r.userId == userId);
+          final registration = event.registrations.where((r) => r.userId == userId).firstOrNull;
+          final isRegistered = registration != null;
+          final hasAttended = registration?.attended ?? false;
 
           return SingleChildScrollView(
             child: Column(
@@ -315,33 +317,55 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: isRegistered ? null : _register,
+                            onPressed: (isRegistered || event.isEnded) ? () {
+                              if (event.isEnded) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended_message') ?? 'This event has ended, we await you in future events.')),
+                                );
+                              }
+                            } : _register,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: isRegistered ? Colors.grey : registerButtonColor,
-                              foregroundColor: isRegistered ? Colors.white : registerButtonTextColor,
+                              backgroundColor: (isRegistered || event.isEnded) ? Colors.grey : registerButtonColor,
+                              foregroundColor: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             child: Text(
-                              isRegistered 
-                                ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
-                                : (AppLocalizations.of(context).translate('register') ?? 'Register'),
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isRegistered ? Colors.white : registerButtonTextColor),
+                              event.isEnded 
+                                ? (AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')
+                                : isRegistered 
+                                  ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
+                                  : (AppLocalizations.of(context).translate('register') ?? 'Register'),
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.bold, 
+                                color: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor
+                              ),
                             ),
                           ),
                         ),
                         if (isRegistered) ...[
                            const SizedBox(height: 12),
-                           SizedBox(
-                              width: double.infinity,
-                              child: TextButton(
-                                onPressed: _unregister,
+                           if (hasAttended)
+                             SizedBox(
+                                width: double.infinity,
                                 child: Text(
-                                  AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
-                                  style: const TextStyle(color: Colors.red),
+                                  AppLocalizations.of(context).translate('attended') ?? 'Attended',
+                                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                           ),
+                             )
+                           else
+                             SizedBox(
+                                width: double.infinity,
+                                child: TextButton(
+                                  onPressed: _unregister,
+                                  child: Text(
+                                    AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                             ),
                         ],
                       ],
                     ],

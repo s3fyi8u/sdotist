@@ -404,6 +404,15 @@ class AppLocalizations {
     'cancel_registration': 'Cancel Registration',
     'confirm_cancel_registration': 'Are you sure you want to cancel your registration for this event?',
     'registration_cancelled': 'Registration cancelled successfully',
+
+    // Ended Events Enhancements
+    'event_ended': 'Event Ended',
+    'event_ended_message': 'This event has ended, we await you in future events.',
+    'attended': 'Attended',
+    'total_registered': 'Total Registered',
+    'total_attended': 'Total Attended',
+    'end_event': 'End Event',
+    'cannot_cancel_attended': 'Cannot cancel registration after attending',
   };
 
   // ─── Arabic ────────────────────────────────────────────────
@@ -781,6 +790,15 @@ class AppLocalizations {
     'cancel_registration': 'إلغاء التسجيل',
     'confirm_cancel_registration': 'هل أنت متأكد من إلغاء تسجيلك في هذه الفعالية؟',
     'registration_cancelled': 'تم إلغاء التسجيل بنجاح',
+
+    // Ended Events Enhancements
+    'event_ended': 'انتهت الفعالية',
+    'event_ended_message': 'انتهت هذة الفعالية، ننتظركم في فعاليات قادمة',
+    'attended': 'تم حضور الفعالية',
+    'total_registered': 'عدد المسجلين',
+    'total_attended': 'عدد الحضور',
+    'end_event': 'إنهاء الفعالية',
+    'cannot_cancel_attended': 'لا يمكن إلغاء التسجيل بعد تأكيد الحضور',
   };
 
   // ─── Turkish ───────────────────────────────────────────────
@@ -1158,6 +1176,15 @@ class AppLocalizations {
     'cancel_registration': 'Kaydı İptal Et',
     'confirm_cancel_registration': 'Bu etkinlik için kaydınızı iptal etmek istediğinizden emin misiniz?',
     'registration_cancelled': 'Kayıt başarıyla iptal edildi',
+
+    // Ended Events Enhancements
+    'event_ended': 'Etkinlik Sona Erdi',
+    'event_ended_message': 'Bu etkinlik sona erdi, sizi gelecek etkinliklerde bekliyoruz.',
+    'attended': 'Katıldı',
+    'total_registered': 'Toplam Kayıtlı',
+    'total_attended': 'Toplam Katılan',
+    'end_event': 'Etkinliği Bitir',
+    'cannot_cancel_attended': 'Katıldıktan sonra kayıt iptal edilemez',
   };
 }
 

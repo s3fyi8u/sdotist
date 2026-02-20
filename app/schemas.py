@@ -207,6 +207,7 @@ class EventBase(BaseModel):
     date: datetime = Field(..., description="تاريخ ووقت الفعالية")
     location: str = Field(..., description="مكان الفعالية")
     image_url: str | None = Field(None, description="رابط صورة الفعالية")
+    is_ended: bool = Field(False, description="حالة الفعالية (انتهت/مستمرة)")
 
 class EventCreate(EventBase):
     pass
@@ -217,6 +218,7 @@ class EventUpdate(BaseModel):
     date: datetime | None = None
     location: str | None = None
     image_url: str | None = None
+    is_ended: bool | None = None
 
 class EventRegistrationOut(BaseModel):
     id: int

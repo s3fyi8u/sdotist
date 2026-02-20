@@ -107,4 +107,16 @@ class EventsService {
       rethrow;
     }
   }
+
+  Future<Event> endEvent(int id) async {
+    try {
+      final response = await _apiClient.dio.put(
+        '${ApiConstants.events}$id',
+        data: {'is_ended': true},
+      );
+      return Event.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

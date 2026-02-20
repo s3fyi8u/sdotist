@@ -67,6 +67,9 @@ def register_for_event(
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
         raise HTTPException(status_code=404, detail="الفعالية غير موجودة")
+        
+    if event.is_ended:
+        raise HTTPException(status_code=400, detail="انتهت هذة الفعالية، لا يمكن التسجيل")
     
     # Check if already registered
     existing_registration = db.query(models.EventRegistration).filter(
@@ -106,6 +109,9 @@ def unregister_from_event(
     
     if not registration:
         raise HTTPException(status_code=404, detail="أنت لست مسجلاً في هذه الفعالية")
+        
+    if registration.attended:
+         raise HTTPException(status_code=400, detail="لا يمكن إلغاء التسجيل بعد تأكيد الحضور")
     
     db.delete(registration)
     db.commit()

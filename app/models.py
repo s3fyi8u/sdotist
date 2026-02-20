@@ -119,6 +119,7 @@ class Event(Base):
     date = Column(DateTime(timezone=True), nullable=False)
     location = Column(String, nullable=False)
     image_url = Column(String, nullable=True)
+    is_ended = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

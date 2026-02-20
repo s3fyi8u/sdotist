@@ -119,6 +119,24 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
     }
   }
 
+  Future<void> _endEvent(int eventId) async {
+    try {
+      await _eventsService.endEvent(eventId);
+      _fetchEvents();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error ending event: $e')),
+        );
+      }
+    }
+  }
+
   void _navigateToCreateEvent({Event? event}) async {
     final result = await Navigator.push(
       context,
@@ -220,6 +238,12 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                     ),
                                   ),
                                 ),
+                                if (!event.isEnded)
+                                  IconButton(
+                                    icon: const Icon(Icons.block, color: Colors.orange),
+                                    tooltip: t.translate('end_event') ?? 'End Event',
+                                    onPressed: () => _endEvent(event.id),
+                                  ),
                               ],
                             ),
                           ),
