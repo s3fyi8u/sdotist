@@ -199,6 +199,7 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
                               ],
                             ),
                           ],
+                        ),
                       ),
                     ],
                   ),

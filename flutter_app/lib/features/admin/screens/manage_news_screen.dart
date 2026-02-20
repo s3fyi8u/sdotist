@@ -182,6 +182,7 @@ class _ManageNewsScreenState extends State<ManageNewsScreen> {
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () => _deleteNews(news['id']),
+                        ),
                       ],
                     ),
                   ),
