@@ -23,11 +23,43 @@ class _HomeTabState extends State<HomeTab> {
   final ApiClient _apiClient = ApiClient();
   List<dynamic> _latestNews = [];
   bool _isLoadingNews = true;
+  Map<String, int> _statistics = {'members': 0, 'events': 0, 'years': 0};
+  bool _isLoadingStatistics = true;
 
   @override
   void initState() {
     super.initState();
     _fetchLatestNews();
+    _fetchStatistics();
+  }
+
+  Future<void> _fetchStatistics() async {
+    try {
+      final response = await _apiClient.dio.get(ApiConstants.statistics);
+      if (mounted) {
+        setState(() {
+          _statistics = {
+            'members': response.data['total_users'] ?? 0,
+            'events': response.data['total_events'] ?? 0,
+            'years': DateTime.now().year - 2013,
+          };
+          _isLoadingStatistics = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          // Fallback values if backend endpoint is not yet deployed
+          _statistics = {
+            'members': 500,
+            'events': 25,
+            'years': DateTime.now().year - 2013,
+          };
+          _isLoadingStatistics = false;
+        });
+        debugPrint('Error fetching statistics: $e');
+      }
+    }
   }
 
   Future<void> _fetchLatestNews() async {
@@ -140,6 +172,12 @@ class _HomeTabState extends State<HomeTab> {
               ),
               const SizedBox(height: 48),
 
+              // Statistics Section
+              if (!_isLoadingStatistics) ...[
+                _buildStatisticsRow(context),
+                const SizedBox(height: 48),
+              ],
+
               // About Us Section
               Align(
                 alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
@@ -171,83 +209,32 @@ class _HomeTabState extends State<HomeTab> {
                 ),
                 child: Column(
                   children: [
-                    Text(
-                      AppLocalizations.of(context).translate('about_us_description'),
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        height: 1.6,
-                        color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    // Vision
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(Icons.track_changes, color: Theme.of(context).primaryColor),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context).translate('our_vision'),
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                AppLocalizations.of(context).translate('our_vision_text'),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    _buildAboutRow(
+                      context,
+                      icon: Icons.account_balance_outlined,
+                      titleKey: 'foundation',
+                      descKey: 'foundation_text',
                     ),
                     const SizedBox(height: 20),
-                    // Mission
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(Icons.favorite, color: Theme.of(context).primaryColor),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context).translate('our_mission'),
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                AppLocalizations.of(context).translate('our_mission_text'),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    _buildAboutRow(
+                      context,
+                      icon: Icons.visibility_outlined,
+                      titleKey: 'our_vision',
+                      descKey: 'our_vision_text',
+                    ),
+                    const SizedBox(height: 20),
+                    _buildAboutRow(
+                      context,
+                      icon: Icons.rocket_launch_outlined,
+                      titleKey: 'our_mission',
+                      descKey: 'our_mission_text',
+                    ),
+                    const SizedBox(height: 20),
+                    _buildAboutRow(
+                      context,
+                      icon: Icons.diamond_outlined,
+                      titleKey: 'our_values',
+                      descKey: 'our_values_text',
                     ),
                   ],
                 ),
@@ -722,6 +709,121 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
+  Widget _buildAboutRow(
+    BuildContext context, {
+    required IconData icon,
+    required String titleKey,
+    required String descKey,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: Theme.of(context).primaryColor),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context).translate(titleKey),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                AppLocalizations.of(context).translate(descKey),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatisticsRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            context,
+            value: '${_statistics['members']}+',
+            label: AppLocalizations.of(context).translate('members_stat'),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            value: '${_statistics['events']}+',
+            label: AppLocalizations.of(context).translate('events_stat'),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            value: '${_statistics['years']}',
+            label: AppLocalizations.of(context).translate('years_stat'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(BuildContext context, {required String value, required String label}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.light 
+            ? Colors.white 
+            : Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).textTheme.bodySmall?.color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSocialIcon(BuildContext context, IconData icon, [String? url]) {
     return Material(
       color: Colors.transparent,

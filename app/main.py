@@ -66,6 +66,9 @@ app.include_router(admin.router)
 from .routers import events
 app.include_router(events.router)
 
+from .routers import statistics
+app.include_router(statistics.router)
+
 
 
 # Health check endpoint
