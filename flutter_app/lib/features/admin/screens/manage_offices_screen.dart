@@ -7,6 +7,7 @@ import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/l10n/app_localizations.dart';
 
 class ManageOfficesScreen extends StatefulWidget {
@@ -141,7 +142,10 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : ResponsiveLayout.constrainedBox(
+              context,
+              maxWidth: 900,
+              ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _offices.length,
               itemBuilder: (context, index) {
@@ -489,7 +493,10 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
       ? const Center(child: CircularProgressIndicator())
       : _members.isEmpty
         ? Center(child: Text(AppLocalizations.of(context).translate('no_members')))
-        : ListView.builder(
+        : ResponsiveLayout.constrainedBox(
+            context,
+            maxWidth: 900,
+            ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: _members.length,
           itemBuilder: (context, index) {

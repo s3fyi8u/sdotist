@@ -9,6 +9,7 @@ import '../../executive_offices/screens/office_list_screen.dart';
 import '../../university_representatives/screens/representative_list_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/widgets/responsive_layout.dart';
 
 class HomeTab extends StatefulWidget {
   final Function(int) onTabChange;
@@ -100,8 +101,11 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     final isRtl = AppLocalizations.of(context).isRtl;
 
-    return SingleChildScrollView(
-      child: Center(
+    return ResponsiveLayout.constrainedBox(
+      context,
+      maxWidth: 900,
+      SingleChildScrollView(
+        child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -513,6 +517,7 @@ class _HomeTabState extends State<HomeTab> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

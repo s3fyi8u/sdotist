@@ -91,72 +91,108 @@ class _NewsScreenState extends State<NewsScreen> {
           : _newsList.isEmpty
               ? Center(child: Text(AppLocalizations.of(context).translate('no_news')))
               : RefreshIndicator(
-        onRefresh: _fetchNews,
-        child: ListView.builder(
-          itemCount: _newsList.length,
-          itemBuilder: (context, index) {
-            final news = _newsList[index];
-            final images = _getNewsImages(news);
-            return ContentCard(
-              padding: EdgeInsets.zero,
+                  onRefresh: _fetchNews,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth >= 800) {
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: constraints.maxWidth >= 1200 ? 3 : 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: _newsList.length,
+                          itemBuilder: (context, index) {
+                            return _buildNewsCard(context, _newsList[index]);
+                          },
+                        );
+                      } else {
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: _newsList.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _buildNewsCard(context, _newsList[index]),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+    );
+  }
+
+  Widget _buildNewsCard(BuildContext context, dynamic news) {
+    final images = _getNewsImages(news);
+    return ContentCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (images.isNotEmpty)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              child: _ImageCarousel(images: images),
+            ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (images.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      child: _ImageCarousel(images: images),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          news['title'] ?? 'No Title',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                  Text(
+                    news['title'] ?? 'No Title',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  if (news['description'] != null) ...[
+                    Text(
+                      news['description'] ?? '',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        if (news['description'] != null) ...[
-                          Text(
-                            news['description'] ?? '',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                        Text(
-                          news['body'] ?? '',
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
-                            const SizedBox(width: 4),
-                            Text(
-                              news['created_at'] != null 
-                                ? news['created_at'].toString().substring(0, 10) 
-                                : '',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 8),
+                  ],
+                  Expanded(
+                    child: Text(
+                      news['body'] ?? '',
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
+                      const SizedBox(width: 4),
+                      Text(
+                        news['created_at'] != null
+                            ? news['created_at'].toString().substring(0, 10)
+                            : '',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[500],
+                            ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

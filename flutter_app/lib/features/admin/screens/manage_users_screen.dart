@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/l10n/app_localizations.dart';
 
 class ManageUsersScreen extends StatefulWidget {
@@ -229,7 +230,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : ResponsiveLayout.constrainedBox(
+              context,
+              maxWidth: 900,
+              ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _users.length,
               itemBuilder: (context, index) {

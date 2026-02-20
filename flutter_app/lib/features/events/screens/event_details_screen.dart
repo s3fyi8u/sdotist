@@ -236,146 +236,202 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           final isRegistered = registration != null;
           final hasAttended = registration?.attended ?? false;
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (event.imageUrl != null)
-                  CachedNetworkImage(
-                    imageUrl: event.imageUrl!,
-                    height: 250,
-                    fit: BoxFit.cover,
-                  ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event.title,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildInfoRow(context, Icons.calendar_today, _formatDate(event.date)),
-                      const SizedBox(height: 8),
-                      _buildInfoRow(context, Icons.location_on, event.location),
-                      const SizedBox(height: 16),
-                      Text(
-                        AppLocalizations.of(context).translate('description') ?? 'Description',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        event.description ?? '',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 24),
-                      if (isAdmin) ...[
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EventRegistrationsScreen(eventId: event.id),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth >= 800) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (event.imageUrl != null)
+                            Expanded(
+                              flex: 4,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: CachedNetworkImage(
+                                  imageUrl: event.imageUrl!,
+                                  fit: BoxFit.cover,
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.people),
-                            label: Text(AppLocalizations.of(context).translate('view_registrations') ?? 'View Registrations'),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: () async {
-                               // Open QR Scanner
-                               final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => QRScannerScreen(eventId: event.id),
-                                  ),
-                               );
-                               if (result == true) {
-                                  _refreshEvent();
-                               }
-                            },
-                            icon: const Icon(Icons.qr_code_scanner),
-                            label: Text(AppLocalizations.of(context).translate('verify_attendance') ?? 'Verify Attendance'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green, // Distinct color
+                              ),
                             ),
-                          ),
-                        ),
-                      ] else ...[
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: (isRegistered || event.isEnded) ? () {
-                              if (event.isEnded) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended_message') ?? 'This event has ended, we await you in future events.')),
-                                );
-                              }
-                            } : _register,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: (isRegistered || event.isEnded) ? Colors.grey : registerButtonColor,
-                              foregroundColor: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: Text(
-                              event.isEnded 
-                                ? (AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')
-                                : isRegistered 
-                                  ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
-                                  : (AppLocalizations.of(context).translate('register') ?? 'Register'),
-                              style: TextStyle(
-                                fontSize: 18, 
-                                fontWeight: FontWeight.bold, 
-                                color: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor
+                          if (event.imageUrl != null) const SizedBox(width: 32),
+                          Expanded(
+                            flex: 5,
+                            child: SingleChildScrollView(
+                              child: _buildEventDetailsContent(
+                                context, event, isAdmin, isRegistered, hasAttended,
+                                registerButtonColor, registerButtonTextColor,
                               ),
                             ),
                           ),
-                        ),
-                        if (isRegistered) ...[
-                           const SizedBox(height: 12),
-                           if (hasAttended)
-                             SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  AppLocalizations.of(context).translate('attended') ?? 'Attended',
-                                  style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                ),
-                             )
-                           else
-                             SizedBox(
-                                width: double.infinity,
-                                child: TextButton(
-                                  onPressed: _unregister,
-                                  child: Text(
-                                    AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                             ),
                         ],
-                      ],
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (event.imageUrl != null)
+                        CachedNetworkImage(
+                          imageUrl: event.imageUrl!,
+                          height: 250,
+                          fit: BoxFit.cover,
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: _buildEventDetailsContent(
+                          context, event, isAdmin, isRegistered, hasAttended,
+                          registerButtonColor, registerButtonTextColor,
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
+                );
+              }
+            },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildEventDetailsContent(
+    BuildContext context, 
+    Event event, 
+    bool isAdmin, 
+    bool isRegistered, 
+    bool hasAttended, 
+    Color registerButtonColor, 
+    Color registerButtonTextColor
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          event.title,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 8),
+        _buildInfoRow(context, Icons.calendar_today, _formatDate(event.date)),
+        const SizedBox(height: 8),
+        _buildInfoRow(context, Icons.location_on, event.location),
+        const SizedBox(height: 16),
+        Text(
+          AppLocalizations.of(context).translate('description') ?? 'Description',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          event.description ?? '',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 24),
+        if (isAdmin) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventRegistrationsScreen(eventId: event.id),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.people),
+              label: Text(AppLocalizations.of(context).translate('view_registrations') ?? 'View Registrations'),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                 // Open QR Scanner
+                 final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QRScannerScreen(eventId: event.id),
+                    ),
+                 );
+                 if (result == true) {
+                    _refreshEvent();
+                 }
+              },
+              icon: const Icon(Icons.qr_code_scanner),
+              label: Text(AppLocalizations.of(context).translate('verify_attendance') ?? 'Verify Attendance'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Distinct color
+              ),
+            ),
+          ),
+        ] else ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: (isRegistered || event.isEnded) ? () {
+                if (event.isEnded) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended_message') ?? 'This event has ended, we await you in future events.')),
+                  );
+                }
+              } : _register,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: (isRegistered || event.isEnded) ? Colors.grey : registerButtonColor,
+                foregroundColor: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(
+                event.isEnded 
+                  ? (AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')
+                  : isRegistered 
+                    ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
+                    : (AppLocalizations.of(context).translate('register') ?? 'Register'),
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.bold, 
+                  color: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor
+                ),
+              ),
+            ),
+          ),
+          if (isRegistered) ...[
+             const SizedBox(height: 12),
+             if (hasAttended)
+               SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    AppLocalizations.of(context).translate('attended') ?? 'Attended',
+                    style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+               )
+             else
+               SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: _unregister,
+                    child: Text(
+                      AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+               ),
+          ],
+        ],
+      ],
     );
   }
 

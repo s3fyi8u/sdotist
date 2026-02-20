@@ -80,11 +80,27 @@ class WebNavigationBar extends StatelessWidget {
               ),
               const SizedBox(width: 30),
               _NavBarItem(
-                title: t.translate('profile'),
-                icon: Icons.person_outline,
+                title: t.translate('events') ?? 'Events',
+                icon: Icons.event_outlined,
                 isActive: selectedIndex == 2,
                 onTap: () => onItemTapped(2),
               ),
+              const SizedBox(width: 30),
+              _NavBarItem(
+                title: t.translate('profile'),
+                icon: Icons.person_outline,
+                isActive: selectedIndex == 3,
+                onTap: () => onItemTapped(3),
+              ),
+              if (authProvider.isAdmin) ...[
+                const SizedBox(width: 30),
+                _NavBarItem(
+                  title: t.translate('admin_dashboard') ?? 'Admin',
+                  icon: Icons.admin_panel_settings_outlined,
+                  isActive: selectedIndex == 4,
+                  onTap: () => onItemTapped(4),
+                ),
+              ],
             ],
           ),
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/event_model.dart';
 import '../services/events_service.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/widgets/responsive_layout.dart';
 
 class EventRegistrationsScreen extends StatefulWidget {
   final int eventId;
@@ -43,9 +44,12 @@ class _EventRegistrationsScreenState extends State<EventRegistrationsScreen> {
           final totalRegistered = registrations.length;
           final totalAttended = registrations.where((r) => r.attended).length;
 
-          return Column(
-            children: [
-              Container(
+          return ResponsiveLayout.constrainedBox(
+            context,
+            maxWidth: 900,
+            Column(
+              children: [
+                Container(
                 padding: const EdgeInsets.all(16),
                 color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 child: Row(

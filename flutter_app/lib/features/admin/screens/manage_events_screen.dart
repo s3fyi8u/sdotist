@@ -223,93 +223,150 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _eventsList.isEmpty
               ? Center(child: Text(t.translate('no_events') ?? 'No events found'))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _eventsList.length,
-                  itemBuilder: (context, index) {
-                    final event = _eventsList[index];
-                    return ContentCard(
-                      child: Column(
-                        children: [
-                          ListTile(
-                            contentPadding: const EdgeInsets.all(8),
-                            leading: event.imageUrl != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      event.imageUrl!,
-                                      width: 60,
-                                      height: 60,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          const Icon(Icons.broken_image),
-                                    ),
-                                  )
-                                : const Icon(Icons.event, size: 40),
-                            title: Text(event.title),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('${event.date.toString().substring(0, 16)} • ${event.location}'),
-                                const SizedBox(height: 4),
-                                Text(
-                                  event.description ?? '',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.blue),
-                                  tooltip: t.translate('edit') ?? 'Edit',
-                                  onPressed: () => _navigateToCreateEvent(event: event),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  tooltip: t.translate('delete') ?? 'Delete',
-                                  onPressed: () => _deleteEvent(event.id),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.people, color: Colors.green),
-                                  tooltip: t.translate('view_registrations') ?? 'Registrations',
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EventRegistrationsScreen(eventId: event.id),
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.qr_code_scanner, color: Colors.purple),
-                                  tooltip: t.translate('scan_qr') ?? 'Scan QR',
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => QRScannerScreen(eventId: event.id),
-                                    ),
-                                  ),
-                                ),
-                                if (!event.isEnded)
-                                  IconButton(
-                                    icon: const Icon(Icons.block, color: Colors.orange),
-                                    tooltip: t.translate('end_event') ?? 'End Event',
-                                    onPressed: () => _endEvent(event.id),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth >= 800) {
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth >= 1200 ? 3 : 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 1.5,
+                        ),
+                        itemCount: _eventsList.length,
+                        itemBuilder: (context, index) {
+                          return _buildEventAdminCard(context, _eventsList[index], t);
+                        },
+                      );
+                    } else {
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _eventsList.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: _buildEventAdminCard(context, _eventsList[index], t),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
+    );
+  }
+
+  Widget _buildEventAdminCard(BuildContext context, Event event, AppLocalizations t) {
+    return ContentCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  if (event.imageUrl != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        event.imageUrl!,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.broken_image),
+                      ),
+                    )
+                  else
+                    const Icon(Icons.event, size: 40),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          event.title,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${event.date.toString().substring(0, 16)} • ${event.location}',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (event.description != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            event.description ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+            child: Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  tooltip: t.translate('edit') ?? 'Edit',
+                  onPressed: () => _navigateToCreateEvent(event: event),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  tooltip: t.translate('delete') ?? 'Delete',
+                  onPressed: () => _deleteEvent(event.id),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.people, color: Colors.green),
+                  tooltip: t.translate('view_registrations') ?? 'Registrations',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventRegistrationsScreen(eventId: event.id),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.purple),
+                  tooltip: t.translate('scan_qr') ?? 'Scan QR',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QRScannerScreen(eventId: event.id),
+                    ),
+                  ),
+                ),
+                if (!event.isEnded)
+                  IconButton(
+                    icon: const Icon(Icons.block, color: Colors.orange),
+                    tooltip: t.translate('end_event') ?? 'End Event',
+                    onPressed: () => _endEvent(event.id),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -16,6 +16,7 @@ import '../../../core/widgets/error_screen.dart';
 import 'settings_screen.dart';
 import 'change_password_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/responsive_layout.dart';
 import '../../admin/screens/admin_dashboard_screen.dart';
 import '../../../core/l10n/app_localizations.dart';
 
@@ -298,146 +299,180 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _userData == null
               ? Center(child: Text(AppLocalizations.of(context).translate('failed_load_profile')))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Profile Header & Barcode
-                      ContentCard(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Left Side: Profile Pic + Info
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (_userData!['profile_image'] != null) {
-                                        _showEnlargedImage(
-                                          context, 
-                                          _userData!['profile_image'], 
-                                          "Profile Picture",
-                                          isCircular: true,
-                                        );
-                                      }
-                                    },
-                                    child: Hero(
-                                      tag: 'profile_image',
-                                      child: CircleAvatar(
-                                        radius: 40,
-                                        backgroundColor: Colors.grey[200],
-                                        backgroundImage: _userData!['profile_image'] != null
-                                            ? CachedNetworkImageProvider(
-                                                _userData!['profile_image'].toString()
-                                              )
-                                            : null,
-                                        child: _userData!['profile_image'] == null
-                                            ? const Icon(Icons.person, size: 40, color: Colors.grey)
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    _userData!['name'] ?? 'No Name',
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _userData!['university'] ?? 'No University',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _userData!['specialization'] ?? 'No Specialization',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            
-                            // Right Side: Barcode
-                            FutureBuilder<Response<List<int>>>(
-                              future: _apiClient.dio.get<List<int>>(
-                                ApiConstants.myBarcode,
-                                options: Options(responseType: ResponseType.bytes),
-                              ),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const SizedBox(height: 80, width: 80, child: Center(child: CircularProgressIndicator()));
-                                }
-                                if (snapshot.hasError || !snapshot.hasData) {
-                                  return const SizedBox(
-                                    height: 100, width: 100, 
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.qr_code_2, size: 40, color: Colors.grey),
-                                        Text("Unavailable", style: TextStyle(fontSize: 10)),
-                                      ],
-                                    )
-                                  );
-                                }
-                                
-                                final imageBytes = Uint8List.fromList(snapshot.data!.data!);
-                                
-                                return GestureDetector(
-                                  onTap: () {
-                                     showDialog(
-                                      context: context,
-                                      builder: (context) => Dialog(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(12),
-                                            child: Image.memory(imageBytes, fit: BoxFit.contain),
-                                          ),
+              : ResponsiveLayout.constrainedBox(
+                  context,
+                  maxWidth: 800,
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Profile Header & Barcode
+                        ContentCard(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Left Side: Profile Pic + Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (_userData!['profile_image'] != null) {
+                                          _showEnlargedImage(
+                                            context, 
+                                            _userData!['profile_image'], 
+                                            "Profile Picture",
+                                            isCircular: true,
+                                          );
+                                        }
+                                      },
+                                      child: Hero(
+                                        tag: 'profile_image',
+                                        child: CircleAvatar(
+                                          radius: 40,
+                                          backgroundColor: Colors.grey[200],
+                                          backgroundImage: _userData!['profile_image'] != null
+                                              ? CachedNetworkImageProvider(
+                                                  _userData!['profile_image'].toString()
+                                                )
+                                              : null,
+                                          child: _userData!['profile_image'] == null
+                                              ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                                              : null,
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: Hero(
-                                    tag: 'qr_code',
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.memory(
-                                        imageBytes,
-                                        height: 100,
-                                        width: 100,
-                                        fit: BoxFit.contain,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      _userData!['name'] ?? 'No Name',
+                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                );
-                              }
-                            ),
-                          ],
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _userData!['university'] ?? 'No University',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _userData!['specialization'] ?? 'No Specialization',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              
+                              // Right Side: Barcode
+                              FutureBuilder<Response<List<int>>>(
+                                future: _apiClient.dio.get<List<int>>(
+                                  ApiConstants.myBarcode,
+                                  options: Options(responseType: ResponseType.bytes),
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const SizedBox(height: 80, width: 80, child: Center(child: CircularProgressIndicator()));
+                                  }
+                                  if (snapshot.hasError || !snapshot.hasData) {
+                                    return const SizedBox(
+                                      height: 100, width: 100, 
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.qr_code_2, size: 40, color: Colors.grey),
+                                          Text("Unavailable", style: TextStyle(fontSize: 10)),
+                                        ],
+                                      )
+                                    );
+                                  }
+                                  
+                                  final imageBytes = Uint8List.fromList(snapshot.data!.data!);
+                                  
+                                  return GestureDetector(
+                                    onTap: () {
+                                       showDialog(
+                                        context: context,
+                                        builder: (context) => Dialog(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(12),
+                                              child: Image.memory(imageBytes, fit: BoxFit.contain),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Hero(
+                                      tag: 'qr_code',
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.memory(
+                                          imageBytes,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      
-                      const SizedBox(height: 24),
-                      
-                      // Menu Items
-                      Column(
-                        children: [
-                          if (authProvider.isAdmin) ...[
+                        
+                        const SizedBox(height: 24),
+                        
+                        // Menu Items
+                        Column(
+                          children: [
+                            if (authProvider.isAdmin) ...[
+                              ContentCard(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AdminDashboardScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Icon(
+                                        Icons.admin_panel_settings,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(AppLocalizations.of(context).translate('admin_dashboard'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    const Spacer(),
+                                    Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                            ],
                             ContentCard(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const AdminDashboardScreen(),
+                                    builder: (context) => UserInfoScreen(userData: _userData!),
                                   ),
                                 );
                               },
@@ -446,161 +481,131 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withValues(alpha: 0.1),
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white.withValues(alpha: 0.1) 
+                                          : Colors.black.withValues(alpha: 0.05),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: const Icon(
-                                      Icons.admin_panel_settings,
-                                      color: Colors.red,
+                                    child: Icon(
+                                      Icons.person_outline, 
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white 
+                                          : Colors.black
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  Text(AppLocalizations.of(context).translate('admin_dashboard'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(AppLocalizations.of(context).translate('personal_information'), style: const TextStyle(fontWeight: FontWeight.bold)),
                                   const Spacer(),
                                   Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            
+                            ContentCard(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white.withValues(alpha: 0.1) 
+                                          : Colors.black.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      Icons.settings_outlined, 
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white 
+                                          : Colors.black
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(AppLocalizations.of(context).translate('settings'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  const Spacer(),
+                                  Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
+                                ],
+                              ),
+                            ),
+                            ContentCard(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white.withValues(alpha: 0.1) 
+                                          : Colors.black.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      Icons.lock_outline, 
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.white 
+                                          : Colors.black
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(AppLocalizations.of(context).translate('change_password'), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  const Spacer(),
+                                  Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
+                                ],
+                              ),
+                            ),
                           ],
-                          ContentCard(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UserInfoScreen(userData: _userData!),
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white.withValues(alpha: 0.1) 
-                                        : Colors.black.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.person_outline, 
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white 
-                                        : Colors.black
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(AppLocalizations.of(context).translate('personal_information'), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                const Spacer(),
-                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                          
-                          ContentCard(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white.withValues(alpha: 0.1) 
-                                        : Colors.black.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.settings_outlined, 
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white 
-                                        : Colors.black
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(AppLocalizations.of(context).translate('settings'), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                const Spacer(),
-                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                          ContentCard(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white.withValues(alpha: 0.1) 
-                                        : Colors.black.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    Icons.lock_outline, 
-                                    color: Theme.of(context).brightness == Brightness.dark 
-                                        ? Colors.white 
-                                        : Colors.black
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(AppLocalizations.of(context).translate('change_password'), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                const Spacer(),
-                                Icon(AppLocalizations.of(context).forwardIcon, size: 16, color: Colors.grey),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 24),
+                        ),
+                        
+                        const SizedBox(height: 24),
 
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                      // Logout Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton.icon(
-                          onPressed: () {
-                             authProvider.logout();
-                             Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-                          },
-                          icon: const Icon(Icons.logout, color: Colors.red),
-                          label: Text(AppLocalizations.of(context).translate('logout'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.red.withValues(alpha: 0.05),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        // Logout Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton.icon(
+                            onPressed: () {
+                               authProvider.logout();
+                               Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+                            },
+                            icon: const Icon(Icons.logout, color: Colors.red),
+                            label: Text(AppLocalizations.of(context).translate('logout'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              backgroundColor: Colors.red.withValues(alpha: 0.05),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // Delete Account Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton.icon(
-                          onPressed: () => _deleteAccount(context, authProvider),
-                          icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
-                          label: Text(
-                            AppLocalizations.of(context).translate('delete_account'),
-                            style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                          ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                        // Delete Account Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextButton.icon(
+                            onPressed: () => _deleteAccount(context, authProvider),
+                            icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
+                            label: Text(
+                              AppLocalizations.of(context).translate('delete_account'),
+                              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                            ),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
     );
