@@ -104,6 +104,7 @@ class _EventRegistrationsScreenState extends State<EventRegistrationsScreen> {
                 ),
               ),
             ],
+          ),
           );
         },
       ),

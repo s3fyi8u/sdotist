@@ -199,12 +199,12 @@ class _ManageOfficesScreenState extends State<ManageOfficesScreen> {
                               ],
                             ),
                           ],
-                        ),
                       ),
                     ],
                   ),
                 );
               },
+            ),
             ),
     );
   }
@@ -528,6 +528,7 @@ class _ManageOfficeMembersScreenState extends State<ManageOfficeMembersScreen> {
                 ),
               );
           },
+      ),
       ),
     );
   }

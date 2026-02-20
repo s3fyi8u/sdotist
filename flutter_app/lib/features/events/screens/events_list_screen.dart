@@ -49,7 +49,6 @@ class _EventsListScreenState extends State<EventsListScreen> {
           }
 
           final events = snapshot.data!;
-          final events = snapshot.data!;
           return LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth >= 800) {

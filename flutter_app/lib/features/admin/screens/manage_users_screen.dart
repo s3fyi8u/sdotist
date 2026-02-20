@@ -269,12 +269,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () => _deleteUser(user['id']),
-                        ),
                       ],
                     ),
                   ),
                 );
               },
+            ),
             ),
     );
   }
