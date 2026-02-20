@@ -412,6 +412,8 @@ class AppLocalizations {
     'total_registered': 'Total Registered',
     'total_attended': 'Total Attended',
     'end_event': 'End Event',
+    'confirm_end_event': 'Confirm End Event',
+    'end_event_warning': 'Are you sure you want to end this event? Users will no longer be able to register.',
     'cannot_cancel_attended': 'Cannot cancel registration after attending',
   };
 
@@ -798,6 +800,8 @@ class AppLocalizations {
     'total_registered': 'عدد المسجلين',
     'total_attended': 'عدد الحضور',
     'end_event': 'إنهاء الفعالية',
+    'confirm_end_event': 'تأكيد إنهاء الفعالية',
+    'end_event_warning': 'هل أنت متأكد من إنهاء هذه الفعالية؟ لن يتمكن المستخدمون من التسجيل بعد الآن.',
     'cannot_cancel_attended': 'لا يمكن إلغاء التسجيل بعد تأكيد الحضور',
   };
 
@@ -1184,6 +1188,8 @@ class AppLocalizations {
     'total_registered': 'Toplam Kayıtlı',
     'total_attended': 'Toplam Katılan',
     'end_event': 'Etkinliği Bitir',
+    'confirm_end_event': 'Etkinliği Bitirmeyi Onayla',
+    'end_event_warning': 'Bu etkinliği bitirmek istediğinizden emin misiniz? Kullanıcılar artık kayıt olamayacak.',
     'cannot_cancel_attended': 'Katıldıktan sonra kayıt iptal edilemez',
   };
 }
