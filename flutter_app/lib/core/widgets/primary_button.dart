@@ -73,54 +73,57 @@ class _PrimaryButtonState extends State<PrimaryButton> with SingleTickerProvider
       },
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            color: widget.backgroundColor ?? bgColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: baseColor,
-              width: _isPressed ? 2.0 : 1.0, // Thicker border on press
-            ),
-            boxShadow: _isPressed
-                ? []
-                : [
-                    BoxShadow(
-                      color: baseColor.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-          ),
-          child: Center(
-            child: widget.isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(baseColor),
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.icon != null) ...[
-                        Icon(widget.icon, color: widget.textColor ?? baseColor),
-                        const SizedBox(width: 8),
-                      ],
-                      Text(
-                        widget.text,
-                        style: TextStyle(
-                          color: widget.textColor ?? baseColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Container(
+            width: double.infinity,
+            height: 56,
+            decoration: BoxDecoration(
+              color: widget.backgroundColor ?? bgColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: baseColor,
+                width: _isPressed ? 2.0 : 1.0, // Thicker border on press
+              ),
+              boxShadow: _isPressed
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: baseColor.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
-                  ),
+            ),
+            child: Center(
+              child: widget.isLoading
+                  ? SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(baseColor),
+                      ),
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.icon != null) ...[
+                          Icon(widget.icon, color: widget.textColor ?? baseColor),
+                          const SizedBox(width: 8),
+                        ],
+                        Text(
+                          widget.text,
+                          style: TextStyle(
+                            color: widget.textColor ?? baseColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),

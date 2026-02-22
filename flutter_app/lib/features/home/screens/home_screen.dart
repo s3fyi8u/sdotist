@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
-import '../../auth/screens/session_expired_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../../news/screens/news_screen.dart';
 import '../../executive_offices/screens/office_list_screen.dart';
@@ -41,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
                debugPrint("Session expired (Home check). Redirecting...");
                authProvider.logout(); // Clear token to prevent loop
                // Explicitly redirect using local context to bypass potentially detached GlobalKey
+               if (!mounted) return;
                Navigator.of(context).pushNamedAndRemoveUntil('/session_expired', (route) => false);
            } else {
               debugPrint("Session check completed with error: $e");

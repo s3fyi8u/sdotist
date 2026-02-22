@@ -6,6 +6,8 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/animated_hover_card.dart';
+import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
 import '../../../core/l10n/app_localizations.dart';
@@ -84,7 +86,25 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
                           future: _representativesFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
+                              return GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 400,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                  childAspectRatio: 3, 
+                                ),
+                                itemCount: 6,
+                                itemBuilder: (context, index) {
+                                  return ShimmerLoading(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
                             } else if (snapshot.hasError) {
                               return ErrorScreen(
                                 error: _error ?? ErrorMapper.map(snapshot.error),
@@ -134,7 +154,22 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
         future: _representativesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.separated(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: 4,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                return ShimmerLoading(
+                  child: Container(
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                );
+              },
+            );
           } else if (snapshot.hasError) {
              return ErrorScreen(
                error: _error ?? ErrorMapper.map(snapshot.error),
@@ -162,7 +197,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
   }
 
   Widget _buildRepCard(BuildContext context, UniversityRepresentative rep) {
-    return ContentCard(
+    return AnimatedHoverCard(
       child: Row(
         children: [
           CircleAvatar(

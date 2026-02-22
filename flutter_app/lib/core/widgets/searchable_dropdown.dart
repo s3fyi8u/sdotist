@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SearchableDropdown extends StatefulWidget {
   final String? value;
@@ -91,6 +92,9 @@ class _SearchableDropdownState extends State<SearchableDropdown> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: TextField(
                         controller: _searchController,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                        ],
                         decoration: InputDecoration(
                           hintText: 'Search...',
                           prefixIcon: const Icon(Icons.search),

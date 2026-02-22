@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
-import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/animated_hover_card.dart';
+import '../../../core/widgets/shimmer_loading.dart';
+import '../../../core/widgets/empty_state_widget.dart';
+import '../../../core/errors/app_error.dart';
 import '../../../core/l10n/app_localizations.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -87,14 +90,37 @@ class _NewsScreenState extends State<NewsScreen> {
         centerTitle: false,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ShimmerLoading(
+                    child: Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )
           : _newsList.isEmpty
-              ? Center(child: Text(AppLocalizations.of(context).translate('no_news')))
+              ? EmptyStateWidget(
+                  icon: Icons.article_outlined,
+                  title: AppLocalizations.of(context).translate('no_news'),
+                  subtitle: 'No articles have been published yet. Please check back later.',
+                  onAction: _fetchNews,
+                  actionLabel: AppLocalizations.of(context).translate('try_again'),
+                )
               : RefreshIndicator(
                   onRefresh: _fetchNews,
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      if (constraints.maxWidth >= 1100) {
+                      if (constraints.maxWidth >= 650) {
                         return GridView.builder(
                           padding: const EdgeInsets.all(16),
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -105,7 +131,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           ),
                           itemCount: _newsList.length,
                           itemBuilder: (context, index) {
-                            return _buildNewsCard(context, _newsList[index]);
+                            return _buildNewsCard(context, _newsList[index], isGrid: true);
                           },
                         );
                       } else {
@@ -115,7 +141,7 @@ class _NewsScreenState extends State<NewsScreen> {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
-                              child: _buildNewsCard(context, _newsList[index]),
+                              child: _buildNewsCard(context, _newsList[index], isGrid: false),
                             );
                           },
                         );
@@ -126,74 +152,100 @@ class _NewsScreenState extends State<NewsScreen> {
     );
   }
 
-  Widget _buildNewsCard(BuildContext context, dynamic news) {
+  Widget _buildNewsCard(BuildContext context, dynamic news, {bool isGrid = false}) {
     final images = _getNewsImages(news);
-    return ContentCard(
-      padding: EdgeInsets.zero,
+    Widget contentPlaceholder = Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (images.isNotEmpty)
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: _ImageCarousel(images: images),
+          Text(
+            news['title'] ?? 'No Title',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          if (news['description'] != null) ...[
+            Text(
+              news['description'] ?? '',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    news['title'] ?? 'No Title',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  if (news['description'] != null) ...[
-                    Text(
-                      news['description'] ?? '',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  Expanded(
-                    child: Text(
-                      news['body'] ?? '',
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
-                      const SizedBox(width: 4),
-                      Text(
-                        news['created_at'] != null
-                            ? news['created_at'].toString().substring(0, 10)
-                            : '',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[500],
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
+            const SizedBox(height: 8),
+          ],
+          if (isGrid)
+            Expanded(
+              child: Text(
+                news['body'] ?? '',
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
+            )
+          else
+            Text(
+              news['body'] ?? '',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
+              const SizedBox(width: 4),
+              Text(
+                news['created_at'] != null
+                    ? news['created_at'].toString().substring(0, 10)
+                    : '',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[500],
+                    ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+
+    return AnimatedHoverCard(
+      padding: EdgeInsets.zero,
+      child: isGrid
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (images.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: _ImageCarousel(
+                      images: images,
+                      heroTag: 'news_image_${news['id']}',
+                    ),
+                  ),
+                Expanded(child: contentPlaceholder),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (images.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: _ImageCarousel(
+                      images: images,
+                      heroTag: 'news_image_${news['id']}',
+                    ),
+                  ),
+                contentPlaceholder,
+              ],
+            ),
     );
   }
 }
@@ -201,7 +253,12 @@ class _NewsScreenState extends State<NewsScreen> {
 /// Instagram-style image carousel with dot indicators
 class _ImageCarousel extends StatefulWidget {
   final List<String> images;
-  const _ImageCarousel({required this.images});
+  final String? heroTag;
+  
+  const _ImageCarousel({
+    required this.images,
+    this.heroTag,
+  });
 
   @override
   State<_ImageCarousel> createState() => _ImageCarouselState();
@@ -214,17 +271,26 @@ class _ImageCarouselState extends State<_ImageCarousel> {
   Widget build(BuildContext context) {
     // Single image - no carousel needed
     if (widget.images.length == 1) {
+      Widget imageWidget = CachedNetworkImage(
+        imageUrl: widget.images[0],
+        fit: BoxFit.cover,
+        placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[200],
+          child: const Icon(Icons.error, size: 40),
+        ),
+      );
+
+      if (widget.heroTag != null) {
+        imageWidget = Hero(
+          tag: widget.heroTag!,
+          child: imageWidget,
+        );
+      }
+
       return AspectRatio(
         aspectRatio: 16 / 9,
-        child: CachedNetworkImage(
-          imageUrl: widget.images[0],
-          fit: BoxFit.cover,
-          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => Container(
-            color: Colors.grey[200],
-            child: const Icon(Icons.error, size: 40),
-          ),
-        ),
+        child: imageWidget,
       );
     }
 

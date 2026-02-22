@@ -11,6 +11,8 @@ import '../../../core/widgets/searchable_dropdown.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import '../../../core/widgets/shake_widget.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -44,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final List<String> _academicYears = ['1', '2', '3', '4', '5'];
   String? _selectedAcademicYear;
+  final _shakeTrigger = ValueNotifier<bool>(false);
 
   final List<String> _universities = [
     'Istanbul University',
@@ -243,8 +246,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: ShakeWidget(
+        shakeTrigger: _shakeTrigger,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Profile Image Picker
@@ -297,6 +302,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             controller: _nameController,
             label: t.translate('full_name'),
             prefixIcon: Icons.person_outline,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) return t.translate('name_required');
               final words = value.trim().split(RegExp(r'\s+'));
@@ -312,6 +320,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             label: t.translate('email_address'),
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+            ],
             validator: (value) {
               if (_emailError != null) return _emailError;
               if (value == null || value.isEmpty) return t.translate('email_required');
@@ -328,6 +339,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             label: t.translate('password'),
             prefixIcon: Icons.lock_outline,
             obscureText: true,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+            ],
             validator: (value) => value!.isEmpty ? t.translate('enter_password_validation') : null,
           ),
           const SizedBox(height: 16),
@@ -336,6 +350,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             label: t.translate('confirm_password'),
             prefixIcon: Icons.lock_outline,
             obscureText: true,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return t.translate('confirm_your_password');
@@ -410,6 +427,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             controller: _specializationController,
             label: t.translate('specialization'),
             prefixIcon: Icons.book_outlined,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+            ],
           ),
           const SizedBox(height: 32),
 
@@ -471,6 +491,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
+
           // Document validation error
           Builder(
             builder: (context) {
@@ -487,6 +508,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onPressed: () async {
               // Validate document separately
               if (_documentFile == null) {
+                _shakeTrigger.value = true;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(t.translate('document_required'))),
                 );
@@ -541,19 +563,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 24),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pop(ctx); // Close dialog
-                                    Navigator.pop(context); // Go back to login
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    elevation: 0,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 400),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(ctx); // Close dialog
+                                      Navigator.pop(context); // Go back to login
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                      elevation: 0,
+                                    ),
+                                    child: Text(t.translate('confirm')),
                                   ),
-                                  child: Text(t.translate('confirm')),
                                 ),
                               ),
                             ],
@@ -574,17 +599,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
 
                   if (context.mounted) {
+                    _shakeTrigger.value = true;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(errorMessage)),
                     );
                   }
                 } catch (e) {
                   if (context.mounted) {
+                    _shakeTrigger.value = true;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('An error occurred: $e')),
                     );
                   }
                 }
+              } else {
+                _shakeTrigger.value = true;
               }
             },
           ),
@@ -609,10 +638,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
+        ], // End column children
+        ), // End column
+      ), // End ShakeWidget
+    ); // End Form
+  } // End buildRegisterForm
 }
 
 

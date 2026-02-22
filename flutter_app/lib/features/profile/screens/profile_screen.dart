@@ -244,31 +244,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                         Navigator.pushNamed(context, '/login')
-                             .then((_) => _refreshProfile());
-                      },
-                      child: Text(AppLocalizations.of(context).translate('login')),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                           Navigator.pushNamed(context, '/login')
+                               .then((_) => _refreshProfile());
+                        },
+                        child: Text(AppLocalizations.of(context).translate('login')),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                        side: BorderSide(
-                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                          side: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                          ),
                         ),
+                        onPressed: () {
+                            Navigator.pushNamed(context, '/register')
+                                .then((_) => _refreshProfile());
+                        },
+                        child: Text(AppLocalizations.of(context).translate('create_account')),
                       ),
-                      onPressed: () {
-                          Navigator.pushNamed(context, '/register')
-                              .then((_) => _refreshProfile());
-                      },
-                      child: Text(AppLocalizations.of(context).translate('create_account')),
                     ),
                   ),
                 ],
@@ -571,36 +577,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 24),
 
                         // Logout Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton.icon(
-                            onPressed: () {
-                               authProvider.logout();
-                               Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-                            },
-                            icon: const Icon(Icons.logout, color: Colors.red),
-                            label: Text(AppLocalizations.of(context).translate('logout'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: Colors.red.withValues(alpha: 0.05),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                 authProvider.logout();
+                                 Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+                              },
+                              icon: const Icon(Icons.logout, color: Colors.red),
+                              label: Text(AppLocalizations.of(context).translate('logout'), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: Colors.red.withValues(alpha: 0.05),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 12),
 
                         // Delete Account Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton.icon(
-                            onPressed: () => _deleteAccount(context, authProvider),
-                            icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
-                            label: Text(
-                              AppLocalizations.of(context).translate('delete_account'),
-                              style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                            ),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: TextButton.icon(
+                              onPressed: () => _deleteAccount(context, authProvider),
+                              icon: Icon(Icons.delete_forever, color: Colors.grey[600]),
+                              label: Text(
+                                AppLocalizations.of(context).translate('delete_account'),
+                                style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
                             ),
                           ),
                         ),

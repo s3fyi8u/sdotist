@@ -254,9 +254,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 borderRadius: BorderRadius.circular(16),
                                 child: AspectRatio(
                                   aspectRatio: 16 / 9,
-                                  child: CachedNetworkImage(
-                                    imageUrl: event.imageUrl!,
-                                    fit: BoxFit.cover,
+                                  child: Hero(
+                                    tag: 'event_image_${event.id}',
+                                    child: CachedNetworkImage(
+                                      imageUrl: event.imageUrl!,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -284,9 +287,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       if (event.imageUrl != null)
                         AspectRatio(
                           aspectRatio: 16 / 9,
-                          child: CachedNetworkImage(
-                            imageUrl: event.imageUrl!,
-                            fit: BoxFit.cover,
+                          child: Hero(
+                            tag: 'event_image_${event.id}',
+                            child: CachedNetworkImage(
+                              imageUrl: event.imageUrl!,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       Padding(
@@ -343,71 +349,80 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
         const SizedBox(height: 24),
         if (isAdmin) ...[
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventRegistrationsScreen(eventId: event.id),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.people),
-              label: Text(AppLocalizations.of(context).translate('view_registrations') ?? 'View Registrations'),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventRegistrationsScreen(eventId: event.id),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.people),
+                label: Text(AppLocalizations.of(context).translate('view_registrations') ?? 'View Registrations'),
+              ),
             ),
           ),
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                 // Open QR Scanner
-                 final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QRScannerScreen(eventId: event.id),
-                    ),
-                 );
-                 if (result == true) {
-                    _refreshEvent();
-                 }
-              },
-              icon: const Icon(Icons.qr_code_scanner),
-              label: Text(AppLocalizations.of(context).translate('verify_attendance') ?? 'Verify Attendance'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // Distinct color
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                   // Open QR Scanner
+                   final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QRScannerScreen(eventId: event.id),
+                      ),
+                   );
+                   if (result == true) {
+                      _refreshEvent();
+                   }
+                },
+                icon: const Icon(Icons.qr_code_scanner),
+                label: Text(AppLocalizations.of(context).translate('verify_attendance') ?? 'Verify Attendance'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, // Distinct color
+                ),
               ),
             ),
           ),
         ] else ...[
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: (isRegistered || event.isEnded) ? () {
-                if (event.isEnded) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended_message') ?? 'This event has ended, we await you in future events.')),
-                  );
-                }
-              } : _register,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: (isRegistered || event.isEnded) ? Colors.grey : registerButtonColor,
-                foregroundColor: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Text(
-                event.isEnded 
-                  ? (AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')
-                  : isRegistered 
-                    ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
-                    : (AppLocalizations.of(context).translate('register') ?? 'Register'),
-                style: TextStyle(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.bold, 
-                  color: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: (isRegistered || event.isEnded) ? () {
+                  if (event.isEnded) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(AppLocalizations.of(context).translate('event_ended_message') ?? 'This event has ended, we await you in future events.')),
+                    );
+                  }
+                } : _register,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: (isRegistered || event.isEnded) ? Colors.grey : registerButtonColor,
+                  foregroundColor: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  event.isEnded 
+                    ? (AppLocalizations.of(context).translate('event_ended') ?? 'Event Ended')
+                    : isRegistered 
+                      ? (AppLocalizations.of(context).translate('already_registered') ?? 'Registered')
+                      : (AppLocalizations.of(context).translate('register') ?? 'Register'),
+                  style: TextStyle(
+                    fontSize: 18, 
+                    fontWeight: FontWeight.bold, 
+                    color: (isRegistered || event.isEnded) ? Colors.white : registerButtonTextColor
+                  ),
                 ),
               ),
             ),
@@ -424,15 +439,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   ),
                )
              else
-               SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: _unregister,
-                    child: Text(
-                      AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
-                      style: const TextStyle(color: Colors.red),
+               ConstrainedBox(
+                 constraints: const BoxConstraints(maxWidth: 400),
+                 child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: _unregister,
+                      child: Text(
+                        AppLocalizations.of(context).translate('cancel_registration') ?? 'Cancel Registration',
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     ),
-                  ),
+                 ),
                ),
           ],
         ],

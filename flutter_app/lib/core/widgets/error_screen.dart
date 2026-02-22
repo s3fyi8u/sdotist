@@ -62,15 +62,17 @@ class _ErrorScreenState extends State<ErrorScreen> {
         ),
       );
     }
+    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: widget.onGoBack != null
             ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
                 onPressed: widget.onGoBack,
               )
             : null,
@@ -85,10 +87,10 @@ class _ErrorScreenState extends State<ErrorScreen> {
             Text(
               widget.error.title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 16),
@@ -97,7 +99,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[700],
+                color: isDark ? Colors.white70 : Colors.grey[700],
                 height: 1.5,
               ),
             ),
@@ -171,18 +173,21 @@ class _ErrorScreenState extends State<ErrorScreen> {
 
   Widget _buildActionButton(BuildContext context) {
     if (widget.error.retryable && widget.onRetry != null) {
-      return SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: ElevatedButton.icon(
-          onPressed: widget.onRetry,
-          icon: const Icon(Icons.refresh),
-          label: Text(AppLocalizations.of(context).translate('try_again')),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black87,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      return ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton.icon(
+            onPressed: widget.onRetry,
+            icon: const Icon(Icons.refresh),
+            label: Text(AppLocalizations.of(context).translate('try_again')),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+              foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),

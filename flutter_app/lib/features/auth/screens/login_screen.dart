@@ -6,6 +6,8 @@ import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
+import '../../../core/widgets/shake_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +20,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _shakeTrigger = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _shakeTrigger.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,22 +179,35 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 48),
 
           // Inputs
-          CustomTextField(
-            controller: _emailController,
-            label: t.translate('email'),
-            hint: t.translate('enter_email'),
-            prefixIcon: Icons.email_outlined,
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) => value!.isEmpty ? t.translate('enter_email_validation') : null,
-          ),
-          const SizedBox(height: 16),
-          CustomTextField(
-            controller: _passwordController,
-            label: t.translate('password'),
-            hint: t.translate('enter_password'),
-            prefixIcon: Icons.lock_outline,
-            obscureText: true,
-            validator: (value) => value!.isEmpty ? t.translate('enter_password_validation') : null,
+          ShakeWidget(
+            shakeTrigger: _shakeTrigger,
+            child: Column(
+              children: [
+                CustomTextField(
+                  controller: _emailController,
+                  label: t.translate('email'),
+                  hint: t.translate('enter_email'),
+                  prefixIcon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                  ],
+                  validator: (value) => value!.isEmpty ? t.translate('enter_email_validation') : null,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  controller: _passwordController,
+                  label: t.translate('password'),
+                  hint: t.translate('enter_password'),
+                  prefixIcon: Icons.lock_outline,
+                  obscureText: true,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                  ],
+                  validator: (value) => value!.isEmpty ? t.translate('enter_password_validation') : null,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 24),
 
@@ -207,26 +231,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   }
                 } catch (e) {
-                   if (context.mounted) {
-                     final error = ErrorMapper.map(e);
-                     ScaffoldMessenger.of(context).showSnackBar(
-                       SnackBar(
-                         content: Row(
-                           children: [
-                             const Icon(Icons.error_outline, color: Colors.white),
-                             const SizedBox(width: 8),
-                             Expanded(child: Text(error.message)),
-                           ],
+                     if (context.mounted) {
+                       _shakeTrigger.value = true;
+                       final error = ErrorMapper.map(e);
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(
+                           content: Row(
+                             children: [
+                               const Icon(Icons.error_outline, color: Colors.white),
+                               const SizedBox(width: 8),
+                               Expanded(child: Text(error.message)),
+                             ],
+                           ),
+                           backgroundColor: Colors.red,
+                           behavior: SnackBarBehavior.floating,
+                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                          ),
-                         backgroundColor: Colors.red,
-                         behavior: SnackBarBehavior.floating,
-                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                       ),
-                     );
-                   }
+                       );
+                     }
+                  }
+                } else {
+                  _shakeTrigger.value = true;
                 }
-              }
-            },
+              },
           ),
           const SizedBox(height: 24),
 

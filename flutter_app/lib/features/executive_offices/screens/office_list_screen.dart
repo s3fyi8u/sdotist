@@ -7,6 +7,8 @@ import '../../../core/errors/app_error.dart';
 import '../../../core/errors/error_mapper.dart';
 import '../../../core/widgets/error_screen.dart';
 import '../../../core/widgets/content_card.dart';
+import '../../../core/widgets/animated_hover_card.dart';
+import '../../../core/widgets/shimmer_loading.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
 import '../../../core/l10n/app_localizations.dart';
@@ -90,7 +92,25 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
                           future: _officesFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
+                              return GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 400,
+                                  crossAxisSpacing: 24,
+                                  mainAxisSpacing: 24,
+                                  childAspectRatio: 0.85, 
+                                ),
+                                itemCount: 6,
+                                itemBuilder: (context, index) {
+                                  return ShimmerLoading(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
                             } else if (snapshot.hasError) {
                               return ErrorScreen(
                                 error: _error ?? ErrorMapper.map(snapshot.error),
@@ -142,7 +162,22 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
         future: _officesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: 4,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                return ShimmerLoading(
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                );
+              },
+            );
           } else if (snapshot.hasError) {
              return ErrorScreen(
                error: _error ?? ErrorMapper.map(snapshot.error),
@@ -172,7 +207,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
   }
 
   Widget _buildOfficeCard(BuildContext context, ExecutiveOffice office) {
-    return ContentCard(
+    return AnimatedHoverCard(
       padding: EdgeInsets.zero,
       onTap: () {
         Navigator.push(

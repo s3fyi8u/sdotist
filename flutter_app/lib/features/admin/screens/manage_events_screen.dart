@@ -262,11 +262,10 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
                   if (event.imageUrl != null)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
@@ -319,7 +318,6 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                 ],
               ),
             ),
-          ),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),

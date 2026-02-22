@@ -4,6 +4,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -78,6 +79,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 hint: t.translate('enter_current_password'),
                 prefixIcon: Icons.lock_outline,
                 obscureText: true,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                ],
                 validator: (value) => value!.isEmpty ? t.translate('required') : null,
               ),
               const SizedBox(height: 16),
@@ -87,6 +91,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 hint: t.translate('enter_new_password'),
                 prefixIcon: Icons.lock_reset,
                 obscureText: true,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                ],
                 validator: (value) =>
                     value!.length < 8 ? t.translate('password_min_8') : null,
               ),
@@ -97,6 +104,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 hint: t.translate('reenter_new_password'),
                 prefixIcon: Icons.lock_reset,
                 obscureText: true,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\x00-\x7F]')),
+                ],
                 validator: (value) => value!.isEmpty ? t.translate('required') : null,
               ),
               const SizedBox(height: 32),
