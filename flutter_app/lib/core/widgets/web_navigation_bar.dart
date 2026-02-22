@@ -36,12 +36,14 @@ class WebNavigationBar extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Logo Section
-          Row(
-            children: [
-              Image.asset(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            // Logo Section
+            Row(
+              children: [
+                Image.asset(
                 'assets/images/logo.png',
                 height: 40,
                 color: isDark ? Colors.white : Colors.black,
@@ -181,7 +183,8 @@ class WebNavigationBar extends StatelessWidget {
             ],
           ),
         ],
-      ),
+      ), // closes Row
+      ), // closes SingleChildScrollView
     );
   }
 

@@ -48,7 +48,7 @@ class _OfficeListScreenState extends State<OfficeListScreen> {
   Widget build(BuildContext context) {
     return ResponsiveLayout(
       mobileScaffold: _buildMobileScaffold(context),
-      tabletScaffold: _buildDesktopScaffold(context),
+      tabletScaffold: _buildMobileScaffold(context), // <--- tablet uses mobile layout now
       desktopScaffold: _buildDesktopScaffold(context),
     );
   }

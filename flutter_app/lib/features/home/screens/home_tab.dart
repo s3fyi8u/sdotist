@@ -6,10 +6,12 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../auth/screens/register_screen.dart';
 import '../../executive_offices/screens/office_list_screen.dart';
 import '../../university_representatives/screens/representative_list_screen.dart';
+import '../../events/screens/event_details_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/animated_hover_card.dart';
+import '../../events/models/event_model.dart';
 
 class HomeTab extends StatefulWidget {
   final Function(int) onTabChange;
@@ -26,12 +28,39 @@ class _HomeTabState extends State<HomeTab> {
   bool _isLoadingNews = true;
   Map<String, int> _statistics = {'members': 0, 'events': 0, 'years': 0};
   bool _isLoadingStatistics = true;
+  List<Event> _upcomingEvents = [];
+  bool _isLoadingEvents = true;
 
   @override
   void initState() {
     super.initState();
     _fetchLatestNews();
     _fetchStatistics();
+    _fetchUpcomingEvents();
+  }
+
+  Future<void> _fetchUpcomingEvents() async {
+    try {
+      final response = await _apiClient.dio.get(ApiConstants.events);
+      if (mounted) {
+        setState(() {
+          final List<dynamic> allEvents = response.data;
+          _upcomingEvents = allEvents
+              .map((json) => Event.fromJson(json))
+              .where((event) => !event.isEnded)
+              .take(2)
+              .toList();
+          _isLoadingEvents = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingEvents = false;
+        });
+        debugPrint('Error fetching upcoming events: $e');
+      }
+    }
   }
 
   Future<void> _fetchStatistics() async {
@@ -280,6 +309,10 @@ class _HomeTabState extends State<HomeTab> {
                   ],
                 ),
               ),
+              const SizedBox(height: 48),
+
+              // Upcoming Events Section
+              _buildUpcomingEventsSection(context, isRtl),
               const SizedBox(height: 48),
 
               // Services Section
@@ -811,6 +844,196 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ),
       ),
+    );
+  }
+
+  String _getMonthName(BuildContext context, int month) {
+    bool isAr = AppLocalizations.of(context).locale.languageCode == 'ar';
+    bool isTr = AppLocalizations.of(context).locale.languageCode == 'tr';
+
+    if (month < 1 || month > 12) return '';
+
+    if (isAr) {
+      const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+      return months[month - 1];
+    } else if (isTr) {
+      const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+      return months[month - 1];
+    } else {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months[month - 1];
+    }
+  }
+
+  String _formatTimeLocalized(BuildContext context, DateTime date) {
+    bool isAr = AppLocalizations.of(context).locale.languageCode == 'ar';
+    bool isTr = AppLocalizations.of(context).locale.languageCode == 'tr';
+
+    int hour = date.hour;
+    int minute = date.minute;
+    String periodInfo;
+
+    if (isAr) {
+      periodInfo = hour >= 12 ? 'مساءً' : 'صباحاً';
+    } else if (isTr) {
+      // 24-hour style or AM/PM equivalent
+      periodInfo = hour >= 12 ? 'ÖS' : 'ÖÖ';
+    } else {
+      periodInfo = hour >= 12 ? 'PM' : 'AM';
+    }
+
+    if (!isTr) {
+      if (hour > 12) hour -= 12;
+      if (hour == 0) hour = 12;
+      return '$hour:${minute.toString().padLeft(2, '0')} $periodInfo';
+    } else {
+      // TR generally prefers 24 hour "14:30"
+      return '${date.hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    }
+  }
+
+  Widget _buildUpcomingEventsSection(BuildContext context, bool isRtl) {
+    if (_isLoadingEvents) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    if (_upcomingEvents.isEmpty) {
+      return const SizedBox.shrink(); // Don't show if empty
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppLocalizations.of(context).translate('upcoming_events') ?? 'الفعاليات القادمة',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextButton(
+              onPressed: () => widget.onTabChange(2), // Navigate to Events
+              child: Text(AppLocalizations.of(context).translate('see_all') ?? 'عرض الكل'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ..._upcomingEvents.map((event) => _buildUpcomingEventCard(context, event, isRtl)),
+      ],
+    );
+  }
+
+  Widget _buildUpcomingEventCard(BuildContext context, Event event, bool isRtl) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsScreen(eventId: event.id),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Theme.of(context).cardColor : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Date Badge
+          Container(
+            width: 70,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2C2C2C), // Dark widget for date
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  event.date.day.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _getMonthName(context, event.date.month),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Event Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${event.location} - ${_formatTimeLocalized(context, event.date)}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.group,
+                      size: 20,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${AppLocalizations.of(context).translate('participant') ?? 'مشارك'} ${event.registrations.length}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
     );
   }
 }

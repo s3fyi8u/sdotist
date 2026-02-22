@@ -44,7 +44,7 @@ class _RepresentativeListScreenState extends State<RepresentativeListScreen> {
   Widget build(BuildContext context) {
     return ResponsiveLayout(
       mobileScaffold: _buildMobileScaffold(context),
-      tabletScaffold: _buildDesktopScaffold(context),
+      tabletScaffold: _buildMobileScaffold(context),
       desktopScaffold: _buildDesktopScaffold(context),
     );
   }

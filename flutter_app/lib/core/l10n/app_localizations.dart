@@ -139,6 +139,8 @@ class AppLocalizations {
     'members_stat': 'Members',
     'events_stat': 'Events',
     'years_stat': 'Years',
+    'upcoming_events': 'Upcoming Events',
+    'participant': 'Participant',
 
     // News
     'news': 'News',
@@ -527,6 +529,8 @@ class AppLocalizations {
     'members_stat': 'عضو',
     'events_stat': 'فعالية',
     'years_stat': 'سنوات',
+    'upcoming_events': 'الفعاليات القادمة',
+    'participant': 'مشارك',
 
     // News
     'news': 'الأخبار',
@@ -915,6 +919,8 @@ class AppLocalizations {
     'welcome_home': 'Ana Sayfaya Hoş Geldiniz! 🏠',
     'welcome_subtitle': 'En son etkinlikler ve haberlerden haberdar olun.',
     'explore': 'Keşfet',
+    'upcoming_events': 'Yaklaşan Etkinlikler',
+    'participant': 'Katılımcı',
 
     // News
     'news': 'Haberler',
