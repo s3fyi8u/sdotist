@@ -24,6 +24,7 @@ class FirebaseService {
   FirebaseService._internal();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  String? _fcmToken;
 
   Future<void> init() async {
     // Request permission for iOS
@@ -78,17 +79,19 @@ class FirebaseService {
 
     // Get the device token
     String? token = await _firebaseMessaging.getToken();
+    _fcmToken = token;
     debugPrint("FirebaseMessaging Token: $token");
 
-    // Send token to backend
+    // Send token to backend (will fail silently if not logged in)
     if (token != null) {
-      _registerTokenWithBackend(token);
+      registerTokenWithBackend(token);
     }
 
     // Listen for token refresh
     _firebaseMessaging.onTokenRefresh.listen((newToken) {
       debugPrint("FirebaseMessaging Token Refreshed: $newToken");
-      _registerTokenWithBackend(newToken);
+      _fcmToken = newToken;
+      registerTokenWithBackend(newToken);
     });
 
     // Foreground messages handler
@@ -117,8 +120,16 @@ class FirebaseService {
     });
   }
 
+  /// Re-registers the current FCM token with the backend.
+  /// Call this after successful login.
+  Future<void> registerCurrentToken() async {
+    if (_fcmToken != null) {
+      await registerTokenWithBackend(_fcmToken!);
+    }
+  }
+
   /// Sends the FCM token to the backend for push notification targeting.
-  Future<void> _registerTokenWithBackend(String token) async {
+  Future<void> registerTokenWithBackend(String token) async {
     try {
       final apiClient = ApiClient();
       await apiClient.dio.post(

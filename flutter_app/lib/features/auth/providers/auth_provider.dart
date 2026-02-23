@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../core/services/firebase_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiClient _apiClient = ApiClient();
@@ -37,6 +38,9 @@ class AuthProvider with ChangeNotifier {
       
       // Fetch user role immediately after login
       await fetchUserProfile();
+      
+      // Register FCM token with backend now that we're authenticated
+      await FirebaseService().registerCurrentToken();
       
     } catch (e) {
       rethrow;
