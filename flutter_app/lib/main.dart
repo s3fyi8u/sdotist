@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,7 +25,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   
-  await FirebaseService().init();
+  // Initialize FCM only on mobile (not supported on web without VAPID key)
+  if (!kIsWeb) {
+    try {
+      await FirebaseService().init();
+    } catch (e) {
+      debugPrint('FirebaseService init error: $e');
+    }
+  }
 
   runApp(const MyApp());
 }
