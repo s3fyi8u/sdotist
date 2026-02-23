@@ -17,3 +17,7 @@ venv/
 .idea/
 .vscode/
 *.swp
+
+# Firebase
+service-account.json
+fcm_test.py

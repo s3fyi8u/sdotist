@@ -14,6 +14,7 @@ class ApiConstants {
   static const String offices = "/offices/";
   static const String representatives = "/representatives/";
   static const String notifications = "/notifications/";
+  static const String registerFcmToken = "/notifications/register-token";
   static const String changePassword = "/users/me/password";
   static const String deleteAccount = "/users/me";
   static const String pendingRegistrations = "/admin/pending-registrations";

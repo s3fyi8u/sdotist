@@ -28,6 +28,7 @@ class User(Base):
     status = Column(String, default="active", nullable=False)  # pending, active, rejected
     document_path = Column(String, nullable=True)  # Path to uploaded student ID document
     is_verified = Column(Boolean, default=False)
+    fcm_token = Column(String, nullable=True)  # Firebase Cloud Messaging device token
     
     news = relationship("News", back_populates="author")
     notifications = relationship("Notification", back_populates="author", foreign_keys="[Notification.author_id]")

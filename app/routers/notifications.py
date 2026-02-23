@@ -4,6 +4,7 @@ from sqlalchemy import or_
 from .. import models, schemas
 from ..database import get_db
 from ..auth import get_current_user
+from ..firebase import send_push_notification
 
 router = APIRouter(
     prefix="/notifications",
@@ -42,6 +43,7 @@ def create_notification(
     """
     Create a broadcast notification.
     Only Admins can create notifications.
+    Also sends a real push notification via FCM to all registered devices.
     """
     if current_user["role"] != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to create notifications")
@@ -54,4 +56,29 @@ def create_notification(
     db.add(new_notification)
     db.commit()
     db.refresh(new_notification)
+
+    # Send FCM push notification to all users with registered tokens
+    tokens = [u.fcm_token for u in db.query(models.User).filter(models.User.fcm_token != None).all()]
+    if tokens:
+        send_push_notification(tokens, notification.title, notification.body)
+
     return new_notification
+
+
+@router.post("/register-token", status_code=status.HTTP_200_OK)
+def register_fcm_token(
+    payload: schemas.FCMTokenRegister,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Register or update the user's FCM device token.
+    Called by the Flutter app after obtaining a token from Firebase.
+    """
+    user = db.query(models.User).filter(models.User.email == current_user["email"]).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    user.fcm_token = payload.token
+    db.commit()
+    return {"message": "FCM token registered successfully"}

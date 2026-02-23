@@ -10,6 +10,10 @@ from fastapi.staticfiles import StaticFiles
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
+# Initialize Firebase Admin SDK for push notifications
+from .firebase import init_firebase
+init_firebase()
+
 # Create FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,

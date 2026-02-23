@@ -134,6 +134,10 @@ class NotificationOut(NotificationBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class FCMTokenRegister(BaseModel):
+    token: str = Field(..., description="FCM device token")
+
+
 class OfficeMemberBase(BaseModel):
     name: str
     position: str | None = None
