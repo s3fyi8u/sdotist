@@ -132,7 +132,7 @@ class _HomeTabState extends State<HomeTab> {
 
     return ResponsiveLayout.constrainedBox(
       context,
-      maxWidth: 900,
+      maxWidth: 1100,
       SingleChildScrollView(
         child: Center(
         child: Padding(
@@ -142,136 +142,147 @@ class _HomeTabState extends State<HomeTab> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              // Logo
-              Center(
-                child: Container(
+
+              // ── HEADER SECTION ──────────────────────────────────
+              // Logo + Title/Subtitle/Description side by side on wide screens
+              LayoutBuilder(builder: (context, constraints) {
+                final isWide = constraints.maxWidth > 600;
+                final logoWidget = Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
                       ),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     child: Image.asset(
                       'assets/images/logoo.png',
-                      width: 120,
-                      height: 120,
+                      width: isWide ? 180 : 120,
+                      height: isWide ? 180 : 120,
                       fit: BoxFit.cover,
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              
-              // Title
-              Text(
-                AppLocalizations.of(context).translate('home_main_title'),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.displayLarge?.color,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              
-              // Subtitle
-              Text(
-                AppLocalizations.of(context).translate('home_main_subtitle'),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              
-              // Description
-              Center(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: Text(
-                    AppLocalizations.of(context).translate('home_description'),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      height: 1.5,
-                      color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
+                );
+
+                final textWidget = Column(
+                  crossAxisAlignment: isWide
+                      ? (isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start)
+                      : CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).translate('home_main_title'),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isWide ? 32 : 24,
+                        color: Theme.of(context).textTheme.displayLarge?.color,
+                      ),
+                      textAlign: isWide ? (isRtl ? TextAlign.right : TextAlign.left) : TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+                    const SizedBox(height: 12),
+                    Text(
+                      AppLocalizations.of(context).translate('home_main_subtitle'),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                        height: 1.6,
+                      ),
+                      textAlign: isWide ? (isRtl ? TextAlign.right : TextAlign.left) : TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context).translate('home_description'),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        height: 1.5,
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
+                      ),
+                      textAlign: isWide ? (isRtl ? TextAlign.right : TextAlign.left) : TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    if (!_isLoadingStatistics)
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 10,
+                        alignment: isWide
+                            ? (isRtl ? WrapAlignment.end : WrapAlignment.start)
+                            : WrapAlignment.center,
+                        children: [
+                          _buildInlineStatBadge(
+                            context,
+                            value: '${_statistics['members']}+',
+                            label: AppLocalizations.of(context).translate('members_stat'),
+                          ),
+                          _buildInlineStatBadge(
+                            context,
+                            value: '${_statistics['events']}+',
+                            label: AppLocalizations.of(context).translate('events_stat'),
+                          ),
+                          _buildInlineStatBadge(
+                            context,
+                            value: '${_statistics['years']}',
+                            label: AppLocalizations.of(context).translate('years_stat'),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: isWide ? 200 : double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1A1A1A),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context).translate('register_membership'),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+
+                if (isWide) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                    children: [
+                      Expanded(child: textWidget),
+                      const SizedBox(width: 40),
+                      logoWidget,
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      logoWidget,
+                      const SizedBox(height: 28),
+                      textWidget,
+                    ],
+                  );
+                }
+              }),
+
               const SizedBox(height: 48),
 
-              // Statistics Section
-              if (!_isLoadingStatistics) ...[
-                _buildStatisticsRow(context),
-                const SizedBox(height: 48),
-              ],
-
               // About Us Section
-              Align(
-                alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
-                child: Text(
-                  AppLocalizations.of(context).translate('about_us'),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.light 
-                      ? Colors.white 
-                      : Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    _buildAboutRow(
-                      context,
-                      icon: Icons.account_balance_outlined,
-                      titleKey: 'foundation',
-                      descKey: 'foundation_text',
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAboutRow(
-                      context,
-                      icon: Icons.visibility_outlined,
-                      titleKey: 'our_vision',
-                      descKey: 'our_vision_text',
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAboutRow(
-                      context,
-                      icon: Icons.rocket_launch_outlined,
-                      titleKey: 'our_mission',
-                      descKey: 'our_mission_text',
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAboutRow(
-                      context,
-                      icon: Icons.diamond_outlined,
-                      titleKey: 'our_values',
-                      descKey: 'our_values_text',
-                    ),
-                  ],
-                ),
-              ),
+              _buildAboutUsCard(context, isRtl),
               const SizedBox(height: 32),
 
               // Quick Access Section (Executive Offices & University Reps)
@@ -326,9 +337,13 @@ class _HomeTabState extends State<HomeTab> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               LayoutBuilder(
                 builder: (context, constraints) {
+                  final isWide = constraints.maxWidth > 600;
+                  final cardWidth = isWide
+                      ? (constraints.maxWidth - 32) / 3
+                      : (constraints.maxWidth - 16) / 2;
                   return Wrap(
                     spacing: 16,
                     runSpacing: 16,
@@ -338,23 +353,24 @@ class _HomeTabState extends State<HomeTab> {
                         context,
                         icon: Icons.event_outlined,
                         title: AppLocalizations.of(context).translate('events'),
-                        onTap: () => widget.onTabChange(2), // Navigate to Events
-                        width: (constraints.maxWidth - 16) / 2,
+                        onTap: () => widget.onTabChange(2),
+                        width: cardWidth,
                       ),
                       _buildServiceCard(
                         context,
                         icon: Icons.article_outlined,
                         title: AppLocalizations.of(context).translate('news'),
-                        onTap: () => widget.onTabChange(1), // Navigate to News
-                        width: (constraints.maxWidth - 16) / 2,
+                        onTap: () => widget.onTabChange(1),
+                        width: cardWidth,
                       ),
                       _buildServiceCard(
                         context,
                         icon: Icons.card_membership_outlined,
                         title: AppLocalizations.of(context).translate('membership'),
-                        onTap: () => widget.onTabChange(3), // Navigate to Profile (Membership placeholder)
-                        width: (constraints.maxWidth - 16) / 2,
+                        onTap: () => widget.onTabChange(3),
+                        width: cardWidth,
                       ),
+
                     ],
                   );
                 },
@@ -372,7 +388,7 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => widget.onTabChange(1), // Navigate to News
+                    onPressed: () => widget.onTabChange(1),
                     child: Text(AppLocalizations.of(context).translate('see_all')),
                   ),
                 ],
@@ -386,7 +402,7 @@ class _HomeTabState extends State<HomeTab> {
                 Center(child: Text(AppLocalizations.of(context).translate('no_news')))
               else
                 ..._latestNews.map((news) => _buildNewsCard(context, news)),
-              
+
               const SizedBox(height: 32),
 
               // Join Us Section
@@ -394,7 +410,7 @@ class _HomeTabState extends State<HomeTab> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A1A), // Dark color
+                  color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
@@ -422,7 +438,7 @@ class _HomeTabState extends State<HomeTab> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                             Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const RegisterScreen()),
                             );
@@ -449,7 +465,7 @@ class _HomeTabState extends State<HomeTab> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
 
               // Contact Us Section
@@ -467,8 +483,8 @@ class _HomeTabState extends State<HomeTab> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.light 
-                      ? Colors.white 
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white
                       : Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
@@ -477,7 +493,6 @@ class _HomeTabState extends State<HomeTab> {
                 ),
                 child: Column(
                   children: [
-                    // Email Section
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -492,10 +507,7 @@ class _HomeTabState extends State<HomeTab> {
                               color: const Color(0xFF1A1A1A),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(
-                              Icons.email,
-                              color: Colors.white,
-                            ),
+                            child: const Icon(Icons.email, color: Colors.white),
                           ),
                           const SizedBox(width: 16),
                           Column(
@@ -520,8 +532,6 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
-                    // Social Media Section
                     Text(
                       AppLocalizations.of(context).translate('follow_us'),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -535,7 +545,7 @@ class _HomeTabState extends State<HomeTab> {
                         _buildSocialIcon(context, FontAwesomeIcons.facebookF),
                         const SizedBox(width: 16),
                         _buildSocialIcon(
-                          context, 
+                          context,
                           FontAwesomeIcons.instagram,
                           'https://www.instagram.com/sdotist',
                         ),
@@ -548,13 +558,120 @@ class _HomeTabState extends State<HomeTab> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 40),
             ],
           ),
         ),
       ),
       ),
+    );
+  }
+
+  // ── HELPER: Inline stat badge for header ──────────────────────
+  Widget _buildInlineStatBadge(BuildContext context, {required String value, required String label}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.white
+            : Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── HELPER: About Us card (extracted) ────────────────────────
+  Widget _buildAboutUsCard(BuildContext context, bool isRtl) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+          child: Text(
+            AppLocalizations.of(context).translate('about_us'),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _buildAboutRow(
+                context,
+                icon: Icons.account_balance_outlined,
+                titleKey: 'foundation',
+                descKey: 'foundation_text',
+              ),
+              const SizedBox(height: 20),
+              _buildAboutRow(
+                context,
+                icon: Icons.visibility_outlined,
+                titleKey: 'our_vision',
+                descKey: 'our_vision_text',
+              ),
+              const SizedBox(height: 20),
+              _buildAboutRow(
+                context,
+                icon: Icons.rocket_launch_outlined,
+                titleKey: 'our_mission',
+                descKey: 'our_mission_text',
+              ),
+              const SizedBox(height: 20),
+              _buildAboutRow(
+                context,
+                icon: Icons.diamond_outlined,
+                titleKey: 'our_values',
+                descKey: 'our_values_text',
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -896,10 +1013,6 @@ class _HomeTabState extends State<HomeTab> {
     if (_isLoadingEvents) {
       return const Center(child: CircularProgressIndicator());
     }
-    
-    if (_upcomingEvents.isEmpty) {
-      return const SizedBox.shrink(); // Don't show if empty
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -908,19 +1021,51 @@ class _HomeTabState extends State<HomeTab> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              AppLocalizations.of(context).translate('upcoming_events') ?? 'الفعاليات القادمة',
+              AppLocalizations.of(context).translate('upcoming_events'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             TextButton(
-              onPressed: () => widget.onTabChange(2), // Navigate to Events
-              child: Text(AppLocalizations.of(context).translate('see_all') ?? 'عرض الكل'),
+              onPressed: () => widget.onTabChange(2),
+              child: Text(AppLocalizations.of(context).translate('see_all')),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        ..._upcomingEvents.map((event) => _buildUpcomingEventCard(context, event, isRtl)),
+        if (_upcomingEvents.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.white
+                  : Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+              ),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.event_busy_outlined,
+                  size: 40,
+                  color: Theme.of(context).disabledColor,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'لا يوجد فعاليات قادمة في الوقت الحالي',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).disabledColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
+        else
+          ..._upcomingEvents.map((event) => _buildUpcomingEventCard(context, event, isRtl)),
       ],
     );
   }
