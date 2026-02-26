@@ -131,13 +131,12 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     final isRtl = AppLocalizations.of(context).isRtl;
 
-    return ResponsiveLayout.constrainedBox(
-      context,
-      maxWidth: 1100,
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1100),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -146,31 +145,31 @@ class _HomeTabState extends State<HomeTab> {
                   children: [
                     const SizedBox(height: 40),
 
-              // ── HEADER SECTION ──────────────────────────────────
-              // Logo + Title/Subtitle/Description side by side on wide screens
-              LayoutBuilder(builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 600;
-                final logoWidget = Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 24,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: Image.asset(
-                      'assets/images/logoo.png',
-                      width: isWide ? 180 : 120,
-                      height: isWide ? 180 : 120,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
+                    // ── HEADER SECTION ──────────────────────────────────
+                    // Logo + Title/Subtitle/Description side by side on wide screens
+                    LayoutBuilder(builder: (context, constraints) {
+                      final isWide = constraints.maxWidth > 600;
+                      final logoWidget = Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.12),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            width: isWide ? 180 : 120,
+                            height: isWide ? 180 : 120,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
 
                 final textWidget = Column(
                   crossAxisAlignment: isWide
@@ -563,7 +562,8 @@ class _HomeTabState extends State<HomeTab> {
               ),
 
               const SizedBox(height: 40),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -578,7 +578,6 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ],
         ),
-      ),
     );
   }
 
