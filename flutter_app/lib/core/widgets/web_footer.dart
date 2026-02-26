@@ -76,7 +76,7 @@ class WebFooter extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Text(
-              '© 2025 رابطة الطلاب السودانيين في إسطنبول. جميع الحقوق محفوظة.',
+              '© 2026 رابطة الطلاب السودانيين في إسطنبول. جميع الحقوق محفوظة.',
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.5),
                 fontSize: 13,
@@ -97,14 +97,10 @@ class WebFooter extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/logoo.png',
-                height: 36,
-                width: 36,
-                fit: BoxFit.cover,
-              ),
+            Image.asset(
+              'assets/images/logo.png',
+              height: 32,
+              color: Colors.white,
             ),
             const SizedBox(width: 10),
             const Text(
@@ -167,7 +163,7 @@ class WebFooter extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _footerLink(t.translate('members'), () => onNavTap?.call(3)),
+        _footerLink(t.translate('profile'), () => onNavTap?.call(3)),
         const SizedBox(height: 10),
         _footerLink(t.translate('help_support'), null),
         const SizedBox(height: 10),

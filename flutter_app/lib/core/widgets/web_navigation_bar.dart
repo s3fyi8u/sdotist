@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/screens/register_screen.dart';
+import '../../features/home/screens/notifications_screen.dart';
 import '../l10n/app_localizations.dart';
 
 class WebNavigationBar extends StatelessWidget {
@@ -39,14 +40,10 @@ class WebNavigationBar extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    'assets/images/logoo.png',
-                    height: 40,
-                    width: 40,
-                    fit: BoxFit.cover,
-                  ),
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: 36,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -87,7 +84,7 @@ class WebNavigationBar extends StatelessWidget {
               ),
               const SizedBox(width: 28),
               _NavBarItem(
-                title: t.translate('members'),
+                title: t.translate('profile'),
                 isActive: selectedIndex == 3,
                 onTap: () => onItemTapped(3),
               ),
@@ -125,8 +122,10 @@ class WebNavigationBar extends StatelessWidget {
                   size: 22,
                 ),
                 onPressed: () {
-                  // Navigate to notifications
-                  Navigator.pushNamed(context, '/notifications');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                  );
                 },
               ),
               const SizedBox(width: 12),
