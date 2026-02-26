@@ -140,6 +140,7 @@ class AppLocalizations {
     'events_stat': 'Events',
     'years_stat': 'Years',
     'upcoming_events': 'Upcoming Events',
+    'help_support': 'Help',
     'participant': 'Participant',
 
     // News
@@ -530,6 +531,7 @@ class AppLocalizations {
     'events_stat': 'فعالية',
     'years_stat': 'سنوات',
     'upcoming_events': 'الفعاليات القادمة',
+    'help_support': 'المساعدة',
     'participant': 'مشارك',
 
     // News
@@ -920,6 +922,7 @@ class AppLocalizations {
     'welcome_subtitle': 'En son etkinlikler ve haberlerden haberdar olun.',
     'explore': 'Keşfet',
     'upcoming_events': 'Yaklaşan Etkinlikler',
+    'help_support': 'Yardım',
     'participant': 'Katılımcı',
 
     // News

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../features/auth/providers/auth_provider.dart';
-import '../../features/executive_offices/screens/office_list_screen.dart';
-import '../../features/university_representatives/screens/representative_list_screen.dart';
-import '../constants/api_constants.dart';
+import '../../features/auth/screens/register_screen.dart';
 import '../l10n/app_localizations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class WebNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -20,234 +15,202 @@ class WebNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final authProvider = Provider.of<AuthProvider>(context);
     final t = AppLocalizations.of(context);
 
     return Container(
-      height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            offset: const Offset(0, 2),
-            blurRadius: 10,
+        color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? Colors.white12 : Colors.grey.shade200,
+            width: 1,
           ),
-        ],
+        ),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            // Logo Section
-            Row(
+      child: Row(
+        children: [
+          // ── LEFT: Logo + Association Name ──────────────────
+          InkWell(
+            onTap: () => onItemTapped(0),
+            hoverColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                'assets/images/logo.png',
-                height: 40,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'sdotist',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                  color: isDark ? Colors.white : Colors.black,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/images/logoo.png',
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      t.translate('home_main_title'),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      t.translate('home_main_subtitle'),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? Colors.white60 : Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          
+
           const Spacer(),
 
-          // Center Navigation Links
+          // ── CENTER: Navigation Links (text only) ──────────
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               _NavBarItem(
-                title: t.translate('welcome_home_title'),
-                icon: Icons.home_outlined,
-                isActive: selectedIndex == 0,
-                onTap: () => onItemTapped(0),
+                title: t.translate('about_us'),
+                isActive: false,
+                onTap: () => onItemTapped(0), // scrolls to about section
               ),
-              const SizedBox(width: 30),
+              const SizedBox(width: 28),
               _NavBarItem(
-                title: t.translate('news'),
-                icon: Icons.article_outlined,
-                isActive: selectedIndex == 1,
-                onTap: () => onItemTapped(1),
-              ),
-              const SizedBox(width: 30),
-              _NavBarItem(
-                title: t.translate('events') ?? 'Events',
-                icon: Icons.event_outlined,
-                isActive: selectedIndex == 2,
-                onTap: () => onItemTapped(2),
-              ),
-              const SizedBox(width: 30),
-              _NavBarItem(
-                title: t.translate('profile'),
-                icon: Icons.person_outline,
+                title: t.translate('members'),
                 isActive: selectedIndex == 3,
                 onTap: () => onItemTapped(3),
               ),
-              if (authProvider.isAdmin) ...[
-                const SizedBox(width: 30),
-                _NavBarItem(
-                  title: t.translate('admin_dashboard') ?? 'Admin',
-                  icon: Icons.admin_panel_settings_outlined,
-                  isActive: selectedIndex == 4,
-                  onTap: () => onItemTapped(4),
-                ),
-              ],
+              const SizedBox(width: 28),
+              _NavBarItem(
+                title: t.translate('news'),
+                isActive: selectedIndex == 1,
+                onTap: () => onItemTapped(1),
+              ),
+              const SizedBox(width: 28),
+              _NavBarItem(
+                title: t.translate('events'),
+                isActive: selectedIndex == 2,
+                onTap: () => onItemTapped(2),
+              ),
+              const SizedBox(width: 28),
+              _NavBarItem(
+                title: t.translate('welcome_home_title'),
+                isActive: selectedIndex == 0,
+                onTap: () => onItemTapped(0),
+              ),
             ],
           ),
 
           const Spacer(),
 
-          // Right Side Actions
+          // ── RIGHT: Notification + Register Button ─────────
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Dropdowns for extra features
-               PopupMenuButton<String>(
-                tooltip: 'More',
-                offset: const Offset(0, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(Icons.grid_view, size: 20, color: isDark ? Colors.white : Colors.black),
+              IconButton(
+                icon: Icon(
+                  Icons.notifications_outlined,
+                  color: isDark ? Colors.white70 : Colors.grey.shade700,
+                  size: 22,
                 ),
-                onSelected: (value) {
-                  if (value == 'offices') {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const OfficeListScreen()));
-                  } else if (value == 'representatives') {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RepresentativeListScreen()));
-                  }
+                onPressed: () {
+                  // Navigate to notifications
+                  Navigator.pushNamed(context, '/notifications');
                 },
-                itemBuilder: (context) => [
-                   PopupMenuItem(
-                    value: 'offices',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.business_outlined, size: 20),
-                        const SizedBox(width: 12),
-                        Text(t.translate('executive_offices')),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'representatives',
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.school_outlined, size: 20),
-                        const SizedBox(width: 12),
-                        Text(t.translate('university_representatives')),
-                      ],
-                    ),
-                  ),
-                ],
               ),
-              
-              const SizedBox(width: 20),
-
-              // Auth State
-              if (authProvider.isAuthenticated)
-                _buildUserProfile(context)
-              else
-                Row(
-                  children: [
-                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/login'),
-                      child: Text(t.translate('login')),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pushNamed(context, '/register'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: Text(t.translate('get_started')),
-                    ),
-                  ],
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1A1A1A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 0,
                 ),
+                child: Text(
+                  t.translate('register_membership'),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
-      ), // closes Row
-      ), // closes SingleChildScrollView
-    );
-  }
-
-  Widget _buildUserProfile(BuildContext context) {
-    // This could fetch realtime user data if stored in provider, 
-    // for simplicity we show a generic avatar or placeholder until profile loads
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Theme.of(context).primaryColor, width: 2),
-      ),
-      child: const CircleAvatar(
-        radius: 16,
-        backgroundColor: Colors.grey,
-        child: Icon(Icons.person, size: 20, color: Colors.white),
       ),
     );
   }
 }
 
-class _NavBarItem extends StatelessWidget {
+class _NavBarItem extends StatefulWidget {
   final String title;
-  final IconData icon;
   final bool isActive;
   final VoidCallback onTap;
 
   const _NavBarItem({
     required this.title,
-    required this.icon,
     required this.isActive,
     required this.onTap,
   });
 
   @override
+  State<_NavBarItem> createState() => _NavBarItemState();
+}
+
+class _NavBarItemState extends State<_NavBarItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    final color = isActive 
-        ? Theme.of(context).primaryColor 
-        : (Theme.of(context).brightness == Brightness.dark ? Colors.grey[400] : Colors.grey[600]);
-        
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      hoverColor: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: isActive ? BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ) : null,
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color: color,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                fontSize: 15,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDark ? Colors.white : Colors.black87;
+    final inactiveColor = isDark ? Colors.white60 : Colors.grey.shade600;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: widget.isActive
+                    ? (isDark ? Colors.white : Colors.black87)
+                    : Colors.transparent,
+                width: 2,
               ),
             ),
-          ],
+          ),
+          child: Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: widget.isActive ? FontWeight.bold : FontWeight.w500,
+              color: widget.isActive || _isHovered ? activeColor : inactiveColor,
+            ),
+          ),
         ),
       ),
     );

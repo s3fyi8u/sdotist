@@ -9,6 +9,7 @@ import '../../university_representatives/screens/representative_list_screen.dart
 import 'notifications_screen.dart';
 import '../../../core/widgets/responsive_layout.dart';
 import '../../../core/widgets/web_navigation_bar.dart';
+import '../../../core/widgets/web_footer.dart';
 import '../../../core/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -101,10 +102,17 @@ class _HomeScreenState extends State<HomeScreen> {
             onItemTapped: _onItemTapped,
           ),
           Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: _pages.elementAt(_selectedIndex),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: _pages.elementAt(_selectedIndex),
+                    ),
+                  ),
+                  WebFooter(onNavTap: _onItemTapped),
+                ],
               ),
             ),
           ),
