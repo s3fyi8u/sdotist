@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/widgets/web_footer.dart';
 import '../../auth/screens/register_screen.dart';
 import '../../executive_offices/screens/office_list_screen.dart';
 import '../../university_representatives/screens/representative_list_screen.dart';
@@ -134,14 +135,16 @@ class _HomeTabState extends State<HomeTab> {
       context,
       maxWidth: 1100,
       SingleChildScrollView(
-        child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 40),
+        child: Column(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 40),
 
               // ── HEADER SECTION ──────────────────────────────────
               // Logo + Title/Subtitle/Description side by side on wide screens
@@ -560,10 +563,21 @@ class _HomeTabState extends State<HomeTab> {
               ),
 
               const SizedBox(height: 40),
-            ],
-          ),
+                  ],
+                ),
+              ),
+            ),
+            // ── FOOTER (desktop only) ──────────────────────────
+            LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth > 800) {
+                  return WebFooter(onNavTap: widget.onTabChange);
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
         ),
-      ),
       ),
     );
   }
