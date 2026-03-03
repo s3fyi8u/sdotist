@@ -6,7 +6,8 @@ from pathlib import Path
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.MAIL_USERNAME,
     MAIL_PASSWORD=settings.MAIL_PASSWORD,
-    MAIL_FROM=settings.MAIL_FROM,
+    MAIL_FROM=settings.MAIL_USERNAME,
+    MAIL_FROM_NAME="رابطة الطلاب السودانيين باسطنبول",
     MAIL_PORT=settings.MAIL_PORT,
     MAIL_SERVER="smtp.zoho.sa",
     MAIL_STARTTLS=False,
