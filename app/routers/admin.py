@@ -68,6 +68,11 @@ def approve_registration(
     user.status = "active"
     user.document_path = None
 
+    # Send approval email
+    from ..utils.email import send_approval_email
+    import asyncio
+    asyncio.create_task(send_approval_email(user.email, user.name))
+
     # Create notification for the user
     admin_user = db.query(User).filter(User.email == current_user["email"]).first()
     notification = Notification(

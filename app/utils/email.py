@@ -24,7 +24,7 @@ async def send_verification_email(email: EmailStr, name: str, token: str, langua
         "user_name": name,
         "verification_link": verification_link,
         "expiry_minutes": "30",
-        "logo_url": "https://sdotist.org/assets/images/app_icon.png",
+        "logo_url": "https://sdotist.org/assets/assets/images/app_icon.png",
         "facebook_url": "https://facebook.com/sdotist",
         "twitter_url": "https://twitter.com/sdotist",
         "instagram_url": "https://instagram.com/sdotist"
@@ -77,6 +77,38 @@ async def send_welcome_email(email: EmailStr, name: str, language: str = "ar"):
 
     message = MessageSchema(
         subject="Welcome to sdotist!" if language == "en" else "مرحباً بك في رابطة الطلاب السودانيين باسطنبول",
+        recipients=[email],
+        body=html,
+        subtype=MessageType.html
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message)
+
+async def send_approval_email(email: EmailStr, name: str, language: str = "ar"):
+    # Common variables
+    variables = {
+        "user_name": name,
+        "app_url": "https://sdotist.org",
+        "logo_url": "https://sdotist.org/assets/assets/images/app_icon.png",
+        "facebook_url": "https://facebook.com/sdotist",
+        "twitter_url": "https://twitter.com/sdotist",
+        "instagram_url": "https://instagram.com/sdotist"
+    }
+    
+    # Select template based on language
+    template_name = "approval_email_en.html" if language == "en" else "approval_email_ar.html"
+    template_path = conf.TEMPLATE_FOLDER / template_name
+    
+    with open(template_path, "r", encoding="utf-8") as f:
+        html = f.read()
+        
+    # Inject variables using Jinja2 Template
+    from jinja2 import Template
+    template = Template(html)
+    html = template.render(**variables)
+
+    message = MessageSchema(
+        subject="Account Approved" if language == "en" else "تم تفعيل حسابك",
         recipients=[email],
         body=html,
         subtype=MessageType.html
