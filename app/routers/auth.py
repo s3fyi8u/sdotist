@@ -107,6 +107,11 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
         if not user.is_verified:
             user.is_verified = True
             db.commit()
+            
+            # Send Welcome Email
+            from ..utils.email import send_welcome_email
+            import asyncio
+            asyncio.create_task(send_welcome_email(user.email, user.name))
         
         from fastapi.responses import HTMLResponse
         from ..utils.email import conf

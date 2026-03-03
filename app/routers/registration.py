@@ -108,7 +108,7 @@ async def register_with_document(
     from ..utils.email import send_verification_email
     token = create_access_token({"sub": new_user.email, "role": new_user.role})
     import asyncio
-    asyncio.create_task(send_verification_email(new_user.email, token))
+    asyncio.create_task(send_verification_email(new_user.email, new_user.name, token))
 
     return {
         "message": "Registration submitted. Your account is under review.",
