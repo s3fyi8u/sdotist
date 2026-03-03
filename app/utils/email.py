@@ -37,9 +37,10 @@ async def send_verification_email(email: EmailStr, name: str, token: str, langua
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
         
-    # Inject variables
-    for key, value in variables.items():
-        html = html.replace(f"{{{{ {key} }}}}", value)
+    # Inject variables using Jinja2 Template
+    from jinja2 import Template
+    template = Template(html)
+    html = template.render(**variables)
 
     message = MessageSchema(
         subject="Verify your sdotist account" if language == "en" else "تأكيد حسابك في رابطة الطلاب السودانيين باسطنبول",
@@ -69,9 +70,10 @@ async def send_welcome_email(email: EmailStr, name: str, language: str = "ar"):
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
         
-    # Inject variables
-    for key, value in variables.items():
-        html = html.replace(f"{{{{ {key} }}}}", value)
+    # Inject variables using Jinja2 Template
+    from jinja2 import Template
+    template = Template(html)
+    html = template.render(**variables)
 
     message = MessageSchema(
         subject="Welcome to sdotist!" if language == "en" else "مرحباً بك في رابطة الطلاب السودانيين باسطنبول",
