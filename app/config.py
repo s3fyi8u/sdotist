@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # Email Settings
     MAIL_USERNAME: str = "info@sdotist.org"
     MAIL_PASSWORD: str = "Pablo@390"
-    MAIL_FROM: str = "info@sdotist.org"
+    MAIL_FROM: str = "رابطة الطلاب السودانيين باسطنبول <info@sdotist.org>"
     MAIL_PORT: int = 465
     MAIL_SERVER: str = "smtp.zoho.sa"
     MAIL_STARTTLS: bool = False
