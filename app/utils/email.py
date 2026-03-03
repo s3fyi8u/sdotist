@@ -57,7 +57,7 @@ async def send_welcome_email(email: EmailStr, name: str, language: str = "ar"):
     variables = {
         "user_name": name,
         "app_url": "https://sdotist.org",
-        "logo_url": "https://sdotist.org/assets/images/app_icon.png",
+        "logo_url": "https://sdotist.org/assets/assets/images/logo.png",
         "facebook_url": "https://facebook.com/sdotist",
         "twitter_url": "https://twitter.com/sdotist",
         "instagram_url": "https://instagram.com/sdotist"
