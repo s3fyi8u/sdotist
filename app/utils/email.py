@@ -24,7 +24,7 @@ async def send_verification_email(email: EmailStr, name: str, token: str, langua
         "user_name": name,
         "verification_link": verification_link,
         "expiry_minutes": "30",
-        "logo_url": "https://sdotist.org/assets/assets/images/app_icon.png",
+        "logo_url": "https://sdotist.org/assets/assets/images/logo.png",
         "facebook_url": "https://facebook.com/sdotist",
         "twitter_url": "https://twitter.com/sdotist",
         "instagram_url": "https://instagram.com/sdotist"
@@ -89,7 +89,7 @@ async def send_approval_email(email: EmailStr, name: str, language: str = "ar"):
     variables = {
         "user_name": name,
         "app_url": "https://sdotist.org",
-        "logo_url": "https://sdotist.org/assets/assets/images/app_icon.png",
+        "logo_url": "https://sdotist.org/assets/assets/images/logo.png",
         "facebook_url": "https://facebook.com/sdotist",
         "twitter_url": "https://twitter.com/sdotist",
         "instagram_url": "https://instagram.com/sdotist"
