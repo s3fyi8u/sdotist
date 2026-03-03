@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import User, Notification
@@ -41,8 +41,9 @@ def get_pending_registrations(
 
 
 @router.post("/registrations/{user_id}/approve")
-def approve_registration(
+async def approve_registration(
     user_id: int,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_admin),
 ):
@@ -68,11 +69,6 @@ def approve_registration(
     user.status = "active"
     user.document_path = None
 
-    # Send approval email
-    from ..utils.email import send_approval_email
-    import asyncio
-    asyncio.create_task(send_approval_email(user.email, user.name))
-
     # Create notification for the user
     admin_user = db.query(User).filter(User.email == current_user["email"]).first()
     notification = Notification(
@@ -83,6 +79,10 @@ def approve_registration(
     )
     db.add(notification)
     db.commit()
+
+    # Send approval email in background AFTER response is returned
+    from ..utils.email import send_approval_email
+    background_tasks.add_task(send_approval_email, user.email, user.name)
 
     return {"message": "User approved successfully", "user_id": user_id}
 

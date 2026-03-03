@@ -10,8 +10,8 @@ class ApiClient {
 
   ApiClient() {
     _dio.options.baseUrl = ApiConstants.baseUrl;
-    _dio.options.connectTimeout = const Duration(seconds: 5);
-    _dio.options.receiveTimeout = const Duration(seconds: 3);
+    _dio.options.connectTimeout = const Duration(seconds: 10);
+    _dio.options.receiveTimeout = const Duration(seconds: 30);
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
